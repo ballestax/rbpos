@@ -410,7 +410,7 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
         acShowOrders = new ProgAction("Pedidos",
                 null, "Ver modulo de pedidos", 'a') {
             public void actionPerformed(ActionEvent e) {
-                Permission perm = getControl().getPermissionByName("show-pedidos-module");
+                Permission perm = getControl().getPermissionByName("show-orders-module");
                 getGuiManager().showBasicPanel(getGuiManager().getPanelBasicPedidos(), perm);
             }
         };

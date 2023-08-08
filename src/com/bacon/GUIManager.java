@@ -628,7 +628,7 @@ public class GUIManager {
             toolbar.removeAll();
             toolbar.updateUI();
 
-            Permission perm = app.getControl().getPermissionByName("show-pedidos-module");
+            Permission perm = app.getControl().getPermissionByName("show-orders-module");
             if (user != null && app.getControl().hasPermission(user, perm)) {
                 toolbar.add((app.getAction(Aplication.ACTION_SHOW_ORDER)));
             }

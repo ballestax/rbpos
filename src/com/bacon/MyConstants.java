@@ -47,13 +47,13 @@ public class MyConstants {
 
     public static final Permission[] PERMISSIONS = {
         new Permission("show-admin-module", "Ver el modulo administrador"),
-        new Permission("show-pedidos-module", "Ver el modulo pedidos"),
+        new Permission("show-orders-module", "Ver el modulo pedidos"),
         new Permission("show-cash-module", "Ver el modulo caja"),
         new Permission("show-reports-module", "Ver el modulo reportes"),
         new Permission("show-orderlist-module", "Ver el modulo lista de pedidos"),
         new Permission("show-tab-backup", "Ver pestaña copia de seguridad"),        
         new Permission("show-tab-config", "Ver pestaña configuracion"),
-        new Permission("show-tab-users", "Ver el modulo administrador"),
+        new Permission("show-tab-users", "Ver el modulo usuarios"),
         new Permission("show-inventory-module", "Ver el modulo inventario"),
         new Permission("show-products-module", "Ver el modulo productos"),
         new Permission("add-items-inventary", "Agregar items al inventario"),
@@ -62,6 +62,12 @@ public class MyConstants {
         new Permission("conciliate-items-inventary", "Coniciliar items al inventario"),
         new Permission("print-items-inventary", "Inprimir items del inventario"),
         new Permission("export-items-inventary", "Exportar items del inventario"),
+        new Permission("add-role", "Agregar rol de usuario"),
+        new Permission("change-permisions", "Cambiar permisos"),
+        new Permission("add-user", "Agregar usuario"),
+        new Permission("change-password", "Cambiar contraseña"),
+        new Permission("anulate-invoce", "Anular facturas"),
+        
         
     };
 
