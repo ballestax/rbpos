@@ -6,6 +6,7 @@
 package com.bacon.gui;
 
 import com.bacon.Aplication;
+import com.bacon.domain.Permission;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JComponent;
@@ -38,18 +39,26 @@ public class PanelModAdmin extends javax.swing.JPanel {
         tabPane = new JTabbedPane();
         tabPane.setTabPlacement(JTabbedPane.LEFT);
 
-        addTab("Copia de seguridad", app.getGuiManager().getPanelAdminBackup());
-        addTab("Configurar", app.getGuiManager().getPanelAdminConfig());
-        addTab("Usuarios", app.getGuiManager().getPanelAdminUsers());
+        Permission perm = app.getControl().getPermissionByName("show-tab-backup");        
+        addTab("Copia de seguridad", app.getGuiManager().getPanelAdminBackup(), app.getControl().hasPermission(app.getUser(), perm));
+        
+        perm = app.getControl().getPermissionByName("show-tab-config");
+        addTab("Configurar", app.getGuiManager().getPanelAdminConfig(), app.getControl().hasPermission(app.getUser(), perm));
+        
+        perm = app.getControl().getPermissionByName("show-tab-users");
+        addTab("Usuarios", app.getGuiManager().getPanelAdminUsers(),app.getControl().hasPermission(app.getUser(), perm));
+                      
 
     }
 
-    public void addTab(String tab, JComponent comp) {
+    public void addTab(String tab, JComponent comp, boolean permision) {
         JLabel titleTab;
         titleTab = new JLabel();
+//        titleTab.setEnabled(permision);
         titleTab.setHorizontalAlignment(SwingConstants.LEFT);
         titleTab.setPreferredSize(new Dimension(200, 30));
         tabPane.addTab(tab, comp);
+//        tabPane.setEnabledAt(tabPane.getTabCount()-1, permision);
         titleTab.setText("<html><p align=left><font size=+1>" + tab + "</p></html>");
         tabPane.setTabComponentAt(tabPane.getTabCount() - 1, titleTab);
         add(tabPane, SwingConstants.CENTER);
