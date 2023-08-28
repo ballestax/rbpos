@@ -1614,9 +1614,9 @@
         
         <SQLStatement method="CHECK_INVENTORY_ADDITIONAL">
             <SQLFragment>
-                SELECT i.id, i.name, p.name as pres, i.measure, i.quantity as exist, ip.presentation_id as idPres, ip.quantity, i.onlyDelivery 
-                FROM inventory i, products p, inventory_product ip 
-                WHERE i.id=ip.item_id AND p.id=ip.product_id AND ip.product_id=?
+                SELECT i.id, i.name, ing.name as pres, i.measure, i.quantity as exist, ad.id  as idAdd, ip.quantity, i.onlyDelivery 
+                FROM inventory i, inventory_product ip, additionals ad, ingredients ing 
+                WHERE i.id=ip.item_id AND ad.ingredient_id =ing.id AND ad.id =ip.adition_id  AND ip.adition_id=?;
             </SQLFragment>
         </SQLStatement>
                 

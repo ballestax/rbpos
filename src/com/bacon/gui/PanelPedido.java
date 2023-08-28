@@ -10,6 +10,7 @@ import com.bacon.Configuration;
 import com.bacon.Control;
 import com.bacon.GUIManager;
 import com.bacon.MyConstants;
+import com.bacon.domain.AdditionalPed;
 import com.bacon.domain.Client;
 import com.bacon.domain.ConfigDB;
 import com.bacon.domain.Cycle;
@@ -1058,6 +1059,14 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         }
 
         Product producto = productPed.getProduct();
+        
+        if(productPed.hasAdditionals()){
+            for (AdditionalPed additional : productPed.getAdicionales()) {
+                HashMap<Integer, HashMap> mapData = app.getControl().checkInventoryAdditional(additional.getAdditional().getId());
+                System.out.println(Arrays.toString(mapData.entrySet().toArray()));
+            }
+            
+        }
 
         if (productPed.hasPresentation()) {
             HashMap<Integer, HashMap> mapData = app.getControl().checkInventory(productPed.getPresentation().getId());
@@ -1088,10 +1097,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
             }
             checkInventory();
         }
-
-        if (productPed.hasAdditionals()) {
-
-        }
+       
 
         if (products.contains(productPed) && price == productPed.getPrecio()) {
             try {

@@ -113,6 +113,7 @@ public class JDBCUtilDAO implements UtilDAO {
 
     public static final String CHECK_INVENTORY_KEY = "CHECK_INVENTORY";
     public static final String CHECK_INVENTORY_PRODUCT_KEY = "CHECK_INVENTORY_PRODUCT";
+    public static final String CHECK_INVENTORY_ADDITIONAL_KEY = "CHECK_INVENTORY_ADDITIONAL";
 
     protected static final String CHECK_TABLE_EMPTY_KEY = "CHECK_TABLE";
     protected static final String INSERT_ROLE_USER_KEY = "INSERT_ROLE_USER";
@@ -1799,6 +1800,7 @@ public class JDBCUtilDAO implements UtilDAO {
         try {
             conn = dataSource.getConnection();
             retrieve = sqlStatements.buildSQLStatement(conn, CHECK_INVENTORY_KEY, parameters);
+            System.out.println("retrieve1 = " + retrieve);
             rs = retrieve.executeQuery();
             while (rs.next()) {
                 data = new HashMap<>();
@@ -1814,7 +1816,7 @@ public class JDBCUtilDAO implements UtilDAO {
                 mData.put(id, data);
             }
         } catch (SQLException | IOException e) {
-            throw new DAOException("Could not properly retrieve the presentations list: " + e);
+            throw new DAOException("Could not properly retrieve check presentation: " + e);
         } finally {
             DBManager.closeResultSet(rs);
             DBManager.closeStatement(retrieve);
@@ -1833,6 +1835,7 @@ public class JDBCUtilDAO implements UtilDAO {
         try {
             conn = dataSource.getConnection();
             retrieve = sqlStatements.buildSQLStatement(conn, CHECK_INVENTORY_PRODUCT_KEY, parameters);
+            System.out.println("retrieve2 = " + retrieve);
             rs = retrieve.executeQuery();
             while (rs.next()) {
                 data = new HashMap<>();
@@ -1848,7 +1851,42 @@ public class JDBCUtilDAO implements UtilDAO {
                 mData.put(id, data);
             }
         } catch (SQLException | IOException e) {
-            throw new DAOException("Could not properly retrieve the products list: " + e);
+            throw new DAOException("Could not properly retrieve check product: " + e);
+        } finally {
+            DBManager.closeResultSet(rs);
+            DBManager.closeStatement(retrieve);
+            DBManager.closeConnection(conn);
+        }
+        return mData;
+    }
+    
+    public HashMap<Integer, HashMap> checkInventoryAdditional(long idAdd) throws DAOException {
+        HashMap<Integer, HashMap> mData = new HashMap<>();
+        HashMap data = null;
+        Connection conn = null;
+        PreparedStatement retrieve = null;
+        ResultSet rs = null;
+        Object[] parameters = {idAdd};
+        try {
+            conn = dataSource.getConnection();
+            retrieve = sqlStatements.buildSQLStatement(conn, CHECK_INVENTORY_ADDITIONAL_KEY, parameters);
+            
+            rs = retrieve.executeQuery();
+            while (rs.next()) {
+                data = new HashMap<>();
+                int id = rs.getInt("id");
+                data.put("id", id);
+                data.put("name", rs.getString("name"));
+                data.put("pres", rs.getString("pres"));
+                data.put("measure", rs.getString("measure"));
+                data.put("exist", rs.getDouble("exist"));
+                data.put("idAdd", rs.getInt("idAdd"));
+                data.put("quantity", rs.getDouble("quantity"));
+                data.put("onlyDelivery", rs.getBoolean("onlyDelivery"));
+                mData.put(id, data);
+            }
+        } catch (SQLException | IOException e) {
+            throw new DAOException("Could not properly retrieve check additional: " + e);
         } finally {
             DBManager.closeResultSet(rs);
             DBManager.closeStatement(retrieve);
