@@ -1210,7 +1210,7 @@ public class GUIManager {
         setWaitCursor();
         JDialog dialog = new MyDialogEsc();
         dialog.setModal(true);
-        int w = 1000;
+        int w = 1100;
         int h = 600;
         dialog.setPreferredSize(new Dimension(w, h));
 

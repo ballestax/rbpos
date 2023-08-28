@@ -7,6 +7,7 @@ package com.bacon.gui;
 
 import com.bacon.Aplication;
 import com.bacon.Configuration;
+import com.bacon.Control;
 import com.bacon.GUIManager;
 import com.bacon.MyConstants;
 import com.bacon.domain.Client;
@@ -40,6 +41,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -155,9 +157,9 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         Font font = new Font("Arial", 1, 18);
         Font font2 = new Font("Serif", 1, 15);
 
-        colorDelivery = Utiles.colorAleatorio(100,200).darker();
+        colorDelivery = Utiles.colorAleatorio(100, 200).darker();
 //        colorLocal = new Color(180,30,154);
-        colorLocal = Utiles.colorAleatorio(100,200).darker();
+        colorLocal = Utiles.colorAleatorio(100, 200).darker();
 
         DCFORM_P = (DecimalFormat) NumberFormat.getInstance();
         DCFORM_P.applyPattern("$ ###,###,###");
@@ -467,7 +469,6 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         lbIndicator.setOpaque(true);
         lbIndicator.setVisible(false);
 
-        
         regCelular.setDocument(TextFormatter.getIntegerLimiter());
         regCelular.setActionCommand(AC_SEARCH_CLIENT);
         regCelular.addActionListener(this);
@@ -805,12 +806,12 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
             msg.append("</html>");
             int opt = JOptionPane.showConfirmDialog(null, msg, "Advertencia", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
             if (opt == JOptionPane.OK_OPTION) {
-                if(inv.getStatus()!=Invoice.ST_ANULADA){
-                inv.setStatus(Invoice.ST_ANULADA);
-                app.getControl().updateInvoice(inv);
-                List<ProductoPed> list = inv.getProducts();
-                app.getControl().restoreInventory(list, inv.getTipoEntrega());
-                }else{
+                if (inv.getStatus() != Invoice.ST_ANULADA) {
+                    inv.setStatus(Invoice.ST_ANULADA);
+                    app.getControl().updateInvoice(inv);
+                    List<ProductoPed> list = inv.getProducts();
+                    app.getControl().restoreInventory(list, inv.getTipoEntrega());
+                } else {
                     GUIManager.showErrorMessage(this, "La factura ya fue anulada, se cargara una nueva con los mismos datos", "Factura anulada");
                 }
                 lbFactura.setText(calculateProximoRegistro());
@@ -828,7 +829,6 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
                 btPrint.setVisible(false);
                 btPrint1.setVisible(false);
-                
 
             }
 
@@ -1061,6 +1061,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         if (productPed.hasPresentation()) {
             HashMap<Integer, HashMap> mapData = app.getControl().checkInventory(productPed.getPresentation().getId());
+            System.out.println(Arrays.toString(mapData.entrySet().toArray()));
             productPed.setData(mapData);
             if (mapData != null && !mapData.isEmpty()) {
                 Set<Integer> keys = mapData.keySet();
@@ -1074,6 +1075,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
             checkInventory();
         } else {
             HashMap<Integer, HashMap> mapData = app.getControl().checkInventoryProduct(productPed.getProduct().getId());
+            System.out.println(Arrays.toString(mapData.entrySet().toArray()));
             productPed.setData(mapData);
             if (mapData != null && !mapData.isEmpty()) {
                 Set<Integer> keys = mapData.keySet();
@@ -1085,6 +1087,10 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
                 }
             }
             checkInventory();
+        }
+
+        if (productPed.hasAdditionals()) {
+
         }
 
         if (products.contains(productPed) && price == productPed.getPrecio()) {
@@ -1695,7 +1701,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         }
     }
 
-    private String calculateProximoRegistro() {
+    /*    private String calculateProximoRegistro() {
         ConfigDB config = app.getControl().getConfigLocal(Configuration.PREFIX_INVOICES);
         String prefijo = config != null ? config.getValor() : "";
 
@@ -1706,12 +1712,14 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         } catch (NumberFormatException e) {
         }
 //        int rows = app.getControl().contarRows("select id from invoices");
-        Object maxValue = app.getControl().getMaxValue("invoices", "code");
+        long maxValue = app.getControl().getMaxIDTabla("invoices");
+
+        Object code = app.getControl().getCodeFromInvoice(maxValue);
 
         Integer value = 0;
         try {
-            value = Integer.parseInt(StringUtils.getDigits(maxValue.toString()));
-        } catch (Exception e) {
+            value = Integer.valueOf(StringUtils.getDigits(code.toString()));
+        } catch (NumberFormatException e) {
         }
 
         String codigo = prefijo + com.bacon.Utiles.getNumeroFormateado(value + ajusteRegistros + 1, ceros);
@@ -1725,6 +1733,39 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
             existClave = app.getControl().existClave("invoices", "code", "'" + codigo + "'");
         }
         return codigo;
+    }*/
+    private String calculateProximoRegistro() {
+        Configuration configuration = app.getConfiguration();
+        Control control = app.getControl();
+
+        ConfigDB config = control.getConfigLocal(Configuration.PREFIX_INVOICES);
+        String prefix = config != null ? config.getValor() : "";
+
+        int leadingZeros = 0;
+        try {
+            leadingZeros = Integer.parseInt(configuration.getProperty("cf.zeros", "0"));
+        } catch (NumberFormatException ignored) {
+        }
+
+        long maxValue = control.getMaxIDTabla("invoices");
+        Object code = control.getCodeFromInvoice(maxValue);
+
+        long value = 0;
+        try {
+            value = Long.parseLong(StringUtils.getDigits(code.toString()));
+        } catch (NumberFormatException ex) {
+            logger.debug(ex.getMessage()+": Number in invoice");
+        }
+
+        int adjustment = 0;
+        String generatedCode;
+
+        do {
+            generatedCode = prefix + com.bacon.Utiles.getNumeroFormateado(value + adjustment + 1, leadingZeros);
+            adjustment++;
+        } while (control.existClave("invoices", "code", "'" + generatedCode + "'") >= 1);
+
+        return generatedCode;
     }
 
     private String getConsecutivoFactura() {
@@ -2258,7 +2299,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         public WaiterListCellRender() {
             setOpaque(true);
-            setForeground(Utiles.colorAleatorio(0,255));
+            setForeground(Utiles.colorAleatorio(0, 255));
             setBorder(BorderFactory.createEmptyBorder(3, 2, 3, 2));
             setFont(new Font("Sans", 1, 16));
         }

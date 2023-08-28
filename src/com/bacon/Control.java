@@ -210,6 +210,16 @@ public class Control {
         }
     }
 
+    public Object getValueFromTable(String tabla, String columna, String where) {
+        try {
+            JDBCUtilDAO utilDAO = (JDBCUtilDAO) JDBCDAOFactory.getInstance().getUtilDAO();
+            return utilDAO.existClave(tabla, columna, where);
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+    
+    
     public int existClave(String tabla, String columna, String clave) {
         try {
             JDBCUtilDAO utilDAO = (JDBCUtilDAO) JDBCDAOFactory.getInstance().getUtilDAO();
@@ -235,6 +245,16 @@ public class Control {
         } catch (Exception e) {
             logger.error("Error getting maxID for: " + tabla, e);
             return 0;
+        }
+    }
+    
+    public Object getCodeFromInvoice(long id) {
+        try {
+            JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
+            return utilDAO.getValueFromTable("invoices", "code", "id="+id);
+        } catch (Exception e) {
+            logger.error("Error getting code from invoice", e);
+            return null;
         }
     }
 
@@ -964,15 +984,18 @@ public class Control {
     public Item getItemWhere(String where) {
         return getItemList(where, "").get(0);
     }
+    
+    public int existeItemName(String name) {
+        return existClave("inventory", "name", "'"+name+"'");
+    }
 
-    public boolean addItem(Item item) {
+    public int addItem(Item item) {
         try {
             JDBCItemDAO itemDAO = (JDBCItemDAO) DAOFactory.getInstance().getItemDAO();
-            itemDAO.addItem(item);
-            return true;
+            return itemDAO.addItems(item);            
         } catch (DAOException ex) {
             logger.error("Error adding Item.", ex);
-            return false;
+            return 0;
         }
     }
 

@@ -3,6 +3,7 @@ package com.bacon.gui;
 import com.bacon.Aplication;
 import com.bacon.ProgAction;
 import com.bacon.Utiles;
+import com.bacon.domain.Additional;
 import com.bacon.domain.Item;
 import com.bacon.domain.Location;
 import com.bacon.domain.Presentation;
@@ -41,8 +42,10 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
 
     private final Aplication app;
     private ProgAction acAddUnit, acAddLocation;
-    private MyDefaultTableModel model;
-    private ListSelection listaSeleccion;
+    private MyDefaultTableModel modelProducts;
+    private ListSelection listaSeleccionProducts;
+    private MyDefaultTableModel modelAditions;
+    private ListSelection listaSeleccionAditions;
     private int widthLabel;
     private long itemId;
 
@@ -53,6 +56,7 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
     private ImageIcon iconDelete;
     private ImageIcon iconSave;
     private ImageIcon iconUpdate;
+    private String editingName;
 
     /**
      * Creates new form PanelAddItem
@@ -77,6 +81,10 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
         iconDelete = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "delete-icon.png", 14, 14));
         iconSave = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "ok-icon.png", 14, 14));
         iconUpdate = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "update.png", 14, 14));
+
+        regID.setFontCampo(font);
+        regID.setVisible(false);
+        regID.setEditable(false);
 
         regQuantity.setFontCampo(font);
         regQuantity.setDocument(TextFormatter.getDoubleLimiter());
@@ -108,32 +116,11 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
         btSave.setActionCommand(AC_SAVE_ITEM);
         btSave.addActionListener(this);
 
-        String[] colNames = {"Sel", "ID", "Producto", "ID pres.", "Presentacion", "Cantidad"};
-        ArrayList<String> asList = new ArrayList<>(Arrays.asList(colNames));
+        createTableProducts();
+        jTabbedPane1.setTitleAt(0, "Productos");
 
-        model = new MyDefaultTableModel(asList.toArray(), 0);
-        tableProducts.setModel(model);
-        tableProducts.getTableHeader().setReorderingAllowed(false);
-        listaSeleccion = new ListSelection(tableProducts);
-
-        tableProducts.setRowHeight(24);
-        tableProducts.getTableHeader().addMouseListener(listaSeleccion);
-        model.addTableModelListener(this);
-
-        int[] colW = {5, 20, 120, 20, 100, 20};
-
-        for (int i = 0; i < tableProducts.getColumnCount(); i++) {
-            tableProducts.getColumnModel().getColumn(i).setCellRenderer(new TableSelectCellRenderer(true));
-            tableProducts.getColumnModel().getColumn(i).setMinWidth(colW[i]);
-            tableProducts.getColumnModel().getColumn(i).setPreferredWidth(colW[i]);
-        }
-
-        tableProducts.getColumnModel().getColumn(0).setHeaderRenderer(listaSeleccion);
-        tableProducts.getColumnModel().getColumn(0).setCellEditor(tableProducts.getDefaultEditor(Boolean.class));
-
-        btRefresh.setActionCommand(AC_REFRESH_PRODUCTS);
-        btRefresh.addActionListener(this);
-        btRefresh.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "refresh.png", 16, 16)));
+        createTableAdditions();
+        jTabbedPane1.setTitleAt(1, "Adicionales");
 
         btEdit.setActionCommand(AC_ALLOW_EDIT);
         btEdit.addActionListener(this);
@@ -151,16 +138,82 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
         chSnapShot.setText("Snapshot");
         chSnapShot.setFont(font);
 
-        lbTitle.setText("Productos y presentaciones");
-        lbTitle.setOpaque(true);
-        lbTitle.setBackground(org.dz.Utiles.colorAleatorio(180, 210));
-
         loadProducts();
 
+        loadAditions();
+
     }
+
+    private void createTableProducts() {
+        String[] colNames = {"Sel", "ID", "Producto", "ID pres.", "Presentacion", "Cantidad"};
+        ArrayList<String> asList = new ArrayList<>(Arrays.asList(colNames));
+
+        lbTitleTab1.setText("Productos y presentaciones");
+        lbTitleTab1.setOpaque(true);
+        lbTitleTab1.setBackground(org.dz.Utiles.colorAleatorio(180, 210));
+
+        modelProducts = new MyDefaultTableModel(asList.toArray(), 0);
+        tableProducts.setModel(modelProducts);
+        tableProducts.getTableHeader().setReorderingAllowed(false);
+        listaSeleccionProducts = new ListSelection(tableProducts);
+
+        tableProducts.setRowHeight(24);
+        tableProducts.getTableHeader().addMouseListener(listaSeleccionProducts);
+        modelProducts.addTableModelListener(this);
+
+        int[] colW = {5, 20, 120, 20, 100, 20};
+
+        for (int i = 0; i < tableProducts.getColumnCount(); i++) {
+            tableProducts.getColumnModel().getColumn(i).setCellRenderer(new TableSelectCellRenderer(true));
+            tableProducts.getColumnModel().getColumn(i).setMinWidth(colW[i]);
+            tableProducts.getColumnModel().getColumn(i).setPreferredWidth(colW[i]);
+        }
+
+        tableProducts.getColumnModel().getColumn(0).setHeaderRenderer(listaSeleccionProducts);
+        tableProducts.getColumnModel().getColumn(0).setCellEditor(tableProducts.getDefaultEditor(Boolean.class));
+
+        btRefreshTab1.setActionCommand(AC_REFRESH_PRODUCTS);
+        btRefreshTab1.addActionListener(this);
+        btRefreshTab1.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "refresh.png", 16, 16)));
+    }
+
+    private void createTableAdditions() {
+        String[] colNames = {"Sel", "ID", "Adicional", "Cantidad"};
+        ArrayList<String> asList = new ArrayList<>(Arrays.asList(colNames));
+
+        lbTitleTab2.setText("Adicionales");
+        lbTitleTab2.setOpaque(true);
+        lbTitleTab2.setBackground(org.dz.Utiles.colorAleatorio(180, 210));
+
+        modelAditions = new MyDefaultTableModel(asList.toArray(), 0);
+        tableAditions.setModel(modelAditions);
+        tableAditions.getTableHeader().setReorderingAllowed(false);
+        listaSeleccionAditions = new ListSelection(tableAditions);
+
+        tableAditions.setRowHeight(24);
+        tableAditions.getTableHeader().addMouseListener(listaSeleccionAditions);
+        modelAditions.addTableModelListener(this);
+
+        int[] colW = {5, 20, 120, 20};
+
+        for (int i = 0; i < tableAditions.getColumnCount(); i++) {
+            tableAditions.getColumnModel().getColumn(i).setCellRenderer(new TableSelectCellRenderer(true));
+            tableAditions.getColumnModel().getColumn(i).setMinWidth(colW[i]);
+            tableAditions.getColumnModel().getColumn(i).setPreferredWidth(colW[i]);
+        }
+
+        tableAditions.getColumnModel().getColumn(0).setHeaderRenderer(listaSeleccionAditions);
+        tableAditions.getColumnModel().getColumn(0).setCellEditor(tableAditions.getDefaultEditor(Boolean.class));
+
+        btRefreshTab2.setActionCommand(AC_REFRESH_ADITIONS);
+        btRefreshTab2.addActionListener(this);
+        btRefreshTab2.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "refresh.png", 16, 16)));
+    }
+
     public static final String AC_DELETE_ITEM = "AC_DELETE_ITEM";
     public static final String AC_ALLOW_EDIT = "AC_ALLOW_EDIT";
     public static final String AC_REFRESH_PRODUCTS = "AC_REFRESH_PRODUCTS";
+    public static final String AC_REFRESH_ADITIONS = "AC_REFRESH_ADITIONS";
     public static final String AC_SAVE_ITEM = "AC_SAVE_ITEM";
     public static final String AC_UPDATE_ITEM = "AC_UPDATE_ITEM";
 
@@ -168,21 +221,51 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
         SwingWorker sw = new SwingWorker() {
             @Override
             protected Object doInBackground() throws Exception {
-                model.setRowCount(0);
+                modelProducts.setRowCount(0);
                 ArrayList<Product> productos = app.getControl().getProductsList("", "category DESC, name");
                 for (int i = 0; i < productos.size(); i++) {
                     Product p = productos.get(i);
                     ArrayList<Presentation> press = app.getControl().getPresentationsByProduct(p.getId());
                     if (!press.isEmpty()) {
                         for (int j = 0; j < press.size(); j++) {
-                            model.addRow(new Object[]{false, p.getId(), p.getName().toUpperCase(), press.get(j).getId(), press.get(j).getName().toUpperCase(), 1});
+                            modelProducts.addRow(new Object[]{false, p.getId(), p.getName().toUpperCase(), press.get(j).getId(), press.get(j).getName().toUpperCase(), 1});
                         }
                     } else {
-                        model.addRow(new Object[]{false, p.getId(), p.getName().toUpperCase(), "--", "--", 1});
+                        modelProducts.addRow(new Object[]{false, p.getId(), p.getName().toUpperCase(), "--", "--", 1});
                     }
-                    model.setRowEditable(model.getRowCount() - 1, false);
-                    model.setCellEditable(model.getRowCount() - 1, 0, true);
-                    model.setCellEditable(model.getRowCount() - 1, 5, true);
+                    modelProducts.setRowEditable(modelProducts.getRowCount() - 1, false);
+                    modelProducts.setCellEditable(modelProducts.getRowCount() - 1, 0, true);
+                    modelProducts.setCellEditable(modelProducts.getRowCount() - 1, 5, true);
+                }
+                return true;
+            }
+
+            @Override
+            protected void done() {
+                if (itemId != 0) {
+                    loadPresentationsByItem(itemId);
+                }
+            }
+
+        };
+        sw.execute();
+
+    }
+
+    private void loadAditions() {
+        SwingWorker sw = new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+                modelAditions.setRowCount(0);
+                ArrayList<Additional> additionalList = app.getControl().getAdditionalList("", "name");
+                for (int i = 0; i < additionalList.size(); i++) {
+                    Additional adition = additionalList.get(i);
+
+                    modelAditions.addRow(new Object[]{false, adition.getId(), adition.getName().toUpperCase(), 1});
+
+                    modelProducts.setRowEditable(modelProducts.getRowCount() - 1, false);
+                    modelProducts.setCellEditable(modelProducts.getRowCount() - 1, 0, true);
+                    modelProducts.setCellEditable(modelProducts.getRowCount() - 1, 3, true);
                 }
                 return true;
             }
@@ -233,6 +316,8 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
         if (item != null) {
             itemId = item.getId();
 
+            regID.setText(String.valueOf(itemId));
+            regID.setEditable(false);
             regName.setText(item.getName());
             regName.setEditable(false);
             regMeseure.setText(item.getMeasure());
@@ -257,6 +342,7 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
             chSnapShot.setEnabled(false);
 
             btEdit.setVisible(true);
+            editingName = item.getName();
 
             loadPresentationsByItem(item.getId());
         }
@@ -269,27 +355,40 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
             Object[] pres = presentations.get(i);
             int idPres = Integer.parseInt(pres[0].toString());
             int idProd = Integer.parseInt(pres[1].toString());
-            String quantity = pres[2].toString();
+            int idAdd = Integer.parseInt(pres[2].toString());
+            String quantity = pres[3].toString();
             if (idPres == 0) {
-                for (int j = 0; j < model.getRowCount(); j++) {
-                    int rProd = Integer.parseInt(model.getValueAt(j, 1).toString());
+                for (int j = 0; j < modelProducts.getRowCount(); j++) {
+                    int rProd = Integer.parseInt(modelProducts.getValueAt(j, 1).toString());
                     if (rProd == idProd) {
-                        model.setValueAt(true, j, 0);
-                        model.setValueAt(quantity, j, 5);
+                        modelProducts.setValueAt(true, j, 0);
+                        modelProducts.setValueAt(quantity, j, 5);
                     }
                 }
             } else {
-                for (int j = 0; j < model.getRowCount(); j++) {
-                    if (Util.isNumber(model.getValueAt(j, 3).toString())) {
-                        int rPres = Integer.parseInt(model.getValueAt(j, 3).toString());
+                for (int j = 0; j < modelProducts.getRowCount(); j++) {
+                    if (Util.isNumber(modelProducts.getValueAt(j, 3).toString())) {
+                        int rPres = Integer.parseInt(modelProducts.getValueAt(j, 3).toString());
                         if (rPres == idPres) {
-                            model.setValueAt(true, j, 0);
-                            model.setValueAt(quantity, j, 5);
+                            modelProducts.setValueAt(true, j, 0);
+                            modelProducts.setValueAt(quantity, j, 5);
+                        }
+                    }
+                }
+            }
+            if (idPres == 0 && idProd == 0 && idAdd != 0) {
+                for (int j = 0; j < modelAditions.getRowCount(); j++) {
+                    if (Util.isNumber(modelAditions.getValueAt(j, 3).toString())) {
+                        int rAdd = Integer.parseInt(modelAditions.getValueAt(j, 1).toString());
+                        if (rAdd == idAdd) {
+                            modelAditions.setValueAt(true, j, 0);
+                            modelAditions.setValueAt(quantity, j, 3);
                         }
                     }
                 }
             }
         }
+
     }
 
     /**
@@ -319,11 +418,19 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
         regLocation = new com.bacon.gui.util.Registro(BoxLayout.X_AXIS, "Locacion", new Object[1], acAddLocation,widthLabel);
         chOnlyDelivery = new javax.swing.JCheckBox();
         chSaveExit = new javax.swing.JCheckBox();
+        regID = new com.bacon.gui.util.Registro(BoxLayout.X_AXIS, "ID", "", widthLabel);
         pnRight = new javax.swing.JPanel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
+        lbTitleTab1 = new javax.swing.JLabel();
+        btRefreshTab1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableProducts = new javax.swing.JTable();
-        btRefresh = new javax.swing.JButton();
-        lbTitle = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        lbTitleTab2 = new javax.swing.JLabel();
+        btRefreshTab2 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tableAditions = new javax.swing.JTable();
 
         regName.setNextFocusableComponent(regMeseure);
 
@@ -369,7 +476,8 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
                         .addGroup(pnLeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(chOnlyDelivery, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(chSnapShot, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(regID, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -378,7 +486,9 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
         pnLeftLayout.setVerticalGroup(
             pnLeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnLeftLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(13, 13, 13)
+                .addComponent(regID, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnLeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(regName, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -414,6 +524,8 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
 
         jSplitPane1.setLeftComponent(pnLeft);
 
+        lbTitleTab1.setFont(new java.awt.Font("Liberation Sans", 1, 16)); // NOI18N
+
         tableProducts.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -424,29 +536,88 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
         ));
         jScrollPane1.setViewportView(tableProducts);
 
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(lbTitleTab1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btRefreshTab1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbTitleTab1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btRefreshTab1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(3, 3, 3)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("tab1", jPanel1);
+
+        lbTitleTab2.setFont(new java.awt.Font("Liberation Sans", 1, 16)); // NOI18N
+
+        tableAditions.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane2.setViewportView(tableAditions);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(lbTitleTab2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btRefreshTab2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbTitleTab2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btRefreshTab2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(3, 3, 3)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("tab1", jPanel2);
+
         javax.swing.GroupLayout pnRightLayout = new javax.swing.GroupLayout(pnRight);
         pnRight.setLayout(pnRightLayout);
         pnRightLayout.setHorizontalGroup(
             pnRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnRightLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(pnRightLayout.createSequentialGroup()
-                        .addComponent(lbTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE))
+                .addComponent(jTabbedPane1)
                 .addContainerGap())
         );
         pnRightLayout.setVerticalGroup(
             pnRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnRightLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(3, 3, 3)
-                .addComponent(jScrollPane1)
+                .addComponent(jTabbedPane1)
                 .addContainerGap())
         );
 
@@ -456,7 +627,7 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 910, Short.MAX_VALUE)
+            .addComponent(jSplitPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -468,18 +639,25 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btDelete;
     private javax.swing.JButton btEdit;
-    private javax.swing.JButton btRefresh;
+    private javax.swing.JButton btRefreshTab1;
+    private javax.swing.JButton btRefreshTab2;
     private javax.swing.JButton btSave;
     private javax.swing.JCheckBox chOnlyDelivery;
     private javax.swing.JCheckBox chSaveExit;
     private javax.swing.JCheckBox chSnapShot;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel labelInfo;
-    private javax.swing.JLabel lbTitle;
+    private javax.swing.JLabel lbTitleTab1;
+    private javax.swing.JLabel lbTitleTab2;
     private javax.swing.JPanel pnLeft;
     private javax.swing.JPanel pnRight;
     private com.bacon.gui.util.Registro regCost;
+    private com.bacon.gui.util.Registro regID;
     private com.bacon.gui.util.Registro regLocation;
     private com.bacon.gui.util.Registro regMeseure;
     private com.bacon.gui.util.Registro regName;
@@ -488,20 +666,26 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
     private com.bacon.gui.util.Registro regStockMax;
     private com.bacon.gui.util.Registro regStockMin;
     private com.bacon.gui.util.Registro regTags;
+    private javax.swing.JTable tableAditions;
     private javax.swing.JTable tableProducts;
     // End of variables declaration//GEN-END:variables
 
     public void modoActualizarItem() {
+        regID.setVisible(true);
         btSave.setIcon(iconUpdate);
         btSave.setText("Actualizar");
+        btSave.setEnabled(true);
         btSave.setActionCommand(AC_UPDATE_ITEM);
         btDelete.setVisible(true);
         chOnlyDelivery.setEnabled(true);
         chSnapShot.setEnabled(true);
+
     }
 
     public void modoNuevoItem() {
+        regID.setVisible(false);
         btDelete.setVisible(false);
+        btSave.setEnabled(true);
         btSave.setIcon(iconSave);
         btSave.setText("Guardar");
         btSave.setActionCommand(AC_SAVE_ITEM);
@@ -509,6 +693,9 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
 
     @Override
     public void reset() {
+        regID.setVisible(false);
+        regID.setEditable(false);
+        regID.setText("");
         regName.setText("");
         regName.setEnabled(true);
         regName.setEditable(true);
@@ -539,10 +726,16 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
         btEdit.setVisible(false);
         btEdit.setActionCommand(AC_ALLOW_EDIT);
         btEdit.setIcon(iconEdit);
+        btSave.setEnabled(true);
 
         for (int i = 0; i < tableProducts.getRowCount(); ++i) {
-            model.setValueAt(Boolean.FALSE, i, 0);
-            model.setValueAt(1, i, 5);
+            modelProducts.setValueAt(Boolean.FALSE, i, 0);
+            modelProducts.setValueAt(1, i, 5);
+        }
+
+        for (int i = 0; i < tableAditions.getRowCount(); ++i) {
+            modelAditions.setValueAt(Boolean.FALSE, i, 0);
+            modelAditions.setValueAt(1, i, 3);
         }
     }
 
@@ -551,22 +744,36 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
         if (AC_SAVE_ITEM.equals(e.getActionCommand())) {
             Item item = parseItem();
             if (item != null) {
-                app.getControl().addItem(item);
+                if (app.getControl().existeItemName(item.getName().toLowerCase()) > 0) {
+                    app.getGuiManager().showError("Ya existe un item con el nombre: " + item.getName());
+                    return;
+                }
+                int idItem = app.getControl().addItem(item);
                 pcs.firePropertyChange(AC_ADD_ITEM, null, item);
                 if (chSaveExit.isSelected()) {
                     cancelPanel();
                 } else {
                     allowEdit(false);
+                    regID.setVisible(true);
+                    regID.setText(String.valueOf(idItem));
                     btEdit.setVisible(true);
                     btEdit.setIcon(iconEdit);
                     btEdit.setActionCommand(AC_ALLOW_EDIT);
+                    btSave.setEnabled(false);
+                    regQuantity.setEditable(false);
                 }
             }
         } else if (AC_UPDATE_ITEM.equals(e.getActionCommand())) {
             Item item = parseItem();
             if (item != null) {
+                if (!item.getName().equalsIgnoreCase(editingName) && app.getControl().existeItemName(item.getName()) > 0) {
+                    app.getGuiManager().showError("Ya existe un item con el nombre: " + item.getName());
+                    return;
+                }
+                item.setId(Long.parseLong(regID.getText()));
                 app.getControl().updateItemAll(item);
                 pcs.firePropertyChange(AC_UPDATE_ITEM, null, item);
+                editingName = "";
                 if (chSaveExit.isSelected()) {
                     cancelPanel();
                 } else {
@@ -577,8 +784,11 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
             }
         } else if (AC_REFRESH_PRODUCTS.equals(e.getActionCommand())) {
             loadProducts();
+        } else if (AC_REFRESH_ADITIONS.equals(e.getActionCommand())) {
+            loadAditions();
         } else if (AC_ALLOW_EDIT.equals(e.getActionCommand())) {
             allowEdit(true);
+            editingName = regName.getText();
             btEdit.setIcon(iconCancel);
             btEdit.setActionCommand(AC_CANCEL_EDIT);
         } else if (AC_CANCEL_EDIT.equals(e.getActionCommand())) {
@@ -586,18 +796,23 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
             btEdit.setIcon(iconEdit);
             btEdit.setActionCommand(AC_ALLOW_EDIT);
         } else if (AC_DELETE_ITEM.equals(e.getActionCommand())) {
-            int confirm = JOptionPane.showConfirmDialog(this, "Desea borrar el item permanentemente", 
+            int confirm = JOptionPane.showConfirmDialog(this, "Desea borrar el item permanentemente",
                     "Eliminar item", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
             if (confirm == JOptionPane.OK_OPTION) {
-                app.getControl().deleteItem(itemId);
-                reset();
-                cancelPanel();
-                pcs.firePropertyChange(AC_DELETE_ITEM, null, null);
+                try {
+                    app.getControl().deleteItem(itemId);
+                    reset();
+                    cancelPanel();
+                    pcs.firePropertyChange(AC_DELETE_ITEM, null, null);
+                } catch (Exception ex) {
+                }
+
             }
         }
     }
 
     public void allowEdit(boolean edit) {
+        btSave.setEnabled(edit);
         regName.setEditable(edit);
         regLocation.setEnabled(edit);
         regMeseure.setEnabled(edit);
@@ -605,6 +820,7 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
         regStockMax.setEditable(edit);
         regStockMin.setEditable(edit);
         regCost.setEditable(edit);
+        btSave.setActionCommand(edit ? AC_UPDATE_ITEM : AC_SAVE_ITEM);
     }
     public static final String AC_CANCEL_EDIT = "AC_CANCEL EDIT";
     public static final String AC_ADD_ITEM = "AC_ADD_ITEM";
@@ -681,12 +897,19 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
             item.setUser(app.getUser().getUsername().toLowerCase());
             item.setTags(regTags.getText().toLowerCase());
             item.setEnabled(true);
-            ArrayList<Object[]> selecteds = getSelecteds();
+            ArrayList<Object[]> selecteds = getSelecteds(modelProducts, 5);
             for (int i = 0; i < selecteds.size(); i++) {
                 Object[] dat = selecteds.get(i);
+                System.out.println("pres:"+Arrays.toString(dat));
                 String dat1 = dat[1].toString();
                 dat1 = StringUtils.isNumeric(dat1) ? dat1 : "0";
-                item.addPresentations(Integer.parseInt(dat[0].toString()), Integer.parseInt(dat1), Double.parseDouble(dat[2].toString()));
+                item.addPresentations(Integer.parseInt(dat[0].toString()), Integer.parseInt(dat1), 0, Double.parseDouble(dat[2].toString()));
+            }
+            ArrayList<Object[]> selectedsAdd = getSelecteds(modelAditions, 3);
+            for (int i = 0; i < selectedsAdd.size(); i++) {
+                Object[] dat = selectedsAdd.get(i);
+                System.out.println("adit:"+Arrays.toString(dat));
+                item.addPresentations(0, 0, Integer.parseInt(dat[0].toString()), Double.parseDouble(dat[2].toString()));
             }
         }
         if (itemId != 0) {
@@ -700,24 +923,25 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
             @Override
             public void run() {
                 tableProducts.updateUI();
+                tableAditions.updateUI();
             }
         });
     }
 
-    private ArrayList<Object[]> getSelecteds() {
+    private ArrayList<Object[]> getSelecteds(MyDefaultTableModel model, int colQuantity) {
         ArrayList<Object[]> prods = new ArrayList<>();
-        int[] selectedsRows = getSelectedsRows();
+        int[] selectedsRows = getSelectedsRows(model);
         for (int i = 0; i < selectedsRows.length; i++) {
             Object[] data = {
                 model.getValueAt(selectedsRows[i], COL_SEL1).toString(),
                 model.getValueAt(selectedsRows[i], COL_SEL2).toString(),
-                model.getValueAt(selectedsRows[i], 5).toString(),};
+                model.getValueAt(selectedsRows[i], colQuantity).toString(),};
             prods.add(data);
         }
         return prods;
     }
 
-    public int[] getSelectedsRows() {
+    public int[] getSelectedsRows(MyDefaultTableModel model) {
         int[] sel = new int[model.getRowCount()];
         Arrays.fill(sel, -1);
         for (int i = 0; i < model.getRowCount(); i++) {

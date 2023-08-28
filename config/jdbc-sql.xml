@@ -23,7 +23,7 @@
                     |CREATE_PERSONS_TABLE
                     |GET_PERSON|GET_PERSON_LIMIT|INSERT_PERSON|UPDATE_PERSON|GET_ID_PERSON|DELETE_PERSON|DELETE_PERSON_WHERE
                     |CREATE_CONFIG_TABLE|GET_CONFIG|DELETE_CONFIG|UPDATE_CONFIG|EXIST_CONFIG
-                    |ADD_CONFIG
+                    |ADD_CONFIG|GET_VALUE_FROM_TABLE
                     |EXIST_CLAVE|GET_MAX_ID|COUNT_TABLE2|EXIST_CLAVE_MULT
                     |CREATE_PRODUCTS_TABLE|ADD_PRODUCT|GET_PRODUCT|DELETE_PRODUCT|UPDATE_PRODUCT|GET_PRODUCT_BY_PRESS_ID
                     |CREATE_INGREDIENTS_TABLE|ADD_INGREDIENT|GET_INGREDIENT|DELETE_INGREDIENT|UPDATE_INGREDIENT
@@ -47,7 +47,8 @@
                     |DELETE_EXPENSES_CATEGORY|GET_INVOICE_BY_PRODUCT
                     |CREATE_INVENTORY_TABLE|GET_ITEM|ADD_ITEM|UPDATE_ITEM
                     |ADD_UNIT|GET_UNIT|UPDATE_UNIT|DELETE_UNIT|CREATE_UNITS_TABLE
-                    |CREATE_INVENTORY_PRODUCT_TABLE|ADD_INVENTORY_PRODUCT|CHECK_INVENTORY|CHECK_INVENTORY_PRODUCT
+                    |CREATE_INVENTORY_PRODUCT_TABLE|ADD_INVENTORY_PRODUCT|ADD_INVENTORY_ADITION
+                    |CHECK_INVENTORY|CHECK_INVENTORY_PRODUCT|CHECK_INVENTORY_ADDITIONAL
                     |ADD_INVENTORY_PRESENTATION|DELETE_ITEM_PRES|DELETE_ITEM
                     |UPDATE_INVENTORY_QUANTITY|ADD_INVENTORY_QUANTITY
                     |CREATE_CONCILIACIONES_TABLE|ADD_CONCILIACION|GET_CONCILIACION|UPDATE_CONCILIACION|DELETE_CONCILIACION
@@ -642,6 +643,12 @@
                 SELECT count(code) FROM config WHERE code=? AND user=? AND device=?;
             </SQLFragment>
         </SQLStatement>    
+        
+        <SQLStatement method="GET_VALUE_FROM_TABLE">
+            <SQLFragment>
+                SELECT {query} FROM {table} WHERE {key};
+            </SQLFragment>
+        </SQLStatement>        
         
         <SQLStatement method="EXIST_CLAVE">
             <SQLFragment>
@@ -1510,6 +1517,12 @@
             </SQLFragment>
         </SQLStatement>
         
+        <SQLStatement method="ADD_INVENTORY_ADITION">
+            <SQLFragment>
+                INSERT INTO inventory_product (item_id, product_id, adition_id, quantity) VALUES (?,?,?,?);
+            </SQLFragment>
+        </SQLStatement>
+        
         <SQLStatement method="DELETE_ITEM_PRES">
             <SQLFragment>
                 DELETE FROM inventory_product WHERE item_id = ?;                
@@ -1592,6 +1605,14 @@
         </SQLStatement>
         
         <SQLStatement method="CHECK_INVENTORY_PRODUCT">
+            <SQLFragment>
+                SELECT i.id, i.name, p.name as pres, i.measure, i.quantity as exist, ip.presentation_id as idPres, ip.quantity, i.onlyDelivery 
+                FROM inventory i, products p, inventory_product ip 
+                WHERE i.id=ip.item_id AND p.id=ip.product_id AND ip.product_id=?
+            </SQLFragment>
+        </SQLStatement>
+        
+        <SQLStatement method="CHECK_INVENTORY_ADDITIONAL">
             <SQLFragment>
                 SELECT i.id, i.name, p.name as pres, i.measure, i.quantity as exist, ip.presentation_id as idPres, ip.quantity, i.onlyDelivery 
                 FROM inventory i, products p, inventory_product ip 

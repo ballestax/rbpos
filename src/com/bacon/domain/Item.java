@@ -38,7 +38,7 @@ public class Item {
     private String user;
 
     private Set<String> tags;
-    
+
     private boolean enabled;
 
     public Item() {
@@ -185,7 +185,7 @@ public class Item {
         for (String tag : tags) {
             stb.append(tag).append(",");
         }
-        stb.replace(stb.length()-1, stb.length(), "");  
+        stb.replace(stb.length() - 1, stb.length(), "");
         return stb.toString();
     }
 
@@ -208,11 +208,11 @@ public class Item {
         this.presentations = presentations;
     }
 
-    public void addPresentations(int idProduct, int idPresentation, double cant) {
+    public void addPresentations(int idProduct, int idPresentation, int idAdition, double cant) {
         if (presentations == null) {
             presentations = new ArrayList<>();
         }
-        presentations.add(new Object[]{idProduct, idPresentation, cant});
+        presentations.add(new Object[]{idProduct, idPresentation, idAdition, cant});
     }
 
     @Override
@@ -266,7 +266,5 @@ public class Item {
     public boolean isEnabled() {
         return enabled;
     }
-
-    
 
 }

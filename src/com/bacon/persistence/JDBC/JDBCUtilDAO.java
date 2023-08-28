@@ -178,6 +178,8 @@ public class JDBCUtilDAO implements UtilDAO {
     public static final String GET_MAX_ID_KEY = "GET_MAX_ID";
     public static final String EXIST_CLAVE_KEY = "EXIST_CLAVE";
     public static final String EXIST_CLAVE_MULT_KEY = "EXIST_CLAVE_MULT";
+    
+    public static final String GET_VALUE_FROM_TABLE_KEY = "GET_VALUE_FROM_TABLE";
 
     public JDBCUtilDAO(DataSource dataSource, SQLLoader sqlStatements) {
         this.dataSource = dataSource;
@@ -298,39 +300,6 @@ public class JDBCUtilDAO implements UtilDAO {
             namedParams.put(JDBCDAOFactory.NAMED_PARAM_QUERY, column);
             namedParams.put(NAMED_PARAM_KEY, code);
             retrieve = sqlStatements.getSQLString(EXIST_CLAVE_KEY, namedParams);
-        } catch (IOException e) {
-            throw new DAOException("Could not properly retrieve the outdated count", e);
-        }
-        Connection conn = null;
-        PreparedStatement pSt = null;
-        ResultSet rs = null;
-        int count = 0;
-        try {
-            conn = dataSource.getConnection();
-            pSt = conn.prepareStatement(retrieve);
-            rs = pSt.executeQuery();
-
-            while (rs.next()) {
-                count = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            throw new DAOException("Could not properly retrieve the outdated count: " + e);
-        } finally {
-            DBManager.closeResultSet(rs);
-            DBManager.closeStatement(pSt);
-            DBManager.closeConnection(conn);
-        }
-        return count;
-    }
-
-    public int existClaveMult(String table, String column, String where) throws DAOException {
-        String retrieve;
-        try {
-            Map<String, String> namedParams = new HashMap<String, String>();
-            namedParams.put(JDBCDAOFactory.NAMED_PARAM_TABLE, table);
-            namedParams.put(JDBCDAOFactory.NAMED_PARAM_QUERY, column);
-            namedParams.put(NAMED_PARAM_KEY, where);
-            retrieve = sqlStatements.getSQLString(EXIST_CLAVE_MULT_KEY, namedParams);
             System.out.println("retrieve = " + retrieve);
         } catch (IOException e) {
             throw new DAOException("Could not properly retrieve the outdated count", e);
@@ -356,7 +325,75 @@ public class JDBCUtilDAO implements UtilDAO {
         }
         return count;
     }
+    
+    public int existClaveMult(String table, String column, String where) throws DAOException {
+        String retrieve;
+        try {
+            Map<String, String> namedParams = new HashMap<String, String>();
+            namedParams.put(JDBCDAOFactory.NAMED_PARAM_TABLE, table);
+            namedParams.put(JDBCDAOFactory.NAMED_PARAM_QUERY, column);
+            namedParams.put(NAMED_PARAM_KEY, where);
+            retrieve = sqlStatements.getSQLString(EXIST_CLAVE_MULT_KEY, namedParams);
+        } catch (IOException e) {
+            throw new DAOException("Could not properly retrieve the outdated count", e);
+        }
+        Connection conn = null;
+        PreparedStatement pSt = null;
+        ResultSet rs = null;
+        int count = 0;
+        try {
+            conn = dataSource.getConnection();
+            pSt = conn.prepareStatement(retrieve);
+            rs = pSt.executeQuery();
 
+            while (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Could not properly retrieve the outdated count: " + e);
+        } finally {
+            DBManager.closeResultSet(rs);
+            DBManager.closeStatement(pSt);
+            DBManager.closeConnection(conn);
+        }
+        return count;
+    }
+
+    
+    public Object getValueFromTable(String table, String column, String where) throws DAOException {
+        String retrieve;
+        try {
+            Map<String, String> namedParams = new HashMap<String, String>();
+            namedParams.put(JDBCDAOFactory.NAMED_PARAM_TABLE, table);
+            namedParams.put(JDBCDAOFactory.NAMED_PARAM_QUERY, column);
+            namedParams.put(NAMED_PARAM_KEY, where);
+            retrieve = sqlStatements.getSQLString(GET_VALUE_FROM_TABLE_KEY, namedParams);
+        } catch (IOException e) {
+            throw new DAOException("Could not properly retrieve the outdated count", e);
+        }
+        Connection conn = null;
+        PreparedStatement pSt = null;
+        ResultSet rs = null;
+        Object value = null;
+        try {
+            conn = dataSource.getConnection();
+            pSt = conn.prepareStatement(retrieve);
+            rs = pSt.executeQuery();
+
+            while (rs.next()) {
+                value = rs.getObject(1);
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Could not properly retrieve the value from table: " + e);
+        } finally {
+            DBManager.closeResultSet(rs);
+            DBManager.closeStatement(pSt);
+            DBManager.closeConnection(conn);
+        }
+        return value;
+    }
+    
+    
     public int getMaxID(String table) throws DAOException {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -1227,7 +1264,7 @@ public class JDBCUtilDAO implements UtilDAO {
             ps.executeUpdate();
 
             long cycleId = 0;
-            try ( ResultSet generatedKeys = ps.getGeneratedKeys()) {
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     cycleId = generatedKeys.getLong(1);
                 }
@@ -1997,8 +2034,9 @@ public class JDBCUtilDAO implements UtilDAO {
             while (rs.next()) {
                 int idPres = rs.getInt("presentation_id");
                 int idProd = rs.getInt("product_id");
+                int idAdition = rs.getInt("adition_id");
                 double quantity = rs.getDouble("quantity");
-                list.add(new Object[]{idPres, idProd, quantity});
+                list.add(new Object[]{idPres, idProd, idAdition, quantity});
             }
         } catch (SQLException | IOException e) {
             throw new DAOException("Could not properly retrieve the item presentations: " + e);
@@ -2265,7 +2303,7 @@ public class JDBCUtilDAO implements UtilDAO {
             Date dEnd = new Date();
             if (status == 0) {
                 dEnd = rs.getTimestamp("end");
-            }            
+            }
             Object[] parameters = {idItem, EVENT, dInit, dEnd};
 
             ps = sqlStatements.buildSQLStatement(conn, COUNT_ITEM_SNAP_EVENT_KEY, parameters);

@@ -342,6 +342,19 @@ public class Utiles {
         return str;
     }
 
+    public static String getNumeroFormateado(long num, int pos) {
+        int l = Mat.getCifras(num).length;
+        if (l >= pos) {
+            return String.valueOf(num);
+        } else {
+            String form = "";
+            for (int i = 0; i < pos - l; i++) {
+                form += "0";
+            }
+            return form + num;
+        }
+    }
+    
     public static String getNumeroFormateado(int num, int pos) {
         int l = Mat.getCifras(num).length;
         if (l >= pos) {

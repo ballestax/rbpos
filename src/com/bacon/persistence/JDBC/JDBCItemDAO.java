@@ -45,6 +45,7 @@ public class JDBCItemDAO implements ItemDAO {
     protected static final String DELETE_ITEM_PRES_KEY = "DELETE_ITEM_PRES";
     public static final String ADD_INVENTORY_PRODUCT_KEY = "ADD_INVENTORY_PRODUCT";
     public static final String ADD_INVENTORY_PRESENTATION_KEY = "ADD_INVENTORY_PRESENTATION";
+    public static final String ADD_INVENTORY_ADITION_KEY = "ADD_INVENTORY_ADITION";
 
     public JDBCItemDAO(DataSource dataSource, SQLLoader sqlStatements) throws DAOException {
         this.dataSource = dataSource;
@@ -155,12 +156,17 @@ public class JDBCItemDAO implements ItemDAO {
 
     @Override
     public void addItem(Item item) throws DAOException {
+        addItems(item);
+    }
+
+    public int addItems(Item item) throws DAOException {
         if (item == null) {
             throw new IllegalArgumentException("Null item");
         }
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
+        int idItem = 0;
         try {
             conn = dataSource.getConnection();
             conn.setAutoCommit(false);
@@ -184,8 +190,6 @@ public class JDBCItemDAO implements ItemDAO {
             ps = sqlStatements.buildSQLStatement(conn, ADD_ITEM_KEY, parameters);
             ps.executeUpdate();
 
-            int idItem = 0;
-
             Map<String, String> namedParams = new HashMap<>();
             namedParams.put(JDBCDAOFactory.NAMED_PARAM_TABLE, "inventory");
             String query = sqlStatements.getSQLString(GET_MAX_ID_KEY, namedParams);
@@ -200,16 +204,18 @@ public class JDBCItemDAO implements ItemDAO {
             for (int i = 0; i < presList.size(); i++) {
                 int idProd = Integer.parseInt(presList.get(i)[0].toString());
                 int idPres = Integer.parseInt(presList.get(i)[1].toString());
-                double cant = Double.parseDouble(presList.get(i)[2].toString());
+                int idAdd = Integer.parseInt(presList.get(i)[2].toString());
+                double cant = Double.parseDouble(presList.get(i)[3].toString());
 
-                if (idPres != 0) {
+                if (idAdd != 0) {
+                    Object[] parameters1 = {idItem, 0, idAdd, cant};
+                    ps = sqlStatements.buildSQLStatement(conn, ADD_INVENTORY_ADITION_KEY, parameters1);
+                } else if (idPres != 0) {
                     Object[] parameters1 = {idItem, idProd, idPres, cant};
                     ps = sqlStatements.buildSQLStatement(conn, ADD_INVENTORY_PRESENTATION_KEY, parameters1);
-
                 } else {
                     Object[] parameters1 = {idItem, idProd, cant};
                     ps = sqlStatements.buildSQLStatement(conn, ADD_INVENTORY_PRODUCT_KEY, parameters1);
-
                 }
                 ps.executeUpdate();
             }
@@ -225,6 +231,7 @@ public class JDBCItemDAO implements ItemDAO {
             DBManager.closeStatement(ps);
             DBManager.closeConnection(conn);
         }
+        return idItem;
     }
 
     @Override
@@ -306,9 +313,13 @@ public class JDBCItemDAO implements ItemDAO {
             for (int i = 0; i < presList.size(); i++) {
                 int idProd = Integer.parseInt(presList.get(i)[0].toString());
                 int idPres = Integer.parseInt(presList.get(i)[1].toString());
-                double cant = Double.parseDouble(presList.get(i)[2].toString());
+                int idAdd = Integer.parseInt(presList.get(i)[2].toString());
+                double cant = Double.parseDouble(presList.get(i)[3].toString());
 
-                if (idPres != 0) {
+                if (idAdd != 0) {
+                    Object[] parameters1 = {idItem, 0, idAdd, cant};
+                    ps = sqlStatements.buildSQLStatement(conn, ADD_INVENTORY_ADITION_KEY, parameters1);
+                } else if (idPres != 0) {
                     Object[] parameters1 = {idItem, idProd, idPres, cant};
                     ps = sqlStatements.buildSQLStatement(conn, ADD_INVENTORY_PRESENTATION_KEY, parameters1);
                 } else {
