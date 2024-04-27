@@ -2,6 +2,7 @@ package com.bacon.domain;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -185,6 +186,18 @@ public class ProductoPed {
             this.data = new HashMap<>();
         }
         this.data.put(key, data);
+    }
+    
+    public void addData(HashMap<Integer, HashMap> data) {
+        if (this.data == null) {
+            this.data = new HashMap<>();
+        }
+        for (Map.Entry<Integer, HashMap> entry : data.entrySet()) {
+            Integer key = entry.getKey();
+            HashMap value = entry.getValue();
+             this.data.put(key, data);
+        }
+       
     }
 
     @Override
