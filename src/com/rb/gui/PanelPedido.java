@@ -645,6 +645,20 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
             ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED);
             String propPrinter = config != null ? config.getValor() : "";
             if (invoice != null) {
+                app.getPrinterService().imprimirPedido(invoice, propPrinter);
+            } else {
+                if (products.isEmpty()) {
+                    GUIManager.showErrorMessage(null, "No hay productos en el pedido", "Advertencia");
+                } else {
+                    Invoice invoicePrev = getInvoice();
+                    app.getPrinterService().imprimirPedido(invoicePrev, propPrinter);
+                }
+            }
+            
+        }else if (AC_PRINT_GUIDE.equals(e.getActionCommand())) {
+            ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED);
+            String propPrinter = config != null ? config.getValor() : "";
+            if (invoice != null) {
                 app.getPrinterService().imprimirGuide(invoice, propPrinter);
             } else {
                 if (products.isEmpty()) {
@@ -850,6 +864,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
             
         }
     }
+    private static final String AC_PRINT_GUIDE = "AC_PRINT_GUIDE";
     
     @Override
     public void stateChanged(ChangeEvent e) {
