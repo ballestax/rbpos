@@ -7,13 +7,13 @@ package com.rb.gui;
 
 import com.rb.Aplication;
 import com.rb.Configuration;
-import com.rb.GUIManager;
 import com.rb.domain.ConfigDB;
+import com.rb.domain.Presentation;
+import com.rb.domain.Product;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.swing.BoxLayout;
@@ -60,6 +60,9 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
         btApply.setText("Aplicar");
         btApply.setActionCommand(ACTION_APPLY);
         btApply.addActionListener(this);
+        
+         panelPrinters.setLayout(new FlowLayout(FlowLayout.LEADING));
+        
     }
     public static final String AC_SEL_PRINTER = "AC_SEL_PRINTER";
 
@@ -67,6 +70,18 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
         PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
         return printServices;
     }
+    
+//    public void loadPrinters(Printer printer) {
+//        ArrayList<Presentation> presList = app.getControl().getAllPresentationsByProduct(printer.getId());
+//        lbTitlePress.setText("Presentaciones [ " + presList.size() + " ]");
+//        panelContainPress.removeAll();
+//        for (Presentation presentation : presList) {
+//            PanelPressProduct panelPressProduct = new PanelPressProduct(app, presentation);
+//            panelPressProduct.addPropertyChangeListener(this);
+//            panelContainPress.add(panelPressProduct);
+//        }
+//        panelContainPress.updateUI();
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -83,6 +98,7 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
         btApply = new javax.swing.JButton();
         lbPrinter = new javax.swing.JLabel();
         regPrinter = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "Impresora", new String[0]);
+        panelPrinters = new javax.swing.JPanel();
 
         lbTitle.setBackground(java.awt.Color.lightGray);
         lbTitle.setOpaque(true);
@@ -93,6 +109,17 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
         lbPrinter.setText("jLabel1");
         lbPrinter.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        javax.swing.GroupLayout panelPrintersLayout = new javax.swing.GroupLayout(panelPrinters);
+        panelPrinters.setLayout(panelPrintersLayout);
+        panelPrintersLayout.setHorizontalGroup(
+            panelPrintersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        panelPrintersLayout.setVerticalGroup(
+            panelPrintersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 135, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -101,12 +128,13 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelPrinters, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-                    .addComponent(lbPrinter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(regPrinter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btApply, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(regPrinter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(lbPrinter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btApply)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -119,10 +147,12 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(regPrinter, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbPrinter, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lbPrinter, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                    .addComponent(btApply, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btApply, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(119, Short.MAX_VALUE))
+                .addComponent(panelPrinters, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -133,6 +163,7 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
     private javax.swing.JLabel lbInfo;
     private javax.swing.JLabel lbPrinter;
     private javax.swing.JLabel lbTitle;
+    private javax.swing.JPanel panelPrinters;
     private com.rb.gui.util.Registro regPrinter;
     // End of variables declaration//GEN-END:variables
 

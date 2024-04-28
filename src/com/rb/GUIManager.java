@@ -9,6 +9,7 @@ import com.rb.domain.Client;
 import com.rb.domain.Cycle;
 import com.rb.domain.Invoice;
 import com.rb.domain.Item;
+import com.rb.domain.Module;
 import com.rb.domain.Permission;
 import com.rb.domain.Presentation;
 import com.rb.domain.Product;
@@ -23,8 +24,11 @@ import com.rb.gui.PanelAddItem;
 import com.rb.gui.PanelAddProduct;
 import com.rb.gui.PanelAdminBackup;
 import com.rb.gui.PanelAdminConfig;
+import com.rb.gui.PanelAdminStations;
+import com.rb.gui.PanelAdminTables;
 import com.rb.gui.PanelModAdmin;
 import com.rb.gui.PanelAdminUsers;
+import com.rb.gui.PanelAdminWaiters;
 import com.rb.gui.PanelCash;
 import com.rb.gui.util.PanelBasic;
 import com.rb.gui.PanelChangePassword;
@@ -46,6 +50,7 @@ import com.rb.gui.PanelList;
 import com.rb.gui.PanelNewConciliacion;
 import com.rb.gui.PanelNewCycle;
 import com.rb.gui.PanelNewLocation;
+import com.rb.gui.PanelOrderList;
 import com.rb.gui.PanelOtherProduct;
 import com.rb.gui.PanelPayInvoice;
 import com.rb.gui.PanelPressProduct;
@@ -154,6 +159,11 @@ public class GUIManager {
     private PanelQuickSearch panelQSearch;
 
     private boolean showingInfo = false;
+    private PanelOrderList panelOrderList;
+    private PanelBasic panelBasicSales;
+    private PanelAdminStations pnAdminStations;
+    private PanelAdminTables pnAdminTables;
+    private PanelAdminWaiters pnAdminWaiters;
 
     private GUIManager() {
 
@@ -273,7 +283,7 @@ public class GUIManager {
     private PanelQuickSearch getPanelQuickSearch() {
         if (panelQSearch == null) {
             panelQSearch = new PanelQuickSearch(app);
-            
+
         }
         return panelQSearch;
     }
@@ -318,9 +328,17 @@ public class GUIManager {
     public PanelBasic getPanelBasicListPedidos() {
         if (panelBasicListPedidos == null) {
             ImageIcon icon = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "ordering.png", 30, 30));
-            panelBasicListPedidos = new PanelBasic(app, "Lista Pedidos", icon, getPanelListPedidos());
+            panelBasicListPedidos = new PanelBasic(app, "Lista Pedidos", icon, getPanelOrderslList());
         }
         return panelBasicListPedidos;
+    }
+
+    public PanelBasic getPanelBasicSales() {
+        if (panelBasicSales == null) {
+            ImageIcon icon = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "sales-report.png", 30, 30));
+            panelBasicSales = new PanelBasic(app, "Ventas", icon, getPanelListPedidos());
+        }
+        return panelBasicSales;
     }
 
     public PanelBasic getPanelBasicCash() {
@@ -362,6 +380,14 @@ public class GUIManager {
         return panelPresentation;
     }
 
+    private PanelOrderList getPanelOrderslList() {
+        if (panelOrderList == null) {
+            panelOrderList = new PanelOrderList(app);
+
+        }
+        return panelOrderList;
+    }
+
     public PanelAdminBackup getPanelAdminBackup() {
         if (pnAdminBackup == null) {
             pnAdminBackup = new PanelAdminBackup(app);
@@ -382,6 +408,29 @@ public class GUIManager {
         }
         return pnAdminUsers;
     }
+    
+     public PanelAdminWaiters getPanelAdminWaiters() {
+        if (pnAdminWaiters == null) {
+            pnAdminWaiters = new PanelAdminWaiters(app);
+        }
+        return pnAdminWaiters;
+    }
+
+    public PanelAdminTables getPanelAdminTables() {
+        if (pnAdminTables == null) {
+            pnAdminTables = new PanelAdminTables(app);
+        }
+        return pnAdminTables;
+    }
+    
+    public PanelAdminStations getPanelAdminStations() {
+        if (pnAdminStations == null) {
+            pnAdminStations = new PanelAdminStations(app);
+        }
+        return pnAdminStations;
+    }
+    
+    
 
     public GuiPanelSelProduct getPanelSelProduct() {
         if (panelSelProduct == null) {
@@ -557,7 +606,7 @@ public class GUIManager {
                 @Override
                 public boolean dispatchKeyEvent(KeyEvent e) {
                     if (e.getKeyCode() == KeyEvent.VK_F3) {
-                        if (!showingInfo && app.getUser()!=null) {
+                        if (!showingInfo && app.getUser() != null) {
                             showingInfo = true;
                             showPanelInfo();
                         }
@@ -628,40 +677,48 @@ public class GUIManager {
             toolbar.removeAll();
             toolbar.updateUI();
 
-            Permission perm = app.getControl().getPermissionByName("show-orders-module");
-            if (user != null && app.getControl().hasPermission(user, perm)) {
-                toolbar.add((app.getAction(Aplication.ACTION_SHOW_ORDER)));
+            List<Module> modules = Aplication.getModules();
+            for (Module module : modules) {
+                Permission perm = app.getControl().getPermissionByName(module.getPermision());
+                if (user != null && app.getControl().hasPermission(user, perm)) {
+                    toolbar.add((app.getAction(module.getName())));
+                }
             }
 
-            perm = app.getControl().getPermissionByName("show-orderlist-module");
-            if (user != null && app.getControl().hasPermission(user, perm)) {
-                toolbar.add((app.getAction(Aplication.ACTION_SHOW_ORDER_LIST)));
-            }
-
-            perm = app.getControl().getPermissionByName("show-cash-module");
-            if (user != null && app.getControl().hasPermission(user, perm)) {
-                toolbar.add((app.getAction(Aplication.ACTION_SHOW_CASH)));
-            }
-
-            perm = app.getControl().getPermissionByName("show-reports-module");
-            if (user != null && app.getControl().hasPermission(user, perm)) {
-                toolbar.add((app.getAction(Aplication.ACTION_SHOW_REPORTS)));
-            }
-
-            perm = app.getControl().getPermissionByName("show-inventory-module");
-            if (user != null && perm != null && app.getControl().hasPermission(user, perm)) {
-                toolbar.add((app.getAction(Aplication.ACTION_SHOW_INVENTORY)));
-            }
-
-            perm = app.getControl().getPermissionByName("show-products-module");
-            if (user != null && app.getControl().hasPermission(user, perm)) {
-                toolbar.add((app.getAction(Aplication.ACTION_SHOW_PRODUCTS)));
-            }
-
-            perm = app.getControl().getPermissionByName("show-admin-module");
-            if (user != null && app.getControl().hasPermission(user, perm)) {
-                toolbar.add((app.getAction(Aplication.ACTION_SHOW_ADMIN)));
-            }
+//            Permission perm = app.getControl().getPermissionByName("show-orders-module");
+//            if (user != null && app.getControl().hasPermission(user, perm)) {
+//                toolbar.add((app.getAction(Aplication.ACTION_SHOW_ORDER)));
+//            }
+//
+//            perm = app.getControl().getPermissionByName("show-orderlist-module");
+//            if (user != null && app.getControl().hasPermission(user, perm)) {
+//                toolbar.add((app.getAction(Aplication.ACTION_SHOW_ORDER_LIST)));
+//            }
+//
+//            perm = app.getControl().getPermissionByName("show-cash-module");
+//            if (user != null && app.getControl().hasPermission(user, perm)) {
+//                toolbar.add((app.getAction(Aplication.ACTION_SHOW_CASH)));
+//            }
+//
+//            perm = app.getControl().getPermissionByName("show-reports-module");
+//            if (user != null && app.getControl().hasPermission(user, perm)) {
+//                toolbar.add((app.getAction(Aplication.ACTION_SHOW_REPORTS)));
+//            }
+//
+//            perm = app.getControl().getPermissionByName("show-inventory-module");
+//            if (user != null && perm != null && app.getControl().hasPermission(user, perm)) {
+//                toolbar.add((app.getAction(Aplication.ACTION_SHOW_INVENTORY)));
+//            }
+//
+//            perm = app.getControl().getPermissionByName("show-products-module");
+//            if (user != null && app.getControl().hasPermission(user, perm)) {
+//                toolbar.add((app.getAction(Aplication.ACTION_SHOW_PRODUCTS)));
+//            }
+//
+//            perm = app.getControl().getPermissionByName("show-admin-module");
+//            if (user != null && app.getControl().hasPermission(user, perm)) {
+//                toolbar.add((app.getAction(Aplication.ACTION_SHOW_ADMIN)));
+//            }
 
             int w = getFrame().getWidth() - (toolbar.getComponentCount() * 40) - 160;
             toolbar.add(Box.createHorizontalStrut(w));
@@ -726,8 +783,7 @@ public class GUIManager {
             archivo.add(new JPopupMenu.Separator());
             archivo.add(app.getAction(Aplication.ACTION_EXIT_APP));
 
-           // ver.add(app.getAction(Aplication.ACTION_SHOW_ADMIN));
-
+            // ver.add(app.getAction(Aplication.ACTION_SHOW_ADMIN));
             salir.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {

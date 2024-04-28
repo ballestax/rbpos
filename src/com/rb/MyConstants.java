@@ -45,31 +45,49 @@ public class MyConstants {
     public static final String[] FILTROS_NUMERO = {"=", ">", ">=", "<", "<=", "<>"};
     public static final String[] FILTROS_BOOLEANOS = {"=", "<>"};
 
+    public static final String PERM_SHOW_TAB_WAITERS = "show-tab-waiters";
+    public static final String PERM_SHOW_TAB_TABLES = "show-tab-tables";
+    public static final String PERM_SHOW_TAB_BACKUP = "show-tab-backup";
+    public static final String PERM_SHOW_TAB_CONFIG = "show-tab-config";
+    public static final String PERM_SHOW_TAB_USERS = "show-tab-users";
+    public static final String PERM_SHOW_TAB_STATIONS = "show-tab-stations";
+
+    public static final String PERM_ADMIN_MODULE = "show-admin-module";
+    public static final String PERM_ORDERS_MODULE = "show-orders-module";
+    public static final String PERM_CASH_MODULE = "show-cash-module";
+    public static final String PERM_REPORTS_MODULE = "show-reports-module";
+    public static final String PERM_SALES_MODULE = "show-sales-module";
+    public static final String PERM_ORDERLIST_MODULE = "show-orderlist-module";
+    public static final String PERM_INVENTORY_MODULE = "show-inventory-module";
+    public static final String PERM_PRODUCTS_MODULE = "show-products-module";
+
     public static final Permission[] PERMISSIONS = {
-        new Permission("show-admin-module", "Ver el modulo administrador"),
-        new Permission("show-orders-module", "Ver el modulo pedidos"),
-        new Permission("show-cash-module", "Ver el modulo caja"),
-        new Permission("show-reports-module", "Ver el modulo reportes"),
-        new Permission("show-orderlist-module", "Ver el modulo lista de pedidos"),
-        new Permission("show-tab-backup", "Ver pestaña copia de seguridad"),        
-        new Permission("show-tab-config", "Ver pestaña configuracion"),
-        new Permission("show-tab-users", "Ver el modulo usuarios"),
-        new Permission("show-inventory-module", "Ver el modulo inventario"),
-        new Permission("show-products-module", "Ver el modulo productos"),
+        new Permission(PERM_ADMIN_MODULE, "Ver el modulo administrador"),
+        new Permission(PERM_ORDERS_MODULE, "Ver el modulo pedidos"),
+        new Permission(PERM_CASH_MODULE, "Ver el modulo caja"),
+        new Permission(PERM_REPORTS_MODULE, "Ver el modulo reportes"),
+        new Permission(PERM_SALES_MODULE, "Ver el modulo ventas"),
+        new Permission(PERM_ORDERLIST_MODULE, "Ver el modulo lista de pedidos"),
+        new Permission(PERM_SHOW_TAB_BACKUP, "Ver pestaña copia de seguridad"),
+        new Permission(PERM_SHOW_TAB_CONFIG, "Ver pestaña configuracion"),
+        new Permission(PERM_SHOW_TAB_USERS, "Ver el modulo usuarios"),
+        new Permission(PERM_INVENTORY_MODULE, "Ver el modulo inventario"),
+        new Permission(PERM_PRODUCTS_MODULE, "Ver el modulo productos"),
         new Permission("add-items-inventary", "Agregar items al inventario"),
         new Permission("load-items-inventary", "Cargar items al inventario"),
         new Permission("download-items-inventary", "Descargar items al inventario"),
         new Permission("conciliate-items-inventary", "Coniciliar items al inventario"),
         new Permission("print-items-inventary", "Inprimir items del inventario"),
         new Permission("export-items-inventary", "Exportar items del inventario"),
-        new Permission("add-role", "Agregar rol de usuario"),
-        new Permission("change-permisions", "Cambiar permisos"),
-        new Permission("add-user", "Agregar usuario"),
-        new Permission("change-password", "Cambiar contraseña"),
-        new Permission("anulate-invoce", "Anular facturas"),
-        
-        
-    };
+        new Permission("show-pos-module", "Ver el modulo POS"),
+        new Permission("allow-cancel-product-order", "Cancelar producto en una orden"),
+        new Permission("allow-modify-product-order", "Modificar producto en una orden"),
+        new Permission(PERM_SHOW_TAB_WAITERS, "Ver pestaña meseros"),
+        new Permission(PERM_SHOW_TAB_TABLES, "Ver pestaña mesas"),
+        new Permission(PERM_SHOW_TAB_STATIONS, "Ver pestaña estaciones"),
+        new Permission("allow-modify-waiters", "Modificar meseros"),
+        new Permission("allow-modify-tables", "Modificar mesas"),
+        new Permission("allow-modify-stations", "Modificar estaciones"),};
 
     public static final SimpleDateFormat FORMAT_DATE = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -78,10 +96,10 @@ public class MyConstants {
     public static final String PEDIDO_PARA_LLEVAR = "PARA LLEVAR";
 
     public static final String[] TIPO_PEDIDO = {PEDIDO_LOCAL, PEDIDO_DOMICILIO, PEDIDO_PARA_LLEVAR};
-    
+
     public static final String[] PERIODOS = {"DIA", "SEMANA", "MES", "AÑO", "RANGO"};
     public static final String[] TIPO_REPORTE = {"PRODUCTOS VENDIDOS", "VENTAS"};
-    
+
     public static final String CF_FACTURA_FINAL = "factura_final";
     public static final String CF_FACTURA_INICIAL = "factura_inicial";
     public static final String CF_FACTURA_ACTUAL = "factura_actual";

@@ -6,6 +6,7 @@
 package com.rb.gui;
 
 import com.rb.Aplication;
+import com.rb.domain.Module;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Component;
@@ -62,7 +63,7 @@ public class PanelDash extends JPanel {
         wl = imgMas.getWidth(this);
         hl = imgMas.getHeight(this);
 
-        loadModules(app);
+        loadModules();
 
     }
 
@@ -70,31 +71,23 @@ public class PanelDash extends JPanel {
 
     }
 
-    private void loadModules(Aplication app1) {
+    private void loadModules() {
         removeAll();
-
-        List<String> modules = new ArrayList();
-        modules.add(Aplication.ACTION_SHOW_ORDER);
-        modules.add(Aplication.ACTION_SHOW_ORDER_LIST);
-        modules.add(Aplication.ACTION_SHOW_CASH);
-        modules.add(Aplication.ACTION_SHOW_PRODUCTS);
-        modules.add(Aplication.ACTION_SHOW_INVENTORY);
-        modules.add(Aplication.ACTION_SHOW_REPORTS);
-        modules.add(Aplication.ACTION_SHOW_ADMIN);
-
+        List<Module> modules = app.getModules();
         int COLS = 5;
         int ix = 1, iy = 1;
-        for (String module : modules) {
-            add(newButton(app1.getAction(module)), constrains(ix, iy, 30));
+        for (Module module : modules) {
+            add(newButton(app.getAction(module.getName())), constrains(ix, iy, 30));
             ix++;
-            if(ix==COLS){
-                ix=1; iy++;
+            if (ix == COLS) {
+                ix = 1;
+                iy++;
             }
         }
 
         Box box = new Box(BoxLayout.X_AXIS);
         box.setAlignmentY(BOTTOM_ALIGNMENT);
-        JButton btn = new JButton(app1.getAction(Aplication.ACTION_EXIT_APP));
+        JButton btn = new JButton(app.getAction(Aplication.ACTION_EXIT_APP));
         btn.setText("");
         btn.setPreferredSize(new Dimension(30, 30));
         btn.setMinimumSize(new Dimension(30, 30));

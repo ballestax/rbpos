@@ -8,6 +8,7 @@ package com.rb;
 import com.rb.domain.Permission;
 import com.rb.domain.Rol;
 import com.rb.domain.User;
+import com.rb.domain.Module;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
@@ -32,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -62,6 +64,7 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
     public static final String ACTION_SHOW_CASH = "acShowCash";
     public static final String ACTION_SHOW_REPORTS = "acShowReports";
     public static final String ACTION_SHOW_INVENTORY = "acShowInventory";
+    public static final String ACTION_SHOW_SALES = "acShowSales";
     public static final String ACTION_SHOW_PRODUCTS = "acShowProducts";
 
     public static final String ACTION_RETURN_TO_MENU = "acReturnToMenu";
@@ -117,6 +120,8 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
     private ProgAction acShowReports;
     private ProgAction acShowInventory;
     private ProgAction acShowProducts;
+    private ProgAction acShowSales;
+    private static List<Module> modules;
 
     public Aplication() {
         Properties properties = new Properties();
@@ -187,6 +192,8 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
         imageBC = createImage();
 
         initRoles();
+
+        loadModules();
     }
 
     public String getFolderIcons() {
@@ -195,6 +202,32 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
 
     public static boolean isLocal() {
         return local;
+    }
+
+    private void loadModules() {
+        if (modules == null) {
+            modules = new ArrayList();
+        }
+        modules.add(new Module(Aplication.ACTION_SHOW_ORDER, MyConstants.PERM_ORDERS_MODULE));
+       // modules.add(new Module(Aplication.ACTION_SHOW_ORDER_LIST, MyConstants.PERM_ORDERLIST_MODULE));
+        modules.add(new Module(Aplication.ACTION_SHOW_SALES, MyConstants.PERM_SALES_MODULE));
+        modules.add(new Module(Aplication.ACTION_SHOW_CASH, MyConstants.PERM_CASH_MODULE));
+        modules.add(new Module(Aplication.ACTION_SHOW_PRODUCTS, MyConstants.PERM_PRODUCTS_MODULE));
+        modules.add(new Module(Aplication.ACTION_SHOW_INVENTORY, MyConstants.PERM_INVENTORY_MODULE));
+        modules.add(new Module(Aplication.ACTION_SHOW_REPORTS, MyConstants.PERM_REPORTS_MODULE));
+        modules.add(new Module(Aplication.ACTION_SHOW_ADMIN, MyConstants.PERM_ADMIN_MODULE));
+    }
+
+    public static List<Module> getModules() {
+        return modules;
+    }
+
+    private boolean addModule(Module module) {
+        return modules.add(module);
+    }
+
+    public boolean deleteModule(String module) {
+        return modules.remove(module);
     }
 
     private void initRoles() {
@@ -325,7 +358,7 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
     }
 
     public void setUser(User user) {
-        if(user!=null){
+        if (user != null) {
             user.setPassword("");
         }
         this.user = user;
@@ -427,6 +460,16 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
         acShowOrderList.setSmallIcon(new ImageIcon(imgManager.getImagen(getFolderIcons() + "ordering.png", 25, 25)));
         acShowOrderList.setLargeIcon(new ImageIcon(imgManager.getImagen(getFolderIcons() + "ordering.png", 32, 32)));
 
+        acShowSales = new ProgAction("Ventas",
+                null, "Ver Ventas", 'a') {
+            public void actionPerformed(ActionEvent e) {
+                Permission perm = getControl().getPermissionByName("show-sales-module");
+                getGuiManager().showBasicPanel(getGuiManager().getPanelBasicSales(), perm);
+            }
+        };
+        acShowSales.setSmallIcon(new ImageIcon(imgManager.getImagen(getFolderIcons() + "sales-report.png", 25, 25)));
+        acShowSales.setLargeIcon(new ImageIcon(imgManager.getImagen(getFolderIcons() + "sales-report.png", 32, 32)));
+
         acShowCash = new ProgAction("Caja",
                 null, "Ver modulo caja", 'c') {
             public void actionPerformed(ActionEvent e) {
@@ -511,6 +554,9 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
 
             case ACTION_SHOW_INVENTORY:
                 return acShowInventory;
+
+            case ACTION_SHOW_SALES:
+                return acShowSales;
 
             default:
                 return null;
