@@ -26,6 +26,7 @@ import com.rb.persistence.SQLLoader;
 import com.rb.persistence.dao.DAOException;
 import com.rb.persistence.dao.UtilDAO;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -101,7 +102,7 @@ public class JDBCUtilDAO implements UtilDAO {
     public static final String ADD_PRESENTATION_PRODUCT_KEY = "ADD_PRESENTATION_PRODUCT";
     public static final String GET_PRESENTATION_BY_DEFAULT_KEY = "GET_PRESENTATION_BY_DEFAULT";
     public static final String GET_PRESENTATION_KEY = "GET_PRESENTATION";
-    
+
     public static final String CREATE_STATIONS_TABLE_KEY = "CREATE_STATIONS_TABLE";
     public static final String CREATE_PRODUCT_STATION_TABLE_KEY = "CREATE_PRODUCT_STATION_TABLE";
     public static final String GET_PRODUCT_STATIONS_KEY = "GET_PRODUCT_STATIONS";
@@ -129,6 +130,8 @@ public class JDBCUtilDAO implements UtilDAO {
 
     public static final String GET_FIRST_REGISTRO_KEY = "GET_FIRST_REGISTRO";
     public static final String GET_LAST_REGISTRO_KEY = "GET_LAST_REGISTRO";
+
+    public static final String GET_SUM_REGISTRO_KEY = "GET_SUM_REGISTRO";
 
     public static final String GET_CATEGORIES_SORTED_KEY = "GET_CATEGORIES_SORTED";
     public static final String GET_ALL_CATEGORIES_KEY = "GET_ALL_CATEGORIES";
@@ -170,6 +173,8 @@ public class JDBCUtilDAO implements UtilDAO {
     public static final String ADD_CATEGORY_KEY = "ADD_CATEGORY";
     public static final String UPDATE_CATEGORY_KEY = "UPDATE_CATEGORY";
 
+    public static final String GET_EXPENSE_INCOME_LIST_KEY = "GET_EXPENSE_INCOME_LIST";
+
     public static final String GET_EXPENSES_CATEGORIES_LIST_KEY = "GET_EXPENSES_CATEGORY";
     public static final String ADD_EXPENSES_CATEGORY_KEY = "ADD_EXPENSES_CATEGORY";
     public static final String UPDATE_EXPENSES_CATEGORY_KEY = "UPDATE_EXPENSES_CATEGORY";
@@ -186,7 +191,7 @@ public class JDBCUtilDAO implements UtilDAO {
     public static final String GET_MAX_ID_KEY = "GET_MAX_ID";
     public static final String EXIST_CLAVE_KEY = "EXIST_CLAVE";
     public static final String EXIST_CLAVE_MULT_KEY = "EXIST_CLAVE_MULT";
-    
+
     public static final String GET_VALUE_FROM_TABLE_KEY = "GET_VALUE_FROM_TABLE";
 
     public JDBCUtilDAO(DataSource dataSource, SQLLoader sqlStatements) {
@@ -238,11 +243,11 @@ public class JDBCUtilDAO implements UtilDAO {
         TABLE_NAME = "invoice_otherproduct";
         createTable(TABLE_NAME, CREATE_INVOICE_OTHER_PRODUCT_TABLE_KEY);
 
-        TABLE_NAME = "expenses_incomes";
-        createTable(TABLE_NAME, CREATE_EXPENSES_INCOMES_TABLE_KEY);
-
         TABLE_NAME = "expenses_categories";
         createTable(TABLE_NAME, CREATE_EXPENSES_CATEGORIES_TABLE_KEY);
+
+        TABLE_NAME = "expenses_incomes";
+        createTable(TABLE_NAME, CREATE_EXPENSES_INCOMES_TABLE_KEY);
 
         TABLE_NAME = "units";
         createTable(TABLE_NAME, CREATE_UNITS_TABLE_KEY);
@@ -258,7 +263,7 @@ public class JDBCUtilDAO implements UtilDAO {
 
         TABLE_NAME = "inventory_snapshot";
         createTable(TABLE_NAME, CREATE_INVENTORY_SNAPSHOT_TABLE_KEY);
-        
+
         TABLE_NAME = "stations";
         createTable(TABLE_NAME, CREATE_STATIONS_TABLE_KEY);
 
@@ -311,7 +316,6 @@ public class JDBCUtilDAO implements UtilDAO {
             namedParams.put(JDBCDAOFactory.NAMED_PARAM_QUERY, column);
             namedParams.put(NAMED_PARAM_KEY, code);
             retrieve = sqlStatements.getSQLString(EXIST_CLAVE_KEY, namedParams);
-            System.out.println("retrieve = " + retrieve);
         } catch (IOException e) {
             throw new DAOException("Could not properly retrieve the outdated count", e);
         }
@@ -336,7 +340,7 @@ public class JDBCUtilDAO implements UtilDAO {
         }
         return count;
     }
-    
+
     public int existClaveMult(String table, String column, String where) throws DAOException {
         String retrieve;
         try {
@@ -370,7 +374,6 @@ public class JDBCUtilDAO implements UtilDAO {
         return count;
     }
 
-    
     public Object getValueFromTable(String table, String column, String where) throws DAOException {
         String retrieve;
         try {
@@ -403,8 +406,7 @@ public class JDBCUtilDAO implements UtilDAO {
         }
         return value;
     }
-    
-    
+
     public int getMaxID(String table) throws DAOException {
         Connection conn = null;
         PreparedStatement ps = null;
@@ -1034,6 +1036,42 @@ public class JDBCUtilDAO implements UtilDAO {
             DBManager.closeConnection(conn);
         }
         return fecha;
+    }
+
+    public BigDecimal getSumValue(String tabla, String field, String where) throws DAOException {
+        String retrieve;
+        try {
+            SQLExtractor sqlExtractorWhere = new SQLExtractor(where, SQLExtractor.Type.WHERE);
+            Map<String, String> namedParams = new HashMap<>();
+            namedParams.put(JDBCDAOFactory.NAMED_PARAM_TABLE, tabla);
+            namedParams.put(JDBCDAOFactory.NAMED_PARAM_QUERY, field);
+            namedParams.put(NAMED_PARAM_WHERE, sqlExtractorWhere.extractWhere());
+            retrieve = sqlStatements.getSQLString(GET_SUM_REGISTRO_KEY, namedParams);
+
+        } catch (IOException e) {
+            throw new DAOException("Could not properly retrieve registro date", e);
+        } catch (SQLException ex) {
+            throw new DAOException("Could not properly retrieve registro date", ex);
+        }
+        Connection conn = null;
+        PreparedStatement pSt = null;
+        ResultSet rs = null;
+        BigDecimal sum = BigDecimal.ZERO;
+        try {
+            conn = dataSource.getConnection();
+            pSt = conn.prepareStatement(retrieve);
+            rs = pSt.executeQuery();
+            while (rs.next()) {
+                sum = rs.getBigDecimal(1);
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Could not properly retrieve the sum of register: " + e);
+        } finally {
+            DBManager.closeResultSet(rs);
+            DBManager.closeStatement(pSt);
+            DBManager.closeConnection(conn);
+        }
+        return sum == null ? BigDecimal.ZERO : sum;
     }
 
     public Object getMaxValue(String tabla, String field) throws DAOException {
@@ -1845,7 +1883,7 @@ public class JDBCUtilDAO implements UtilDAO {
         try {
             conn = dataSource.getConnection();
             retrieve = sqlStatements.buildSQLStatement(conn, CHECK_INVENTORY_PRODUCT_KEY, parameters);
-            System.out.println("retrieve2 = " + retrieve);
+
             rs = retrieve.executeQuery();
             while (rs.next()) {
                 data = new HashMap<>();
@@ -1869,7 +1907,7 @@ public class JDBCUtilDAO implements UtilDAO {
         }
         return mData;
     }
-    
+
     public HashMap<Integer, HashMap> checkInventoryAdditional(long idAdd) throws DAOException {
         HashMap<Integer, HashMap> mData = new HashMap<>();
         HashMap data = null;
@@ -1880,7 +1918,7 @@ public class JDBCUtilDAO implements UtilDAO {
         try {
             conn = dataSource.getConnection();
             retrieve = sqlStatements.buildSQLStatement(conn, CHECK_INVENTORY_ADDITIONAL_KEY, parameters);
-            
+
             rs = retrieve.executeQuery();
             while (rs.next()) {
                 data = new HashMap<>();
@@ -2493,9 +2531,9 @@ public class JDBCUtilDAO implements UtilDAO {
         return categories;
     }
 
-    public ArrayList<CashMov.Category> getExpensesCategoriesList(String where, String orderBy) throws DAOException {
+    public Map<Long, CashMov.Category> getExpensesCategoriesMap(String where, String orderBy) throws DAOException {
         String retrieveUnit;
-        ArrayList<CashMov.Category> categories = new ArrayList<>();
+        Map<Long, CashMov.Category> categories = new HashMap<>();
         try {
             SQLExtractor sqlExtractorWhere = new SQLExtractor(where, SQLExtractor.Type.WHERE);
             SQLExtractor sqlExtractorOrderBy = new SQLExtractor(orderBy, SQLExtractor.Type.ORDER_BY);
@@ -2521,8 +2559,8 @@ public class JDBCUtilDAO implements UtilDAO {
 
             while (rs.next()) {
                 category = new CashMov.Category(rs.getString("category"));
-                category.setId(rs.getLong("id"));;
-                categories.add(category);
+                category.setId(rs.getLong("id"));
+                categories.put(category.getId(), category);
             }
         } catch (SQLException e) {
             throw new DAOException("Could not proper retrieve the Unit: " + e);
@@ -2532,6 +2570,54 @@ public class JDBCUtilDAO implements UtilDAO {
             DBManager.closeConnection(conn);
         }
         return categories;
+    }
+
+    public ArrayList<CashMov> getExpenseIncomeList(String where, String orderBy) throws DAOException {
+        String retrieve;
+        ArrayList<CashMov> movs = new ArrayList<>();
+        try {
+            SQLExtractor sqlExtractorWhere = new SQLExtractor(where, SQLExtractor.Type.WHERE);
+            SQLExtractor sqlExtractorOrderBy = new SQLExtractor(orderBy, SQLExtractor.Type.ORDER_BY);
+            Map<String, String> namedParams = new HashMap<>();
+            namedParams.put(NAMED_PARAM_WHERE, sqlExtractorWhere.extractWhere());
+            namedParams.put(NAMED_PARAM_ORDER_BY, sqlExtractorOrderBy.extractOrderBy());
+            retrieve = sqlStatements.getSQLString(GET_EXPENSE_INCOME_LIST_KEY, namedParams);
+
+        } catch (SQLException e) {
+            throw new DAOException("Could not properly retrieve the Categories List", e);
+        } catch (IOException e) {
+            throw new DAOException("Could not properly retrieve the Categories List", e);
+        }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        CashMov mov;
+        try {
+            conn = dataSource.getConnection();
+            ps = conn.prepareStatement(retrieve);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                mov = new CashMov();
+                mov.setDate(rs.getDate("eventDate"));
+                mov.setId(rs.getLong("id"));
+                mov.setType(rs.getInt("type"));
+                mov.setValue(rs.getBigDecimal("value"));
+                mov.setDescription(rs.getString("description"));
+                mov.setIdCycle(rs.getLong("cycle_id"));
+                mov.setIdCategory(rs.getLong("category_id"));
+
+                movs.add(mov);
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Could not proper retrieve the Mov: " + e);
+        } finally {
+            DBManager.closeResultSet(rs);
+            DBManager.closeStatement(ps);
+            DBManager.closeConnection(conn);
+        }
+        return movs;
     }
 
     public void addExpenseCategory(String category) throws DAOException {
@@ -2602,21 +2688,22 @@ public class JDBCUtilDAO implements UtilDAO {
         }
     }
 
-    public void addExpenseIncome(HashMap data) throws DAOException {
+    public void addExpenseIncome(CashMov data) throws DAOException {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
             conn = dataSource.getConnection();
             conn.setAutoCommit(false);
             Object[] parameters = {
-                data.get("TYPE"),
-                data.get("DESC"),
-                data.get("VALUE"),
-                data.get("NOTE"),
-                data.get("CYCLE"),
-                data.get("CATEGORY")
+                data.getDate(),
+                data.getType(),
+                data.getDescription(),
+                data.getValue(),
+                data.getNote(),
+                data.getIdCycle(),
+                data.getIdCategory()
             };
-            ps = sqlStatements.buildSQLStatement(conn, ADD_EXPENSE_INCOME_KEY, parameters);
+            ps = sqlStatements.buildSQLStatement(conn, ADD_EXPENSE_INCOME_KEY, parameters, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.executeUpdate();
             conn.commit();
         } catch (SQLException e) {
@@ -2630,7 +2717,7 @@ public class JDBCUtilDAO implements UtilDAO {
             DBManager.closeConnection(conn);
         }
     }
-    
+
     public String getProductStations(long idProduct) throws DAOException {
         String stations = "";
         Connection conn = null;

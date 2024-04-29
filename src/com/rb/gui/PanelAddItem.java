@@ -900,7 +900,6 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
             ArrayList<Object[]> selecteds = getSelecteds(modelProducts, 5);
             for (int i = 0; i < selecteds.size(); i++) {
                 Object[] dat = selecteds.get(i);
-                System.out.println("pres:"+Arrays.toString(dat));
                 String dat1 = dat[1].toString();
                 dat1 = StringUtils.isNumeric(dat1) ? dat1 : "0";
                 item.addPresentations(Integer.parseInt(dat[0].toString()), Integer.parseInt(dat1), 0, Double.parseDouble(dat[2].toString()));
@@ -908,7 +907,6 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
             ArrayList<Object[]> selectedsAdd = getSelecteds(modelAditions, 3);
             for (int i = 0; i < selectedsAdd.size(); i++) {
                 Object[] dat = selectedsAdd.get(i);
-                System.out.println("adit:"+Arrays.toString(dat));
                 item.addPresentations(0, 0, Integer.parseInt(dat[0].toString()), Double.parseDouble(dat[2].toString()));
             }
         }

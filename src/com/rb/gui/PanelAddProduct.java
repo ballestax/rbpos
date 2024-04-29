@@ -242,7 +242,6 @@ public class PanelAddProduct extends PanelCapturaMod implements ActionListener, 
                 if (MyConstants.FILTER_TEXT_INT_START == tFilter) {
                     return entry.getStringValue(columna).startsWith(text);
                 } else if (tFilter == MyConstants.FILTER_TEXT_INT_CONTAINS) {
-                    System.out.println(columna + " -> contains:" + text);
                     return entry.getStringValue(columna).contains(text);
                 } else {
                     return entry.getStringValue(columna).equals(text);

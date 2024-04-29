@@ -1045,7 +1045,6 @@ public class JDBCInvoiceDAO implements InvoiceDAO {
             if (oldProducts != null && !oldProducts.equals(products)) {
                 for (ProductoPed oldProduct : oldProducts) {
                     HashMap<Integer, HashMap> data = oldProduct.getData();
-                    System.out.println(Arrays.toString(data.entrySet().toArray()));
                 }
             }
 

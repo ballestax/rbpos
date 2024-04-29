@@ -599,7 +599,6 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             valido = false;
         }
 
-        System.out.println(regDesc.getText());
         if (regDesc.getText().trim().isEmpty()) {
             regDesc.setBorder(bordeError);
             valido = false;

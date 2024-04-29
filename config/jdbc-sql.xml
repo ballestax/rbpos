@@ -42,7 +42,7 @@
                     |CREATE_OTHER_PRODUCTS_TABLE|GET_OTHER_PRODUCT|ADD_OTHER_PRODUCT|DELETE_OTHER_PRODUCT
                     |CREATE_INVOICE_OTHER_PRODUCT_TABLE|ADD_INVOICE_OTHER_PRODUCT
                     |GET_CATEGORIES_SORTED|GET_ALL_CATEGORIES|GET_CATEGORY
-                    |CREATE_EXPENSES_INCOMES_TABLE|ADD_EXPENSE_INCOME|GET_EXPENSE_INCOME
+                    |CREATE_EXPENSE_INCOME_TABLE|ADD_EXPENSE_INCOME|GET_EXPENSE_INCOME_LIST
                     |CREATE_EXPENSES_CATEGORIES_TABLE|ADD_EXPENSES_CATEGORY|GET_EXPENSES_CATEGORY|UPDATE_EXPENSES_CATEGORY
                     |DELETE_EXPENSES_CATEGORY|GET_INVOICE_BY_PRODUCT
                     |CREATE_INVENTORY_TABLE|GET_ITEM|ADD_ITEM|UPDATE_ITEM
@@ -68,6 +68,7 @@
                     |GET_STATION_BY_ID
                     |CREATE_CATEGORIES_TABLE|ADD_CATEGORY|GET_CATEGORY_PROD|UPDATE_CATEGORY
                     |ADD_PRESENTATION|UPDATE_PRESENTATION|UPDATE_PRESENTATION_TO_DEFAULT|UPDATE_PRESENTATION_TO_DEFAULT_BY_ID
+                    |GET_SUM_REGISTRO
                     ) #REQUIRED
                     
 	>
@@ -1105,6 +1106,15 @@
             </SQLFragment>
         </SQLStatement>
         
+        <SQLStatement method="GET_SUM_REGISTRO">
+            <SQLFragment>
+                SELECT sum({query}) FROM {table} 
+            </SQLFragment>
+            <SQLFragment excludeIfNamedParamEmpty="TRUE">
+                WHERE {where}
+            </SQLFragment>
+        </SQLStatement>
+        
         <SQLStatement method="CREATE_CLIENTS_TABLE">
             <SQLFragment>
                 CREATE TABLE clients (
@@ -1360,17 +1370,20 @@
             
         </SQLStatement>
 
-
-        <SQLStatement method="CREATE_EXPENSES_INCOMES_TABLE">            
+        <SQLStatement method="CREATE_EXPENSE_INCOME_TABLE">            
             <SQLFragment>
                 CREATE TABLE expenses_incomes(
                 id INTEGER AUTO_INCREMENT,
+                eventDate DATETIME,
                 type INTEGER NOT NULL,
-                desc VARCHAR(100),
+                description VARCHAR(100),
                 value DECIMAL(20,2),
                 note VARCHAR(255),
                 cycle_id INTEGER NOT NULL,
                 category_id INTEGER NOT NULL,
+                createdTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                lastUpdatedTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                user VARCHAR(25) NOT NULL DEFAULT 'USER_DF',
                 PRIMARY KEY (id),      
                 FOREIGN KEY (cycle_id) REFERENCES cycles(id) ON DELETE CASCADE ON UPDATE CASCADE,                       
                 FOREIGN KEY (category_id) REFERENCES expenses_categories(id) ON DELETE CASCADE ON UPDATE CASCADE                       
@@ -1380,17 +1393,17 @@
         
         <SQLStatement method="ADD_EXPENSE_INCOME">
             <SQLFragment>
-                INSERT INTO expenses_incomes (type,desc,value,note,cycle_id,category_id) 
-                VALUES (?,?,?,?,?,?)
+                INSERT INTO expenses_incomes (eventDate,type,description,value,note,cycle_id,category_id) 
+                VALUES (?,?,?,?,?,?,?)
             </SQLFragment>
         </SQLStatement>
         
-        <SQLStatement method="GET_EXPENSE_INCOME">
+        <SQLStatement method="GET_EXPENSE_INCOME_LIST">
             <SQLFragment>
                 SELECT
             </SQLFragment>
             <SQLFragment>
-                * FROM expenses_incomes
+                * FROM expenses_incomes                
             </SQLFragment>
             <SQLFragment excludeIfNamedParamEmpty="TRUE">
                 WHERE {where}

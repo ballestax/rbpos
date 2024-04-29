@@ -137,9 +137,7 @@ public class PanelSelCategory extends PanelCapturaMod implements ActionListener 
             lastButtonSel.setForeground(Color.red);
             }
             
-            lastCategorySel = e.getActionCommand().substring(8);
-            System.out.println(lastCategorySel);
-            
+            lastCategorySel = e.getActionCommand().substring(8);            
         }
     }
 

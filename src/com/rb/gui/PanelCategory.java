@@ -200,7 +200,6 @@ public class PanelCategory extends PanelCapturaMod implements PropertyChangeList
     }
 
     public void showView2() {
-        System.out.println("view2");
         view = 2;
         app.getGuiManager().setWaitCursor();
         pnItems.removeAll();
@@ -247,7 +246,6 @@ public class PanelCategory extends PanelCapturaMod implements PropertyChangeList
     }
 
     public void showView1() {
-        System.out.println("view1");
         view = 1;
         app.getGuiManager().setWaitCursor();
         pnItems.removeAll();

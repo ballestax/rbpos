@@ -1,5 +1,6 @@
 package com.rb.domain;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -11,6 +12,8 @@ public class CashMov {
     private long id;
     private int type;
     private Date date;
+    private BigDecimal value;
+    private String note;
     private long idCycle;
     private String description;
     private long idCategory;
@@ -57,6 +60,14 @@ public class CashMov {
         return description;
     }
 
+    public BigDecimal getValue() {
+        return value;
+    }
+
+    public void setValue(BigDecimal value) {
+        this.value = value;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -68,6 +79,16 @@ public class CashMov {
     public void setIdCategory(long idCategory) {
         this.idCategory = idCategory;
     }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+    
+    
 
     public static class Category {
 

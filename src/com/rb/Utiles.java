@@ -198,7 +198,6 @@ public class Utiles {
         if (nuevoNombre.charAt(nuevoNombre.length() - 1) == '@') {
             nuevoNombre = nuevoNombre.substring(0, nuevoNombre.length() - 1);
         }
-        System.out.println(nuevoNombre);
         return nuevoNombre.split("@");
     }
 
@@ -419,7 +418,6 @@ public class Utiles {
         StandardPBEStringEncryptor enc = new StandardPBEStringEncryptor();
         enc.setPassword(String.valueOf(pass));
         String tenc = enc.encrypt(property);
-        System.out.println(tenc);
     }
 
     public static void encrypt(String key, File inputFile, File outputFile) throws CryptoException {

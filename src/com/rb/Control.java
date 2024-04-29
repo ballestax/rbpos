@@ -42,6 +42,7 @@ import com.rb.persistence.dao.DAOException;
 import com.rb.persistence.dao.DAOFactory;
 import com.rb.persistence.dao.RemoteUserResultsInterface;
 import com.rb.persistence.dao.UserRetrieveException;
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -218,8 +219,7 @@ public class Control {
             return -1;
         }
     }
-    
-    
+
     public int existClave(String tabla, String columna, String clave) {
         try {
             JDBCUtilDAO utilDAO = (JDBCUtilDAO) JDBCDAOFactory.getInstance().getUtilDAO();
@@ -247,11 +247,11 @@ public class Control {
             return 0;
         }
     }
-    
+
     public Object getCodeFromInvoice(long id) {
         try {
             JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
-            return utilDAO.getValueFromTable("invoices", "code", "id="+id);
+            return utilDAO.getValueFromTable("invoices", "code", "id=" + id);
         } catch (Exception e) {
             logger.error("Error getting code from invoice", e);
             return null;
@@ -984,15 +984,15 @@ public class Control {
     public Item getItemWhere(String where) {
         return getItemList(where, "").get(0);
     }
-    
+
     public int existeItemName(String name) {
-        return existClave("inventory", "name", "'"+name+"'");
+        return existClave("inventory", "name", "'" + name + "'");
     }
 
     public int addItem(Item item) {
         try {
             JDBCItemDAO itemDAO = (JDBCItemDAO) DAOFactory.getInstance().getItemDAO();
-            return itemDAO.addItems(item);            
+            return itemDAO.addItems(item);
         } catch (DAOException ex) {
             logger.error("Error adding Item.", ex);
             return 0;
@@ -1168,7 +1168,7 @@ public class Control {
             return null;
         }
     }
-    
+
     public HashMap<Integer, HashMap> checkInventoryAdditional(long idAdd) {
         try {
             JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
@@ -1410,12 +1410,42 @@ public class Control {
         }
     }
 
-    public ArrayList<CashMov.Category> getExpensesCategoriesList(String where, String orderBy) {
+    public ArrayList<CashMov> getExpenseIncomeList(String where, String orderBy) {
         try {
             JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
-            return utilDAO.getExpensesCategoriesList(where, orderBy);
+            return utilDAO.getExpenseIncomeList(where, orderBy);
         } catch (DAOException ex) {
-            logger.error("Error getting Expenses Categories list.", ex);
+            logger.error("Error getting Expenses Expense-Imcome list.", ex);
+            return null;
+        }
+    }
+
+    public BigDecimal getValueExpenseIncomeByCycle(long idCycle, int type) {
+        try {
+            JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
+            return utilDAO.getSumValue("expenses_incomes", "value", "cycle_id=" + idCycle + " AND type=" + type);
+        } catch (DAOException ex) {
+            logger.error("Error getting Sum of Expense - Income.", ex);
+            return null;
+        }
+    }
+    
+     public BigDecimal getValueSalesByCycle(long idCycle) {
+        try {
+            JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
+            return utilDAO.getSumValue("invoices", "value", "ciclo=" + idCycle + " AND status=0");
+        } catch (DAOException ex) {
+            logger.error("Error getting Sum of Invoices.", ex);
+            return null;
+        }
+    }
+
+    public Map<Long, CashMov.Category> getExpensesCategoriesMap(String where, String orderBy) {
+        try {
+            JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
+            return utilDAO.getExpensesCategoriesMap(where, orderBy);
+        } catch (DAOException ex) {
+            logger.error("Error getting Expenses Categories map.", ex);
             return null;
         }
     }
@@ -1440,7 +1470,16 @@ public class Control {
         }
     }
 
-    public void addExpenseIncome(HashMap data) {
+//    public void addExpenseIncome(HashMap data) {
+//        try {
+//            JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
+//            utilDAO.addExpenseIncome(data);
+//        } catch (DAOException ex) {
+//            logger.error("Error adding expense-income.", ex);
+//            GUIManager.showErrorMessage(null, "Error agregando expense-income", "Error");
+//        }
+//    }
+    public void addExpenseIncome(CashMov data) {
         try {
             JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
             utilDAO.addExpenseIncome(data);

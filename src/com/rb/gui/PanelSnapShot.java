@@ -115,7 +115,6 @@ public class PanelSnapShot extends PanelCapturaMod implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 long id = cycle.getId();
-                System.out.println("id:" + id);
                 tfCycle.setText(String.valueOf(--id));
                 acSearchCycle.actionPerformed(new ActionEvent(this, 1, AC_SEARCH_CYCLE));
             }

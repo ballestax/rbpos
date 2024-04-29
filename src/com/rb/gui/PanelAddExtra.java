@@ -2,11 +2,14 @@ package com.rb.gui;
 
 import com.rb.Aplication;
 import com.rb.domain.CashMov;
+import com.rb.domain.Cycle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
@@ -22,6 +25,8 @@ public class PanelAddExtra extends PanelCapturaMod implements ActionListener {
     private final Aplication app;
     private String lb1, lb2, lb3, lb4, lb5;
     private int width = 100;
+    public static final String STR_INCOME = "INGRESO";
+    public static final String STR_EXPENSE = "EGRESO";
 
     /**
      * Creates new form PanelAddExtra
@@ -52,7 +57,7 @@ public class PanelAddExtra extends PanelCapturaMod implements ActionListener {
         regValor.setDocument(TextFormatter.getDoubleLimiter());
         regNote.setLabelText(lb4);
 
-        String[] tipo = {"Salida", "Entrada"};
+        String[] tipo = {STR_EXPENSE, STR_INCOME};
         regTipo.setText(tipo);
 
         ImageIcon icon = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "add1.png", 20, 20));
@@ -63,42 +68,48 @@ public class PanelAddExtra extends PanelCapturaMod implements ActionListener {
         btSave.setText("Agregar");
         btSave.setActionCommand(AC_ADD_EXTRA);
         btSave.addActionListener(this);
-        
+
         updateCategoriesList();
 
     }
     public static final String AC_ADD_CATEGORY_EXTRA = "AC_ADD_CATEGORY_EXTRA";
 
-    private void checkExtra() {
+    private CashMov checkExtra() {
         boolean valido = true;
-        CashMov mov =null;
-        if(regDesc.getText().trim().isEmpty()){
+        CashMov mov = null;
+        if (regDesc.getText().trim().isEmpty()) {
             regDesc.setBorder(bordeError);
             valido = false;
         }
-        if(regValor.getText().trim().isEmpty()){
+        if (regValor.getText().trim().isEmpty()) {
             regValor.setBorder(bordeError);
             valido = false;
         }
         if (regCategory.getSelected() < 1) {
             regCategory.setBorder(bordeError);
             valido = false;
-        }if (regTipo.getSelected() < 0) {
+        }
+        if (regTipo.getSelected() < 0) {
             regTipo.setBorder(bordeError);
             valido = false;
         }
-        if(valido){
+        if (valido) {
             mov = new CashMov();
-            long id = ((CashMov.Category)regCategory.getSelectedItem()).getId();
+            long id = ((CashMov.Category) regCategory.getSelectedItem()).getId();
             mov.setIdCategory(id);
-            
+            mov.setDate(new Date());
+            mov.setValue(BigDecimal.valueOf(Double.parseDouble(regValor.getText())));
+            mov.setDescription(regDesc.getText());
+            Cycle cycle = app.getControl().getLastCycle();
+            mov.setIdCycle(cycle.getId());
+            mov.setType(STR_EXPENSE.equals(regTipo.getSelectedItem()) ? CashMov.EXPENSE : CashMov.INCOME);
+            return mov;
         }
-        
-
+        return null;
     }
 
     public ArrayList<CashMov.Category> getCategoriesList() {
-        ArrayList<CashMov.Category> categoriesList = app.getControl().getExpensesCategoriesList("", "category");
+        ArrayList<CashMov.Category> categoriesList = new ArrayList(app.getControl().getExpensesCategoriesMap("", "category").values());
         return categoriesList;
     }
 
@@ -108,7 +119,7 @@ public class PanelAddExtra extends PanelCapturaMod implements ActionListener {
         regCategory.setText(list.toArray());
     }
 
-    private static final String AC_ADD_EXTRA = "AC_ADD_EXTRA";
+    public static final String AC_ADD_EXTRA = "AC_ADD_EXTRA";
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -211,9 +222,14 @@ public class PanelAddExtra extends PanelCapturaMod implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (AC_ADD_EXTRA.equals(e.getActionCommand())) {
-            checkExtra();
+            CashMov mov = checkExtra();
+            if (mov != null) {
+                app.getControl().addExpenseIncome(mov);
+                getRootPane().getParent().setVisible(false);
+                pcs.firePropertyChange(AC_ADD_EXTRA, null, null);
+            }
         } else if (AC_ADD_CATEGORY_EXTRA.equals(e.getActionCommand())) {
-            List<CashMov.Category> list = app.getControl().getExpensesCategoriesList("", "category");
+            List<CashMov.Category> list = new ArrayList(app.getControl().getExpensesCategoriesMap("", "category").values());
             app.getGuiManager().showPanelNewCategory("Categoria", this, list);
         }
     }
