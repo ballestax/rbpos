@@ -23,32 +23,49 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
                               <Component id="btPendiente" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
+                              <EmptySpace pref="340" max="32767" attributes="0"/>
                               <Component id="btPagar" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="regEfect" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="lbInvoice" pref="158" max="32767" attributes="0"/>
-                              <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                              <Component id="lbTitle" pref="158" max="32767" attributes="0"/>
+                              <Component id="lbInvoice" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="lbTitle" min="-2" pref="239" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="regTransfer" alignment="0" max="32767" attributes="0"/>
-                          <Component id="regBank" alignment="0" max="32767" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="jCheckBox1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="regTransfer" max="32767" attributes="0"/>
+                                  <Component id="regBank" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="lnDevolution" max="32767" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="lbValDevolution" min="-2" pref="244" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="regEfect" alignment="0" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="registro2" min="-2" pref="2" max="-2" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="lbTotal" alignment="1" max="32767" attributes="0"/>
-                          <Component id="lbVar" alignment="1" max="32767" attributes="0"/>
-                          <Component id="lbSubt" alignment="1" pref="150" max="32767" attributes="0"/>
-                      </Group>
-                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="lbValVar" pref="150" max="32767" attributes="0"/>
-                          <Component id="lbValSubt" pref="150" max="32767" attributes="0"/>
-                          <Component id="lbValTot" alignment="0" pref="150" max="32767" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="panelValues" alignment="0" max="32767" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="lbTotal" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="lbVar" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="lbSubt" alignment="1" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="lbValVar" max="32767" attributes="0"/>
+                                  <Component id="lbValSubt" max="32767" attributes="0"/>
+                                  <Component id="lbValTot" alignment="0" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
                       </Group>
                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                   </Group>
@@ -59,43 +76,65 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="2" attributes="0">
+                  <Component id="lbInvoice" linkSize="1" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="lbTitle" linkSize="1" alignment="2" min="-2" pref="26" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="lbValSubt" min="-2" pref="28" max="-2" attributes="0"/>
                   <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                      <Component id="lbSubt" min="-2" pref="22" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="lbValVar" min="-2" pref="28" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="lbVar" min="-2" pref="21" max="-2" attributes="0"/>
+                      <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="lbValTot" min="-2" pref="28" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="lbTotal" min="-2" pref="21" max="-2" attributes="0"/>
+                      <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="panelValues" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+              <Component id="regEfect" min="-2" pref="31" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="regTransfer" pref="31" max="32767" attributes="0"/>
+                  <Component id="jCheckBox1" max="32767" attributes="0"/>
+              </Group>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                      <Component id="registro2" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="2" attributes="0">
-                          <Component id="lbInvoice" linkSize="1" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="lbTitle" linkSize="1" alignment="2" min="-2" pref="26" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="lbSubt" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="lbValSubt" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="lbValVar" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                          <Component id="lbVar" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="lbValTot" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                          <Component id="lbTotal" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="regEfect" min="-2" pref="31" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="regTransfer" min="-2" pref="31" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="regBank" min="-2" pref="31" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="lbValDevolution" alignment="1" min="-2" pref="28" max="-2" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="lnDevolution" min="-2" pref="21" max="-2" attributes="0"/>
+                              <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace pref="54" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btPagar" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btPendiente" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                  </Group>
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="243" pref="243" max="-2" attributes="0"/>
-                      <Component id="registro2" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -116,7 +155,7 @@
     </Component>
     <Component class="com.rb.gui.util.Registro" name="regEfect">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.rb.gui.util.Registro(0, &quot;&quot;,&quot;0&quot;,140,140)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.rb.gui.util.Registro(0, &quot;&quot;,&quot;0&quot;,162,162)"/>
       </AuxValues>
     </Component>
     <Component class="com.rb.gui.util.Registro" name="registro2">
@@ -134,7 +173,7 @@
     <Component class="javax.swing.JLabel" name="lbInvoice">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="9e" green="9c" red="96" type="rgb"/>
+          <Color blue="cc" green="cc" red="cc" type="rgb"/>
         </Property>
         <Property name="text" type="java.lang.String" value="jLabel1"/>
         <Property name="opaque" type="boolean" value="true"/>
@@ -143,27 +182,41 @@
     <Component class="javax.swing.JLabel" name="lbValSubt">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="c3" green="c3" red="c3" type="rgb"/>
+          <Color blue="ff" green="cc" red="ff" type="rgb"/>
         </Property>
         <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" value="jLabel1"/>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.MatteColorBorderInfo">
+            <MatteColorBorder bottom="1" left="0" right="1" top="0">
+              <Color PropertyName="color" blue="66" green="66" red="ff" type="rgb"/>
+            </MatteColorBorder>
+          </Border>
+        </Property>
         <Property name="opaque" type="boolean" value="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="lbValVar">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="c3" green="c3" red="c3" type="rgb"/>
+          <Color blue="ff" green="cc" red="ff" type="rgb"/>
         </Property>
         <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" value="jLabel1"/>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.MatteColorBorderInfo">
+            <MatteColorBorder bottom="1" left="0" right="1" top="0">
+              <Color PropertyName="color" blue="66" green="66" red="ff" type="rgb"/>
+            </MatteColorBorder>
+          </Border>
+        </Property>
         <Property name="opaque" type="boolean" value="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="lbSubt">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="9e" green="9c" red="96" type="rgb"/>
+          <Color blue="cc" green="cc" red="cc" type="rgb"/>
         </Property>
         <Property name="text" type="java.lang.String" value="jLabel1"/>
         <Property name="opaque" type="boolean" value="true"/>
@@ -172,7 +225,7 @@
     <Component class="javax.swing.JLabel" name="lbVar">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="9e" green="9c" red="96" type="rgb"/>
+          <Color blue="cc" green="cc" red="cc" type="rgb"/>
         </Property>
         <Property name="text" type="java.lang.String" value="jLabel1"/>
         <Property name="opaque" type="boolean" value="true"/>
@@ -181,17 +234,24 @@
     <Component class="javax.swing.JLabel" name="lbValTot">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="c3" green="c3" red="c3" type="rgb"/>
+          <Color blue="ff" green="cf" red="a5" type="rgb"/>
         </Property>
         <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" value="jLabel1"/>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.MatteColorBorderInfo">
+            <MatteColorBorder bottom="1" left="0" right="1" top="0">
+              <Color PropertyName="color" blue="99" green="99" red="0" type="rgb"/>
+            </MatteColorBorder>
+          </Border>
+        </Property>
         <Property name="opaque" type="boolean" value="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="lbTotal">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="9e" green="9c" red="96" type="rgb"/>
+          <Color blue="cc" green="cc" red="cc" type="rgb"/>
         </Property>
         <Property name="text" type="java.lang.String" value="jLabel1"/>
         <Property name="opaque" type="boolean" value="true"/>
@@ -207,5 +267,48 @@
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.rb.gui.util.Registro(0,&quot;&quot;, new String[1] ,140)"/>
       </AuxValues>
     </Component>
+    <Component class="javax.swing.JCheckBox" name="jCheckBox1">
+    </Component>
+    <Component class="javax.swing.JLabel" name="lnDevolution">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="cc" green="cc" red="cc" type="rgb"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="jLabel1"/>
+        <Property name="opaque" type="boolean" value="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lbValDevolution">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="99" green="ff" red="99" type="rgb"/>
+        </Property>
+        <Property name="horizontalAlignment" type="int" value="4"/>
+        <Property name="text" type="java.lang.String" value="jLabel1"/>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.MatteColorBorderInfo">
+            <MatteColorBorder bottom="1" left="0" right="1" top="0">
+              <Color PropertyName="color" blue="33" green="99" red="0" type="rgb"/>
+            </MatteColorBorder>
+          </Border>
+        </Property>
+        <Property name="opaque" type="boolean" value="true"/>
+      </Properties>
+    </Component>
+    <Container class="javax.swing.JPanel" name="panelValues">
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <EmptySpace min="0" pref="39" max="32767" attributes="0"/>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+    </Container>
   </SubComponents>
 </Form>

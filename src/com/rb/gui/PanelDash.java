@@ -43,9 +43,9 @@ public class PanelDash extends JPanel {
 
     private Aplication app;
     private final Image imagen;
-    private final BufferedImage imgMas;
-    private final int wl;
-    private final int hl;
+    private final BufferedImage imgMas = null;
+    private int wl=0;
+    private int hl=0;
 
     public PanelDash(Aplication app) {
         this.app = app;
@@ -56,13 +56,15 @@ public class PanelDash extends JPanel {
 //        BufferedImage textoImagen = ImagenesFx.textoImagen("DERO\nCAMPAÑA", WC, WC, Color.LIGHT_GRAY, Color.white, new Font("Tahoma", 1, 18));
 //        imagen = centrarTexto;//ImagenesFx.rotarImagen(org.bx.Imagenes.toBuffereredImage(centrarTexto), -45);
         imagen = Imagenes.imagenToGray(app.getImageBC(), "");
-        Image tmp = app.getImgManager().getImagen(app.getFolderIcons() + "logo.png");
-        imgMas = Imagenes.toBuffereredImage(tmp);
+//        try {
+//            Image tmp = app.getImgManager().getImagen(app.getFolderIcons() + "logo-2.png");
+//            imgMas = Imagenes.toBuffereredImage(tmp);
+//            wl = imgMas.getWidth(this);
+//            hl = imgMas.getHeight(this);
+//        } catch (Exception e) {
+//        }
+
 //        tmp = ImagenFx.escarlarImagen(imgMas, 80, 30, true);
-
-        wl = imgMas.getWidth(this);
-        hl = imgMas.getHeight(this);
-
         loadModules();
 
     }
