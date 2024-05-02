@@ -76,8 +76,15 @@ public class TablaCellRenderer extends DefaultTableCellRenderer {
                 }
             }
         }
+        boolean red =false;
+        try {
+            red = "PENDIENTE".equals(table.getValueAt(row, 6));
+        } catch (Exception e) {
+        }
+        
+
         if (isSelected) {
-            setForeground(Color.black);
+            setForeground(red ? Color.red : Color.black);
             setBackground(table.getSelectionBackground());
             if (hasFocus) {
                 setBorder(BorderFactory.createLineBorder(Color.darkGray));
@@ -86,7 +93,7 @@ public class TablaCellRenderer extends DefaultTableCellRenderer {
             }
         } else {
             setBackground(table.getBackground());
-            setForeground(Color.black);
+            setForeground(red?Color.red:Color.black);
             setBorder(UIManager.getBorder("Table.cellBorder"));
         }
         return this;

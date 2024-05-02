@@ -69,6 +69,8 @@
                     |CREATE_CATEGORIES_TABLE|ADD_CATEGORY|GET_CATEGORY_PROD|UPDATE_CATEGORY
                     |ADD_PRESENTATION|UPDATE_PRESENTATION|UPDATE_PRESENTATION_TO_DEFAULT|UPDATE_PRESENTATION_TO_DEFAULT_BY_ID
                     |GET_SUM_REGISTRO
+                    |CREATE_PAYS_TABLE|ADD_PAY|GET_PAYS|UPDATE_PAY
+                    |INVOICE_IS_PAYED
                     ) #REQUIRED
                     
 	>
@@ -1913,6 +1915,67 @@
             </SQLFragment>
         </SQLStatement> 
         
+        <SQLStatement method="CREATE_PAYS_TABLE">            
+            <SQLFragment>
+                CREATE TABLE pays(
+                id INTEGER AUTO_INCREMENT,
+                id_invoice INTEGER NOT NULL,
+                cycle INTEGER NOT NULL,
+                pay_type INT,
+                efecty DECIMAL (12,2),
+                transfer DECIMAL (12,2),
+                bank_transfer VARCHAR(100),
+                card DECIMAL (12,2),
+                card_type INT,
+                cambio DECIMAL (12,2),
+                credit DECIMAL (12,2),
+                createdTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                lastUpdateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,          
+                user VARCHAR(50),      
+                PRIMARY KEY (id));
+            </SQLFragment>
+        </SQLStatement>
+        
+        <SQLStatement method="ADD_PAY">
+            <SQLFragment>
+                INSERT INTO pays (id_invoice,cycle,pay_type,efecty,transfer,bank_transfer,card,card_type,cambio,credit,user) 
+                VALUES (?,?,?,?,?,?,?,?,?,?,?);
+            </SQLFragment>            
+        </SQLStatement>
+        
+        
+         <SQLStatement method="UPDATE_PAY">
+            <SQLFragment>
+                UPDATE pays
+                id_invoice=?,
+                cycle=?,
+                pay_type=?,
+                efecty=?,
+                transfer=?,
+                bank_transfer=?,
+                card=?,
+                card_type=?,
+                cambio=?,
+                credit=?,
+                user=? 
+                WHERE id = ?;
+            </SQLFragment>            
+        </SQLStatement>
+        
+        <SQLStatement method="GET_PAYS">
+            <SQLFragment>
+                SELECT *
+                FROM pays
+            </SQLFragment>            
+            <SQLFragment excludeIfNamedParamEmpty="TRUE">
+                WHERE {where} 
+            </SQLFragment>
+            <SQLFragment excludeIfNamedParamEmpty="TRUE">
+                ORDER BY {orderby}
+            </SQLFragment>
+        </SQLStatement>
+        
+        
         <SQLStatement method="CREATE_INVENTORY_SNAPSHOT_TABLE">            
             <SQLFragment>
                 CREATE TABLE inventory_snapshot(
@@ -2131,6 +2194,16 @@
                 SELECT GROUP_CONCAT(ps.station_id) AS stations
                 FROM product_station ps
                 WHERE ps.product_id=?
+            </SQLFragment>
+        </SQLStatement>        
+         
+        <SQLStatement method="INVOICE_IS_PAYED">
+            <SQLFragment>
+                SELECT B.id, A.id, B.cambio,B.pay_type 
+                FROM invoices A
+                INNER JOIN pays B
+                ON A.id=B.id_invoice
+                WHERE A.code=? AND (B.efecty+B.transfer+B.card)>=A.value 
             </SQLFragment>
         </SQLStatement>
         

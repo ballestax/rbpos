@@ -17,6 +17,7 @@ import com.rb.domain.InventoryEvent;
 import com.rb.domain.Invoice;
 import com.rb.domain.Item;
 import com.rb.domain.Location;
+import com.rb.domain.Pay;
 import com.rb.domain.Permission;
 import com.rb.domain.Presentation;
 import com.rb.domain.Product;
@@ -35,6 +36,7 @@ import com.rb.persistence.JDBC.JDBCIngredientDAO;
 import com.rb.persistence.JDBC.JDBCInvoiceDAO;
 import com.rb.persistence.JDBC.JDBCItemDAO;
 import com.rb.persistence.JDBC.JDBCLocationDAO;
+import com.rb.persistence.JDBC.JDBCPayDAO;
 import com.rb.persistence.JDBC.JDBCProductDAO;
 import com.rb.persistence.JDBC.JDBCUserDAO;
 import com.rb.persistence.JDBC.JDBCUtilDAO;
@@ -109,6 +111,9 @@ public class Control {
 
             JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
             utilDAO.init();
+
+            JDBCPayDAO payDAO = (JDBCPayDAO) DAOFactory.getInstance().getPayDAO();
+            payDAO.init();
 
         } catch (Exception e) {
             logger.error("Error initializing database", e);
@@ -1222,6 +1227,36 @@ public class Control {
         }
     }
 
+    public void addPay(Pay pay) {
+        try {
+            JDBCPayDAO payDAO = (JDBCPayDAO) DAOFactory.getInstance().getPayDAO();
+            payDAO.addPay(pay);
+        } catch (DAOException ex) {
+            logger.error("Error adding pay", ex);
+            GUIManager.showErrorMessage(null, "Error adding pay", "Error");
+        }
+    }
+
+    public Pay getPay(int id) {
+        try {
+            JDBCPayDAO payDAO = (JDBCPayDAO) DAOFactory.getInstance().getPayDAO();
+            return payDAO.getPay(id);
+        } catch (DAOException ex) {
+            logger.error("Error getting pay", ex);
+            GUIManager.showErrorMessage(null, "Error getting pay", "Error");
+            return null;
+        }
+    }
+
+    public Map facturaIsPaga(String code) {
+        try {
+            JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
+            return utilDAO.invoiceIsPayed(code);
+        } catch (DAOException ex) {
+            return null;
+        }
+    }
+
     public void addInventoryRegister(Item item, int event, double quantity) {
         try {
             JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
@@ -1429,13 +1464,23 @@ public class Control {
             return null;
         }
     }
-    
-     public BigDecimal getValueSalesByCycle(long idCycle) {
+
+    public BigDecimal getValueSalesByCycle(long idCycle) {
         try {
             JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
             return utilDAO.getSumValue("invoices", "value", "ciclo=" + idCycle + " AND status=0");
         } catch (DAOException ex) {
             logger.error("Error getting Sum of Invoices.", ex);
+            return null;
+        }
+    }
+
+    public BigDecimal getValueTranfersByCycle(long idCycle) {
+        try {
+            JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
+            return utilDAO.getSumValue("pays", "transfer+card", "cycle=" + idCycle);
+        } catch (DAOException ex) {
+            logger.error("Error getting Sum of Pays", ex);
             return null;
         }
     }

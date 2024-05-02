@@ -185,6 +185,8 @@ public class JDBCUtilDAO implements UtilDAO {
     public static final String UPDATE_PRESENTATION_TO_DEFAULT_KEY = "UPDATE_PRESENTATION_TO_DEFAULT";
     public static final String UPDATE_PRESENTATION_TO_DEFAULT_BY_ID_KEY = "UPDATE_PRESENTATION_TO_DEFAULT_BY_ID";
 
+    public static final String INVOICE_IS_PAYED_KEY = "INVOICE_IS_PAYED";
+
     private static final Logger logger = Logger.getLogger(JDBCUtilDAO.class.getCanonicalName());
 
     public static final String NAMED_PARAM_KEY = "{key}";
@@ -838,6 +840,35 @@ public class JDBCUtilDAO implements UtilDAO {
         return result;
     }
 
+    public Map invoiceIsPayed(String code) throws DAOException {
+        Map<String, Object> map = new HashMap<>();
+        Connection conn = null;
+        PreparedStatement retrieve = null;
+        ResultSet rs = null;
+        Object[] parameters = {code};
+        try {
+            conn = dataSource.getConnection();
+            retrieve = sqlStatements.buildSQLStatement(conn, INVOICE_IS_PAYED_KEY, parameters);
+            
+            rs = retrieve.executeQuery();
+            while (rs.next()) {
+                map.put("id", rs.getInt(1));
+                map.put("id_invoice", rs.getInt(2));
+                map.put("cambio", rs.getDouble(3));
+                map.put("type", rs.getInt(4));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Could not properly get has permissions: " + e);
+        } catch (IOException e) {
+            throw new DAOException("Could not properly get has permissions: " + e);
+        } finally {
+            DBManager.closeResultSet(rs);
+            DBManager.closeStatement(retrieve);
+            DBManager.closeConnection(conn);
+        }
+        return map;
+    }
+
     public String getUserRole(int userID) throws DAOException {
         String result = null;
         Connection conn = null;
@@ -1047,6 +1078,7 @@ public class JDBCUtilDAO implements UtilDAO {
             namedParams.put(JDBCDAOFactory.NAMED_PARAM_QUERY, field);
             namedParams.put(NAMED_PARAM_WHERE, sqlExtractorWhere.extractWhere());
             retrieve = sqlStatements.getSQLString(GET_SUM_REGISTRO_KEY, namedParams);
+            System.out.println("retrieve = " + retrieve);
 
         } catch (IOException e) {
             throw new DAOException("Could not properly retrieve registro date", e);

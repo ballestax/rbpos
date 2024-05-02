@@ -21,7 +21,6 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.Document;
 
-
 public class Registro extends JComponent implements Reseteable, CaretListener {
 
     private Box box;
@@ -646,7 +645,16 @@ public class Registro extends JComponent implements Reseteable, CaretListener {
             ((JTextField) campo).setText("");
         } else if (campo instanceof MyDatePickerImp) {
             ((MyDatePickerImp) campo).setText("");
+        } else if (campo instanceof JComboBox) {
+            ((JComboBox) campo).setSelectedIndex(-1);
         }
+    }
+
+    public void hardReset() {
+        reset();
+        setBorderToNormal();
+        setEditable(true);
+        setEnabled(true);
     }
 
     public Component getComponent() {
@@ -854,6 +862,7 @@ public class Registro extends JComponent implements Reseteable, CaretListener {
         if (status != NORMAL) {
             status = NORMAL;
             setBorder(bordeNormal);
+            setTint(Color.darkGray);
         }
     }
 
@@ -902,7 +911,7 @@ public class Registro extends JComponent implements Reseteable, CaretListener {
             ((JComboBox) campo).setForeground(fg);
         } else if (campo instanceof MyDatePickerImp) {
             ((MyDatePickerImp) campo).setFieldForeground(fg);
-        }        
+        }
     }
 
     public void setTextAligment(int align) {
@@ -973,12 +982,26 @@ public class Registro extends JComponent implements Reseteable, CaretListener {
 
     public void addActionListener(ActionListener listener) {
         if (campo != null) {
+
             if (campo instanceof JComboBox) {
                 ((JComboBox) campo).addActionListener(listener);
             } else if (campo instanceof JTextField) {
                 ((JTextField) campo).addActionListener(listener);
             } else if (campo instanceof JCheckBox) {
                 ((JCheckBox) campo).addActionListener(listener);
+            }
+        }
+    }
+
+    public void removeActionListener(ActionListener listener) {
+        if (campo != null) {
+
+            if (campo instanceof JComboBox) {
+                ((JComboBox) campo).removeActionListener(listener);
+            } else if (campo instanceof JTextField) {
+                ((JTextField) campo).removeActionListener(listener);
+            } else if (campo instanceof JCheckBox) {
+                ((JCheckBox) campo).removeActionListener(listener);
             }
         }
     }
@@ -1019,13 +1042,15 @@ public class Registro extends JComponent implements Reseteable, CaretListener {
     public void setLabelBackground(Color color) {
         label.setOpaque(true);
         label.setBackground(color);
+        box.setOpaque(true);
         box.setBackground(color);
     }
 
     public void setDocument(Document docLim) {
         this.docLim = docLim;
-        if(campo instanceof JTextField)
-        ((JTextField) campo).setDocument(this.docLim);
+        if (campo instanceof JTextField) {
+            ((JTextField) campo).setDocument(this.docLim);
+        }
     }
 
     public void setPadding(int top, int left, int botton, int right) {

@@ -19,6 +19,7 @@ import com.rb.persistence.dao.IngredientDAO;
 import com.rb.persistence.dao.InvoiceDAO;
 import com.rb.persistence.dao.ItemDAO;
 import com.rb.persistence.dao.LocationDAO;
+import com.rb.persistence.dao.PayDAO;
 import com.rb.persistence.dao.ProductDAO;
 import com.rb.persistence.dao.UserDAO;
 import com.rb.persistence.dao.UtilDAO;
@@ -318,6 +319,15 @@ public class JDBCDAOFactory extends DAOFactory {
     @Override
     public LocationDAO getLocationDAO() throws DAOException {
         return new JDBCLocationDAO(dataSource, sqlStatements);
-    }       
+    } 
+
+    @Override
+    public PayDAO getPayDAO() throws DAOException {
+        return new JDBCPayDAO(dataSource, sqlStatements);
+    }
+    
+    
+    
+    
 
 }

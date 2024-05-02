@@ -40,7 +40,7 @@ public class JDBCPayDAO implements PayDAO {
     protected static final String CREATE_PAYS_TABLE_KEY = "CREATE_PAYS_TABLE";
     protected static final String INSERT_PAY_KEY = "ADD_PAY";
     protected static final String UPDATE_PAY_KEY = "UPDATE_PAY";
-    protected static final String GET_PAY_KEY = "GET_PAY";
+    protected static final String GET_PAY_KEY = "GET_PAYS";
     protected static final String DELETE_PAY_KEY = "DELETE_PAY";
 
     public JDBCPayDAO(BasicDataSource dataSource, SQLLoader sqlStatements) throws DAOException {
@@ -77,7 +77,7 @@ public class JDBCPayDAO implements PayDAO {
     public Pay getPayBy(String query) throws DAOException {
         String retrieveImporter;
         try {
-            SQLExtractor sqlExtractorWhere = new SQLExtractor(query, SQLExtractor.Type.WHERE);;
+            SQLExtractor sqlExtractorWhere = new SQLExtractor(query, SQLExtractor.Type.WHERE);
             Map<String, String> namedParams = new HashMap<String, String>();
             namedParams.put(NAMED_PARAM_WHERE, sqlExtractorWhere.extractWhere());
             retrieveImporter = sqlStatements.getSQLString(GET_PAY_KEY, namedParams);
@@ -97,14 +97,22 @@ public class JDBCPayDAO implements PayDAO {
             rs = retrieve.executeQuery();
             while (rs.next()) {
                 pay = new Pay();
-                pay.setId(rs.getInt(1));
-                pay.setCodigo(rs.getString(2));
-                pay.setFecha(rs.getDate(3));
-                pay.setIdInvoice(rs.getInt(4));
-                
-                pay.setNota(rs.getString(8));
-                pay.setUpdateTime(rs.getDate(9));
-                pay.setUser(rs.getString(10));
+                pay.setId(rs.getInt("id"));
+                pay.setCodigo("P" + rs.getInt("id"));
+                pay.setCycle(rs.getLong("cycle"));
+                pay.setFecha(rs.getDate("createdTime"));
+                pay.setIdInvoice(rs.getInt("id_invoice"));
+                pay.setEfecty(rs.getBigDecimal("efecty"));
+                pay.setTransfer(rs.getBigDecimal("transfer"));
+                pay.setCard(rs.getBigDecimal("card"));
+                pay.setCambio(rs.getBigDecimal("cambio"));
+                pay.setCredit(rs.getBigDecimal("credit"));
+                pay.setEfecty(rs.getBigDecimal("efecty"));
+                pay.setCardType(rs.getInt("card_type"));
+                pay.setType(rs.getInt("pay_type"));
+                pay.setBankTransfer(rs.getString("bank_transfer"));
+                pay.setUpdateTime(rs.getDate("lastUpdateTime"));
+                pay.setUser(rs.getString("user"));
             }
         } catch (SQLException e) {
             throw new DAOException("Could not properly retrieve the pay: " + e);
@@ -154,13 +162,22 @@ public class JDBCPayDAO implements PayDAO {
 
             while (rs.next()) {
                 pay = new Pay();
-                pay.setId(rs.getInt(1));
-                pay.setCodigo(rs.getString(2));
-                pay.setFecha(rs.getTimestamp(3));
-                pay.setIdInvoice(rs.getInt(4));
-                
-                pay.setUpdateTime(rs.getTimestamp(9));
-                pay.setUser(rs.getString(10));
+                pay.setId(rs.getInt("id"));
+                pay.setCodigo("P" + rs.getInt("id"));
+                pay.setCycle(rs.getLong("cycle"));
+                pay.setFecha(rs.getDate("createdTime"));
+                pay.setIdInvoice(rs.getInt("id_invoice"));
+                pay.setEfecty(rs.getBigDecimal("efecty"));
+                pay.setTransfer(rs.getBigDecimal("transfer"));
+                pay.setCard(rs.getBigDecimal("card"));
+                pay.setCambio(rs.getBigDecimal("cambio"));
+                pay.setCredit(rs.getBigDecimal("credit"));
+                pay.setEfecty(rs.getBigDecimal("efecty"));
+                pay.setCardType(rs.getInt("card_type"));
+                pay.setType(rs.getInt("pay_type"));
+                pay.setBankTransfer(rs.getString("bank_transfer"));
+                pay.setUpdateTime(rs.getDate("lastUpdateTime"));
+                pay.setUser(rs.getString("user"));
                 payes.add(pay);
             }
         } catch (SQLException e) {
@@ -184,24 +201,20 @@ public class JDBCPayDAO implements PayDAO {
             conn = dataSource.getConnection();
             conn.setAutoCommit(false);
             Object[] parameters = {
-                pay.getCodigo(),
-                pay.getFecha(),
                 pay.getIdInvoice(),
-                
-                pay.getNota(),
+                pay.getCycle(),
+                pay.getType().getCode(),
+                pay.getEfecty(),
+                pay.getTransfer(),
+                pay.getBankTransfer(),
+                pay.getCard(),
+                pay.getCardType(),
+                pay.getCambio(),
+                pay.getCredit(),
                 pay.getUser()
             };
             ps = sqlStatements.buildSQLStatement(conn, INSERT_PAY_KEY, parameters);
             ps.executeUpdate();
-
-            double res = pay.getValue();
-            Object[] parameterx = {
-                res,
-                pay.getIdInvoice()
-            };
-            ps = sqlStatements.buildSQLStatement(conn, JDBCUtilDAO.ADD_INVENTORY_QUANTITY_KEY, parameterx);
-            ps.executeUpdate();
-
             conn.commit();
         } catch (SQLException e) {
             DBManager.rollbackConn(conn);
@@ -245,10 +258,16 @@ public class JDBCPayDAO implements PayDAO {
             conn = dataSource.getConnection();
             conn.setAutoCommit(false);
             Object[] parameters = {
-                pay.getCodigo(),
-                pay.getFecha(),
-                pay.getIdInvoice(),               
-                pay.getNota(),
+                pay.getIdInvoice(),
+                pay.getCycle(),
+                pay.getType().getCode(),
+                pay.getEfecty(),
+                pay.getTransfer(),
+                pay.getBankTransfer(),
+                pay.getCard(),
+                pay.getCardType(),
+                pay.getCambio(),
+                pay.getCredit(),
                 pay.getUser(),
                 pay.getId()
             };

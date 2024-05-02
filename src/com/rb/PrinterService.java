@@ -20,6 +20,7 @@ import com.github.anastaciocintra.escpos.image.Bitonal;
 import com.github.anastaciocintra.escpos.image.BitonalThreshold;
 import com.github.anastaciocintra.escpos.image.EscPosImage;
 import com.github.anastaciocintra.output.PrinterOutputStream;
+import com.rb.domain.Pay;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -55,6 +56,10 @@ public class PrinterService {
     }
 
     public void imprimirFactura(Invoice invoice, String printerName) {
+        imprimirFactura(invoice, null, printerName);
+    }
+
+    public void imprimirFactura(Invoice invoice, Pay pay, String printerName) {
 
         Waiter waiter = null;
         Table table = null;
@@ -97,9 +102,9 @@ public class PrinterService {
 
             config = app.getControl().getConfigLocal(com.rb.Configuration.BS_CUSTOM_BOTTON);
             String BS_CUSTOM2 = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_CUSTOM_BOTTON);
-            
+
             config = app.getControl().getConfigLocal(com.rb.Configuration.BS_CUSTOM_SERVICE);
-            String BS_CUSTOM3 = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_CUSTOM_SERVICE);
+            String BS_CUSTOM3 = config != null ? config.getValor() : ""; //app.getConfiguration().getProperty(Configuration.BS_CUSTOM_SERVICE);
 
             config = app.getControl().getConfigLocal(com.rb.Configuration.BS_CUSTOM_QUALITY_MSG);
             String BS_QUALITY_MESSAGE = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_CUSTOM_QUALITY_MSG);
@@ -206,9 +211,15 @@ public class PrinterService {
             escpos.writeLF(font2, "================================================");
             escpos.feed(1);
 
+            if (pay != null) {
+                escpos.writeLF(font3, "Metodo de pago: " + pay.getMethods());
+                escpos.writeLF(font3, "Total recibido: " + app.DCFORM_P.format(pay.getTotalRec()));
+                escpos.writeLF(font3, "Cambio: " + app.DCFORM_P.format(pay.getCambio()));
+            }
+
             if (invoice.getTipoEntrega() == PanelPedido.TIPO_LOCAL) {
                 if (invoice.getPorcService() > 0) {
-                    escpos.writeLF(font2Bold, "***ADVERTENCIA DE SERVICIO VOLUNTARIO***");                    
+                    escpos.writeLF(font2Bold, "***ADVERTENCIA DE SERVICIO VOLUNTARIO***");
                     escpos.writeLF(font2, BS_CUSTOM3);
 //                    escpos.writeLF(font2, "Segun lo establecido en la Ley 1935 del 3/ago/2018"
 //                            + "(Art. 1,2, parágrafo 1, art. 3, par. 1, art 4)");
@@ -246,7 +257,8 @@ public class PrinterService {
             java.util.logging.Logger.getLogger(PanelPedido.class.getName()).log(Level.ALL.SEVERE, null, ex);
         }
     }
- public void imprimirPedido(Invoice invoice, String printerName) {
+
+    public void imprimirPedido(Invoice invoice, String printerName) {
 
         Waiter waiter = null;
         Table table = null;
