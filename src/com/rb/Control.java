@@ -870,7 +870,7 @@ public class Control {
     public Cycle getLastCycle() {
         try {
             JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
-            return utilDAO.getCyclesList("", "init DESC").get(0);
+            return utilDAO.getLastCycle("","");
         } catch (DAOException ex) {
             String msg = "Error getting cycle";
             logger.error(msg, ex);
@@ -1224,6 +1224,16 @@ public class Control {
             logger.error("Error getting salida by conciliacion list.", ex);
             GUIManager.showErrorMessage(null, "Error consultando lista de conciliaciones", "Error");
             return null;
+        }
+    }
+
+    public void addWaiter(Waiter waiter) {
+        try {
+            JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
+            utilDAO.addWaiter(waiter);
+        } catch (DAOException ex) {
+            logger.error("Error adding pay", ex);
+            GUIManager.showErrorMessage(null, "Error adding pay", "Error");
         }
     }
 

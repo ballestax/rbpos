@@ -86,6 +86,7 @@ public class JDBCUtilDAO implements UtilDAO {
     public static final String ADD_CYCLE_KEY = "ADD_CYCLE";
     public static final String GET_CYCLE_KEY = "GET_CYCLE";
     public static final String UPDATE_CYCLE_KEY = "UPDATE_CYCLE";
+    public static final String GET_LAST_CYCLE_KEY = "GET_LAST_CYCLE";
 
     public static final String CREATE_INVENTORY_SNAPSHOT_TABLE_KEY = "CREATE_INVENTORY_SNAPSHOT_TABLE";
     public static final String ADD_INVENTARY_SNAPSHOT_ITEM_KEY = "ADD_INVENTORY_SNAPSHOT_ITEM";
@@ -115,7 +116,7 @@ public class JDBCUtilDAO implements UtilDAO {
     public static final String CREATE_INVOICE_OTHER_PRODUCT_TABLE_KEY = "CREATE_INVOICE_OTHER_PRODUCT_TABLE";
     public static final String ADD_INVOICE_OTHER_PRODUCT_KEY = "ADD_INVOICE_OTHER_PRODUCT";
 
-    public static final String CREATE_EXPENSES_INCOMES_TABLE_KEY = "CREATE_EXPENSES_INCOMES_TABLE";
+    public static final String CREATE_EXPENSES_INCOMES_TABLE_KEY = "CREATE_EXPENSE_INCOME_TABLE";
     public static final String ADD_EXPENSE_INCOME_KEY = "ADD_EXPENSE_INCOME";
     public static final String CREATE_EXPENSES_CATEGORIES_TABLE_KEY = "CREATE_EXPENSES_CATEGORIES_TABLE";
 
@@ -172,6 +173,8 @@ public class JDBCUtilDAO implements UtilDAO {
     public static final String GET_CATEGORIES_LIST_KEY = "GET_CATEGORY_PROD";
     public static final String ADD_CATEGORY_KEY = "ADD_CATEGORY";
     public static final String UPDATE_CATEGORY_KEY = "UPDATE_CATEGORY";
+
+    public static final String ADD_WAITER_KEY = "ADD_WAITER";
 
     public static final String GET_EXPENSE_INCOME_LIST_KEY = "GET_EXPENSE_INCOME_LIST";
 
@@ -1069,6 +1072,51 @@ public class JDBCUtilDAO implements UtilDAO {
         return fecha;
     }
 
+    public Cycle getLastCycle(String where, String order) throws DAOException {
+        String retrieveList;
+        ArrayList<Cycle> cycles = new ArrayList<>();
+        try {
+            SQLExtractor sqlExtractorWhere = new SQLExtractor(where, SQLExtractor.Type.WHERE);
+            SQLExtractor sqlExtractorOrder = new SQLExtractor(order, SQLExtractor.Type.ORDER_BY);
+            Map<String, String> namedParams = new HashMap<>();
+            namedParams.put(NAMED_PARAM_WHERE, sqlExtractorWhere.extractWhere());
+            namedParams.put(NAMED_PARAM_ORDER_BY, sqlExtractorOrder.extractOrderBy());
+            retrieveList = sqlStatements.getSQLString(GET_LAST_CYCLE_KEY, namedParams);
+        } catch (SQLException e) {
+            throw new DAOException("Could not properly retrieve the Cycles list", e);
+        } catch (IOException e) {
+            throw new DAOException("Could not properly retrieve the Cycles list", e);
+        }
+
+        Cycle cycle = null;
+        Connection conn = null;
+        PreparedStatement retrieve = null;
+        ResultSet rs = null;
+
+        try {
+            conn = dataSource.getConnection();
+            retrieve = conn.prepareStatement(retrieveList);
+            rs = retrieve.executeQuery();
+            while (rs.next()) {
+                cycle = new Cycle();
+                cycle.setId(rs.getInt(1));
+                cycle.setInit(rs.getTimestamp(2));
+                cycle.setEnd(rs.getTimestamp(3));
+                cycle.setInitialBalance(rs.getBigDecimal(4));
+                cycle.setStatus(rs.getInt(5));
+                
+            }
+            
+        } catch (SQLException e) {
+            throw new DAOException("Could not properly retrieve the cycle: " + e);
+        } finally {
+            DBManager.closeResultSet(rs);
+            DBManager.closeStatement(retrieve);
+            DBManager.closeConnection(conn);
+        }
+        return cycle;
+    }
+
     public BigDecimal getSumValue(String tabla, String field, String where) throws DAOException {
         String retrieve;
         try {
@@ -1753,6 +1801,30 @@ public class JDBCUtilDAO implements UtilDAO {
         } catch (IOException e) {
             DBManager.rollbackConn(conn);
             throw new DAOException("Cannot add Category", e);
+        } finally {
+            DBManager.closeStatement(ps);
+            DBManager.closeConnection(conn);
+        }
+    }
+
+    public void addWaiter(Waiter waiter) throws DAOException {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+            Object[] parameters = {
+                waiter.getName(), waiter.getStatus(), waiter.getColor()
+            };
+            ps = sqlStatements.buildSQLStatement(conn, ADD_WAITER_KEY, parameters);
+            ps.executeUpdate();
+            conn.commit();
+        } catch (SQLException e) {
+            DBManager.rollbackConn(conn);
+            throw new DAOException("Cannot add Waiter", e);
+        } catch (IOException e) {
+            DBManager.rollbackConn(conn);
+            throw new DAOException("Cannot add Waiter", e);
         } finally {
             DBManager.closeStatement(ps);
             DBManager.closeConnection(conn);

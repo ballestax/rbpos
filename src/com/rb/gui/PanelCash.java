@@ -299,8 +299,11 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
 
     public void loadCycle() {
         cycle = app.getControl().getLastCycle();
-        showCycle(cycle);
+        if (cycle != null) {
+            showCycle(cycle);
+        }
     }
+    
     private static final String AC_ADD_GASTO = "AC_ADD_GASTO";
     public static final String AC_CLOSE_CYCLE = "AC_CLOSE_CYCLE";
     public static final String AC_NEW_CYCLE = "AC_NEW_CYCLE";

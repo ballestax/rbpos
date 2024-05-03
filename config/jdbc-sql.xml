@@ -31,7 +31,8 @@
                     |CREATE_ADDITIONALS_TABLE|ADD_ADDITIONAL|GET_ADDITIONAL|DELETE_ADDITIONAL|UPDATE_ADDITIONAL
                     |CREATE_INVOICES_TABLE|ADD_INVOICE|GET_INVOICE|DELETE_INVOICE|UPDATE_INVOICE
                     |CREATE_WAITERS_TABLE|CREATE_TABLES_TABLE|CREATE_INVOICE_PRODUCT_TABLE
-                    |GET_WAITERS|GET_TABLES|ADD_INVOICE_PRODUCT|GET_INVOICE_PRODUCT
+                    |ADD_WAITER|GET_WAITERS|GET_TABLES
+                    |ADD_INVOICE_PRODUCT|GET_INVOICE_PRODUCT
                     |CREATE_ADDITIONAL_PRODUCT_TABLE|ADD_ADDITIONAL_PRODUCT|GET_ADDITIONAL_PRODUCT
                     |CREATE_EXCLUSION_PRODUCT_TABLE|ADD_EXCLUSION_PRODUCT|GET_EXCLUSION_PRODUCT
                     |GET_FIRST_REGISTRO|GET_LAST_REGISTRO
@@ -70,7 +71,7 @@
                     |ADD_PRESENTATION|UPDATE_PRESENTATION|UPDATE_PRESENTATION_TO_DEFAULT|UPDATE_PRESENTATION_TO_DEFAULT_BY_ID
                     |GET_SUM_REGISTRO
                     |CREATE_PAYS_TABLE|ADD_PAY|GET_PAYS|UPDATE_PAY
-                    |INVOICE_IS_PAYED
+                    |INVOICE_IS_PAYED|GET_LAST_CYCLE
                     ) #REQUIRED
                     
 	>
@@ -2204,6 +2205,31 @@
                 INNER JOIN pays B
                 ON A.id=B.id_invoice
                 WHERE A.code=? AND (B.efecty+B.transfer+B.card)>=A.value 
+            </SQLFragment>
+        </SQLStatement>
+
+         <SQLStatement method="ADD_WAITER">
+            <SQLFragment>
+                INSERT INTO waiters (name,status,color) 
+                VALUES (?,?,?)
+            </SQLFragment>
+        </SQLStatement>
+
+         <SQLStatement method="GET_LAST_CYCLE">
+            <SQLFragment>
+                SELECT
+            </SQLFragment>
+            <SQLFragment>
+                * FROM cycles
+            </SQLFragment>
+            <SQLFragment excludeIfNamedParamEmpty="TRUE">
+                WHERE {where}
+            </SQLFragment>
+            <SQLFragment excludeIfNamedParamEmpty="TRUE">
+                ORDER BY {orderby}
+            </SQLFragment>
+            <SQLFragment>
+                LIMIT 1
             </SQLFragment>
         </SQLStatement>
         

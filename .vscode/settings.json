@@ -1,0 +1,27 @@
+{
+    "java.project.referencedLibraries": {
+        "include": [
+            "lib/**/*.jar",
+            "c:\\Dev\\lib\\dom4j-2.1.4.jar",
+            "c:\\Dev\\lib\\escpos-coffee-4.1.0.jar",
+            "c:\\Dev\\lib\\jasypt-1.9.3.jar",
+            "c:\\Dev\\lib\\javax.mail.jar",
+            "c:\\Dev\\lib\\javax.persistence.jar",
+            "c:\\Dev\\lib\\jfreechart-1.5.4.jar",
+            "c:\\Dev\\lib\\jsoup-1.17.2.jar",
+            "c:\\Dev\\lib\\prettytime-5.0.7.jar",
+            "c:\\Dev\\lib\\xmlbeans-2.3.0.jar",
+            "c:\\Dev\\lib2\\log4j-1.2.17.jar",
+            "c:\\Dev\\lib2\\commons-dbcp-1.4.jar",
+            "c:\\Dev\\lib\\BxLibrary_3.0.jar",
+            "c:\\Dev\\lib\\mariadb-java-client-3.3.3.jar",
+            "c:\\Dev\\lib2\\commons-pool-1.6.jar",
+            "c:\\Dev\\lib\\Zql.jar",
+            "c:\\Dev\\lib2\\commons-collections-3.2.2.jar",
+            "c:\\Dev\\lib\\commons-lang3-3.14.0.jar"
+        ],
+        "exclude": [
+            "c:\\Dev\\lib\\commons-dbcp2-2.12.0.jar"
+        ]
+    }
+}

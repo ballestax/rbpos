@@ -73,15 +73,15 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
     public static final String CONFIG_LASTUPDATE = "lastUpdate";
 
     public static final String PREFERENCES = "";
-    public static final String DATABASE = "bacon2";
+    public static final String DATABASE = "rubidium";
     public static final String WORK_FOLDER = "rubidium";
-    public static final String DB_USER = "root";
+    public static final String DB_USER = "rubi";
     public static boolean INSTALL_DB = false;
     private static final boolean messaged = true;
     public static final String DEFAULT_EXPORT_DIR = "";
 
     //Correr la aplicacion con configuracion de servidor local
-    private static boolean local = true;
+    private static boolean local = !true;
 
     public DateFormat DF = new SimpleDateFormat("dd-MM-yyyy");
     public DateFormat DF_FULL = new SimpleDateFormat("dd MMMM yyyy hh:mm");
@@ -112,13 +112,13 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
     private ScheduledExecutorService ses;
     private SimpleDateFormat sdfExport;
     private PropertyChangeSupport pcs;
-    private String folderIcons = "gui/img/icons/";
+    private String folderIcons = "gui/img/icons2/";
     private ProgAction acShowOrders;
     public final DecimalFormat DCFORM_W;
     public final DecimalFormat DCFORM_P;
     private ProgAction acShowOrderList;
     private ProgAction acShowReports;
-    private ProgAction acShowInventory;
+    private ProgAction acShowInventory;admin
     private ProgAction acShowProducts;
     private ProgAction acShowSales;
     private static List<Module> modules;
