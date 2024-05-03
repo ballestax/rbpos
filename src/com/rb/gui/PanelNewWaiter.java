@@ -30,14 +30,20 @@ public class PanelNewWaiter extends PanelCaptura implements ActionListener {
     public static final String AC_NEW_WAITER = "AC_NEW_WAITER";
     private String title;
     private Color color;
+    private int mode;
 
     /**
      * Creates new form PanelModPassword
      */
-    public PanelNewWaiter(Aplication app) {
+    public PanelNewWaiter(Aplication app, Waiter waiter) {
         this.app = app;
         initComponents();
         createComponents();
+        mode = 0;
+        if (waiter != null) {
+            mode = 1; //EDITANDO
+            loadWaiter(waiter);
+        }
     }
 
     private void createComponents() {
@@ -73,6 +79,18 @@ public class PanelNewWaiter extends PanelCaptura implements ActionListener {
         this.title = title;
         jLabel1.setText("Ingresar mesero.");
     }
+
+    public void loadWaiter(Waiter waiter) {
+        tfUser.setName(waiter.getName());
+        cbStatus.setSelectedIndex(waiter.getStatus() == 0 ? 1 : 0);
+        btColor.setBackground(Color.decode(waiter.getColor()));
+
+        btAcept.setActionCommand(AC_UPDATE_WAITER);
+        
+        
+
+    }
+    private static final String AC_UPDATE_WAITER = "AC_UPDATE_WAITER";
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -197,7 +215,24 @@ public class PanelNewWaiter extends PanelCaptura implements ActionListener {
                 waiter.setColor(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
                 app.getControl().addWaiter(waiter);
                 pcs.firePropertyChange(AC_NEW_WAITER, waiter, null);
-                
+
+                getRootPane().getParent().setVisible(false);
+            } else {
+                JOptionPane.showMessageDialog(null, "Ingrese el nombre del mesero");
+            }
+
+        }
+        
+        else if (AC_UPDATE_WAITER.equals(e.getActionCommand())) {
+            String name = tfUser.getText();
+            int status = cbStatus.getSelectedIndex() == 0 ? 1 : 0;
+            if (!name.isEmpty()) {
+                Waiter waiter = new Waiter(name, status);
+                Color color = btColor.getBackground();
+                waiter.setColor(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
+                app.getControl().updateWaiter(waiter);
+                pcs.firePropertyChange(AC_NEW_WAITER, waiter, null);
+
                 getRootPane().getParent().setVisible(false);
             } else {
                 JOptionPane.showMessageDialog(null, "Ingrese el nombre del mesero");

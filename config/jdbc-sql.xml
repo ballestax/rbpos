@@ -70,7 +70,7 @@
                     |ADD_PRESENTATION|UPDATE_PRESENTATION|UPDATE_PRESENTATION_TO_DEFAULT|UPDATE_PRESENTATION_TO_DEFAULT_BY_ID
                     |GET_SUM_REGISTRO
                     |CREATE_PAYS_TABLE|ADD_PAY|GET_PAYS|UPDATE_PAY
-                    |INVOICE_IS_PAYED|ADD_WAITER
+                    |INVOICE_IS_PAYED|ADD_WAITER|UPDATE_WAITER
                     ) #REQUIRED
                     
 	>
@@ -2211,7 +2211,17 @@
             <SQLFragment>
                 INSERT INTO waiters (name,status,color) VALUES (?,?,?);
             </SQLFragment>
-        </SQLStatement>        
+        </SQLStatement>     
+        
+            <SQLStatement method="UPDATE_WAITER">
+            <SQLFragment>
+                UPDATE waiters SET                
+                name=?,
+                status=?,
+                color=? 
+                WHERE id = ?;
+            </SQLFragment>            
+        </SQLStatement>    
         
     </DAOStatements>
 </DAOConfiguration>

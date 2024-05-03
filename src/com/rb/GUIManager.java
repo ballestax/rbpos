@@ -15,6 +15,7 @@ import com.rb.domain.Presentation;
 import com.rb.domain.Product;
 import com.rb.domain.Rol;
 import com.rb.domain.User;
+import com.rb.domain.Waiter;
 import com.rb.gui.GuiPanelNewUser;
 import com.rb.gui.GuiPanelSelProduct;
 import com.rb.gui.util.JStatusbar;
@@ -577,7 +578,7 @@ public class GUIManager {
         panelModPassword.setTitle(title);
         return panelModPassword;
     }
-
+    
     private PanelNewUser getPanelNewUser(PropertyChangeListener pcl) {
         PanelNewUser panelNewUser = new PanelNewUser(app);
         panelNewUser.addPropertyChangeListener(pcl);
@@ -591,7 +592,7 @@ public class GUIManager {
     }
 
     private PanelNewWaiter getPanelNewWaiter(PropertyChangeListener pcl) {
-        PanelNewWaiter panelNewWaiter = new PanelNewWaiter(app);
+        PanelNewWaiter panelNewWaiter = new PanelNewWaiter(app, null);
         panelNewWaiter.addPropertyChangeListener(pcl);
         return panelNewWaiter;
     }

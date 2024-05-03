@@ -188,6 +188,7 @@ public class JDBCUtilDAO implements UtilDAO {
     public static final String INVOICE_IS_PAYED_KEY = "INVOICE_IS_PAYED";
 
     public static final String ADD_WAITER_KEY = "ADD_WAITER";
+    public static final String UPDATE_WAITER_KEY = "UPDATE_WAITER";
 
     private static final Logger logger = Logger.getLogger(JDBCUtilDAO.class.getCanonicalName());
 
@@ -2864,6 +2865,30 @@ public class JDBCUtilDAO implements UtilDAO {
             throw new DAOException("Cannot add Rol", e);
         } finally {
             DBManager.closeStatement(ps);
+            DBManager.closeConnection(conn);
+        }
+    }
+
+    public void updateWaiter(Waiter waiter) throws DAOException {
+        Connection conn = null;
+        PreparedStatement update = null;
+        try {
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+            Object[] parameters = {
+                waiter.getName(),
+                waiter.getStatus(),
+                waiter.getColor(),
+                waiter.getId()
+            };
+            update = sqlStatements.buildSQLStatement(conn, UPDATE_WAITER_KEY, parameters);
+            update.executeUpdate();
+            conn.commit();
+        } catch (SQLException | IOException e) {
+            DBManager.rollbackConn(conn);
+            throw new DAOException("Could not properly update the Waiter", e);
+        } finally {
+            DBManager.closeStatement(update);
             DBManager.closeConnection(conn);
         }
     }
