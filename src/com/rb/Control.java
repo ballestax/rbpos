@@ -769,6 +769,7 @@ public class Control {
             return false;
         }
     }
+    
 
     public boolean updateClient(Client client) {
         try {
@@ -1623,6 +1624,32 @@ public class Control {
         data.put("real", real);
 
         return data;
+    }
+    
+    public boolean addWaiter(Waiter waiter) {
+        try {
+            JDBCUtilDAO utilDao = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
+            utilDao.addWaiter(waiter);
+            return true;
+        } catch (DAOException ex) {
+            String msg = "Error adding waiter";
+            logger.error(msg, ex);
+            GUIManager.showErrorMessage(null, msg, "Error");
+            return false;
+        }
+    }
+    
+    public boolean updateWaiter(Waiter waiter) {
+        try {
+            JDBCUtilDAO utilDao = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
+            utilDao.updateWaiter(waiter);
+            return true;
+        } catch (DAOException ex) {
+            String msg = "Error adding waiter";
+            logger.error(msg, ex);
+            GUIManager.showErrorMessage(null, msg, "Error");
+            return false;
+        }
     }
 
 }

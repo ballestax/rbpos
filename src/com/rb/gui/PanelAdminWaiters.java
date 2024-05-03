@@ -206,7 +206,7 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(PanelNewWaiter.AC_NEW_WAITER)) {
-
+            loadWaiters();
         }
     }
 
@@ -331,6 +331,7 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
                 int row = tabla.convertRowIndexToModel(f);
                 String name = tabla.getModel().getValueAt(row, 1).toString();
                 // TODO
+                
             }
             try {
                 fireEditingStopped();
