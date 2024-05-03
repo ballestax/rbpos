@@ -627,8 +627,8 @@ public class GUIManager {
 
     public ArrayList<Image> getListIconos() {
         ArrayList list = new ArrayList<>();
-        list.add(app.getImgManager().getImagen(app.getFolderIcons() + "logo-2.png", 32, 32));
-        list.add(app.getImgManager().getImagen(app.getFolderIcons() + "logo-2.png", 64, 64));
+        list.add(app.getImgManager().getImagen(app.getFolderIcons() + "logo1.png", 32, 32));
+        list.add(app.getImgManager().getImagen(app.getFolderIcons() + "logo1.png", 64, 64));
         return list;
     }
 

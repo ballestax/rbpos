@@ -174,7 +174,7 @@ public class JDBCUtilDAO implements UtilDAO {
     public static final String ADD_CATEGORY_KEY = "ADD_CATEGORY";
     public static final String UPDATE_CATEGORY_KEY = "UPDATE_CATEGORY";
 
-    public static final String ADD_WAITER_KEY = "ADD_WAITER";
+    // public static final String ADD_WAITER_KEY = "ADD_WAITER";
 
     public static final String GET_EXPENSE_INCOME_LIST_KEY = "GET_EXPENSE_INCOME_LIST";
 
@@ -1809,29 +1809,29 @@ public class JDBCUtilDAO implements UtilDAO {
         }
     }
 
-    public void addWaiter(Waiter waiter) throws DAOException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = dataSource.getConnection();
-            conn.setAutoCommit(false);
-            Object[] parameters = {
-                waiter.getName(), waiter.getStatus(), waiter.getColor()
-            };
-            ps = sqlStatements.buildSQLStatement(conn, ADD_WAITER_KEY, parameters);
-            ps.executeUpdate();
-            conn.commit();
-        } catch (SQLException e) {
-            DBManager.rollbackConn(conn);
-            throw new DAOException("Cannot add Waiter", e);
-        } catch (IOException e) {
-            DBManager.rollbackConn(conn);
-            throw new DAOException("Cannot add Waiter", e);
-        } finally {
-            DBManager.closeStatement(ps);
-            DBManager.closeConnection(conn);
-        }
-    }
+    // public void addWaiter(Waiter waiter) throws DAOException {
+    //     Connection conn = null;
+    //     PreparedStatement ps = null;
+    //     try {
+    //         conn = dataSource.getConnection();
+    //         conn.setAutoCommit(false);
+    //         Object[] parameters = {
+    //             waiter.getName(), waiter.getStatus(), waiter.getColor()
+    //         };
+    //         ps = sqlStatements.buildSQLStatement(conn, ADD_WAITER_KEY, parameters);
+    //         ps.executeUpdate();
+    //         conn.commit();
+    //     } catch (SQLException e) {
+    //         DBManager.rollbackConn(conn);
+    //         throw new DAOException("Cannot add Waiter", e);
+    //     } catch (IOException e) {
+    //         DBManager.rollbackConn(conn);
+    //         throw new DAOException("Cannot add Waiter", e);
+    //     } finally {
+    //         DBManager.closeStatement(ps);
+    //         DBManager.closeConnection(conn);
+    //     }
+    // }
 
     public void updateCategory(String category, String id) throws DAOException {
         Connection conn = null;

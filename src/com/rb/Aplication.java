@@ -112,13 +112,13 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
     private ScheduledExecutorService ses;
     private SimpleDateFormat sdfExport;
     private PropertyChangeSupport pcs;
-    private String folderIcons = "gui/img/icons2/";
+    private String folderIcons = "gui/img/icons/";
     private ProgAction acShowOrders;
     public final DecimalFormat DCFORM_W;
     public final DecimalFormat DCFORM_P;
     private ProgAction acShowOrderList;
     private ProgAction acShowReports;
-    private ProgAction acShowInventory;admin
+    private ProgAction acShowInventory;
     private ProgAction acShowProducts;
     private ProgAction acShowSales;
     private static List<Module> modules;
