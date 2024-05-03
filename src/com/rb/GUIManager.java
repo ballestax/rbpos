@@ -50,6 +50,7 @@ import com.rb.gui.PanelList;
 import com.rb.gui.PanelNewConciliacion;
 import com.rb.gui.PanelNewCycle;
 import com.rb.gui.PanelNewLocation;
+import com.rb.gui.PanelNewWaiter;
 import com.rb.gui.PanelOrderList;
 import com.rb.gui.PanelOtherProduct;
 import com.rb.gui.PanelPayInvoice;
@@ -589,6 +590,12 @@ public class GUIManager {
         return panelNewRol;
     }
 
+    private PanelNewWaiter getPanelNewWaiter(PropertyChangeListener pcl) {
+        PanelNewWaiter panelNewWaiter = new PanelNewWaiter(app);
+        panelNewWaiter.addPropertyChangeListener(pcl);
+        return panelNewWaiter;
+    }
+
     public void agregarSplitPaneAbajo(JComponent componente) {
         getSplitpane().setBottomComponent(componente);
         getSplitpane().setDividerLocation(0.77);
@@ -932,6 +939,19 @@ public class GUIManager {
         dialog.add(getPanelNewRol(pcl, role));
         dialog.setResizable(false);
         dialog.setTitle("Nuevo Rol de Usuario.");
+        dialog.pack();
+        dialog.setLocationRelativeTo(getFrame());
+        setDefaultCursor();
+        dialog.setVisible(true);
+    }
+
+    public void showNewWaiter(PropertyChangeListener pcl) {
+        setWaitCursor();
+        JDialog dialog = getDialog(true);
+        dialog.setPreferredSize(null);
+        dialog.add(getPanelNewWaiter(pcl));
+        dialog.setResizable(false);
+        dialog.setTitle("Nuevo Mesero.");
         dialog.pack();
         dialog.setLocationRelativeTo(getFrame());
         setDefaultCursor();

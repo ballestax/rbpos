@@ -8,14 +8,10 @@ package com.rb.gui;
 import com.rb.gui.util.MyPopupListener;
 import com.rb.Aplication;
 import com.rb.GUIManager;
-import com.rb.domain.Permission;
 import com.rb.domain.Waiter;
-import com.rb.persistence.JDBC.JDBCDAOFactory;
 import com.rb.persistence.JDBC.JDBCUtilDAO;
 import com.rb.persistence.dao.DAOException;
 import com.rb.persistence.dao.DAOFactory;
-import com.rb.persistence.dao.RemoteUserResultsInterface;
-import com.rb.persistence.dao.UserRetrieveException;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -23,10 +19,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.EventObject;
-import java.util.List;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import static javax.swing.BorderFactory.createLineBorder;
@@ -34,7 +28,6 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -56,6 +49,8 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
     private MyPopupListener popupListenerTabla;
 
     public static final String AC_MOD_WAITER = "AC_MOD_WAITER";
+    private JButton btUpdate;
+    private JButton btNewWaiter;
 
     /**
      * Creates new form PanelAdminUsers
@@ -70,6 +65,17 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
 
     private void createComponents() {
         toolbar.setFloatable(false);
+
+        btNewWaiter = new JButton("Nuevo Mesero");
+        btNewWaiter.setActionCommand(ACTION_NEW_WAITER);
+        btNewWaiter.addActionListener(this);
+
+        btUpdate = new JButton("Actualizar");
+        btUpdate.setActionCommand(ACTION_UPDATE);
+        btUpdate.addActionListener(this);
+        
+        toolbar.add(btNewWaiter);
+        toolbar.add(btUpdate);
 
         String[] colNames = {"ID", "Nombre", "Estado", "Color", "Ver"};
         model = new MyDefaultTableModel(colNames, 0);
@@ -109,6 +115,8 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
         loadWaiters();
 
     }
+    private static final String ACTION_UPDATE = "ACTION_UPDATE";
+    private static final String ACTION_NEW_WAITER = "ACTION_NEW_WAITER";
 
     private void loadWaiters() {
         try {
@@ -120,7 +128,7 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
                 model.addRow(new Object[]{
                     waiter.getId(),
                     waiter.getName(),
-                    waiter.getStatus()==1?"ACTIVO":"INACTIVO",
+                    waiter.getStatus() == 1 ? "ACTIVO" : "INACTIVO",
                     waiter.getColor(),
                     true
                 });
@@ -188,17 +196,16 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
     @Override
     public void actionPerformed(ActionEvent e) {
         if (ACTION_NEW_WAITER.equals(e.getActionCommand())) {
-            //TODO New Waiter
-        } else if (ACTION_UPDATE_WAITER.equals(e.getActionCommand())) {
+            app.getGuiManager().showNewWaiter(this);
+        } else if (ACTION_UPDATE.equals(e.getActionCommand())) {
             loadWaiters();
         }
     }
-    public static final String ACTION_UPDATE_WAITER = "ACTION_UPDATE_WAITER";
-    public static final String ACTION_NEW_WAITER = "ACTION_NEW_WAITER";
+   
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(PanelNewUser.AC_NEW_USER)) {
+        if (evt.getPropertyName().equals(PanelNewWaiter.AC_NEW_WAITER)) {
 
         }
     }
@@ -207,9 +214,9 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
 
         public ButtonCellRenderer(String text) {
             setText(text);
-            
-            setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.yellow),BorderFactory.createEmptyBorder(5, 5, 5, 5) 
-                    ));
+
+            setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.yellow), BorderFactory.createEmptyBorder(5, 5, 5, 5)
+            ));
         }
 
         @Override
