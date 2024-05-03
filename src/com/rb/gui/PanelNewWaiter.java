@@ -190,10 +190,14 @@ public class PanelNewWaiter extends PanelCaptura implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (AC_NEW_WAITER.equals(e.getActionCommand())) {
             String name = tfUser.getText();
-            int status = cbStatus.getSelectedIndex();
+            int status = cbStatus.getSelectedIndex() == 0 ? 1 : 0;
             if (!name.isEmpty()) {
                 Waiter waiter = new Waiter(name, status);
+                Color color = btColor.getBackground();
+                waiter.setColor(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
+                app.getControl().addWaiter(waiter);
                 pcs.firePropertyChange(AC_NEW_WAITER, waiter, null);
+                
                 getRootPane().getParent().setVisible(false);
             } else {
                 JOptionPane.showMessageDialog(null, "Ingrese el nombre del mesero");

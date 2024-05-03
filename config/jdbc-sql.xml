@@ -70,7 +70,7 @@
                     |ADD_PRESENTATION|UPDATE_PRESENTATION|UPDATE_PRESENTATION_TO_DEFAULT|UPDATE_PRESENTATION_TO_DEFAULT_BY_ID
                     |GET_SUM_REGISTRO
                     |CREATE_PAYS_TABLE|ADD_PAY|GET_PAYS|UPDATE_PAY
-                    |INVOICE_IS_PAYED
+                    |INVOICE_IS_PAYED|ADD_WAITER
                     ) #REQUIRED
                     
 	>
@@ -1944,7 +1944,7 @@
         </SQLStatement>
         
         
-         <SQLStatement method="UPDATE_PAY">
+        <SQLStatement method="UPDATE_PAY">
             <SQLFragment>
                 UPDATE pays
                 id_invoice=?,
@@ -2206,6 +2206,12 @@
                 WHERE A.code=? AND (B.efecty+B.transfer+B.card)>=A.value 
             </SQLFragment>
         </SQLStatement>
+        
+        <SQLStatement method="ADD_WAITER">
+            <SQLFragment>
+                INSERT INTO waiters (name,status,color) VALUES (?,?,?);
+            </SQLFragment>
+        </SQLStatement>        
         
     </DAOStatements>
 </DAOConfiguration>

@@ -187,6 +187,8 @@ public class JDBCUtilDAO implements UtilDAO {
 
     public static final String INVOICE_IS_PAYED_KEY = "INVOICE_IS_PAYED";
 
+    public static final String ADD_WAITER_KEY = "ADD_WAITER";
+
     private static final Logger logger = Logger.getLogger(JDBCUtilDAO.class.getCanonicalName());
 
     public static final String NAMED_PARAM_KEY = "{key}";
@@ -849,7 +851,7 @@ public class JDBCUtilDAO implements UtilDAO {
         try {
             conn = dataSource.getConnection();
             retrieve = sqlStatements.buildSQLStatement(conn, INVOICE_IS_PAYED_KEY, parameters);
-            
+
             rs = retrieve.executeQuery();
             while (rs.next()) {
                 map.put("id", rs.getInt(1));
@@ -1078,7 +1080,6 @@ public class JDBCUtilDAO implements UtilDAO {
             namedParams.put(JDBCDAOFactory.NAMED_PARAM_QUERY, field);
             namedParams.put(NAMED_PARAM_WHERE, sqlExtractorWhere.extractWhere());
             retrieve = sqlStatements.getSQLString(GET_SUM_REGISTRO_KEY, namedParams);
-            System.out.println("retrieve = " + retrieve);
 
         } catch (IOException e) {
             throw new DAOException("Could not properly retrieve registro date", e);
@@ -2836,6 +2837,35 @@ public class JDBCUtilDAO implements UtilDAO {
             DBManager.closeConnection(conn);
         }
         return stations;
+    }
+
+    public void addWaiter(Waiter waiter) throws DAOException {
+        if (waiter == null) {
+            throw new IllegalArgumentException("Null waiter");
+        }
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = dataSource.getConnection();
+
+            conn.setAutoCommit(false);
+            Object[] parameters = {
+                waiter.getName(),
+                waiter.getStatus(),
+                waiter.getColor()
+            };
+            ps = sqlStatements.buildSQLStatement(conn, ADD_WAITER_KEY, parameters);
+
+            ps.executeUpdate();
+
+            conn.commit();
+        } catch (SQLException | IOException e) {
+            DBManager.rollbackConn(conn);
+            throw new DAOException("Cannot add Rol", e);
+        } finally {
+            DBManager.closeStatement(ps);
+            DBManager.closeConnection(conn);
+        }
     }
 
 }

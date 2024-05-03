@@ -206,7 +206,7 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(PanelNewWaiter.AC_NEW_WAITER)) {
-
+            loadWaiters();
         }
     }
 
