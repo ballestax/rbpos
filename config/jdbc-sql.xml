@@ -70,7 +70,7 @@
                     |ADD_PRESENTATION|UPDATE_PRESENTATION|UPDATE_PRESENTATION_TO_DEFAULT|UPDATE_PRESENTATION_TO_DEFAULT_BY_ID
                     |GET_SUM_REGISTRO
                     |CREATE_PAYS_TABLE|ADD_PAY|GET_PAYS|UPDATE_PAY
-                    |INVOICE_IS_PAYED|ADD_WAITER|UPDATE_WAITER
+                    |INVOICE_IS_PAYED|ADD_WAITER|UPDATE_WAITER|ADD_TABLE|UPDATE_TABLE
                     ) #REQUIRED
                     
 	>
@@ -2219,6 +2219,21 @@
                 name=?,
                 status=?,
                 color=? 
+                WHERE id = ?;
+            </SQLFragment>            
+        </SQLStatement>  
+        
+          <SQLStatement method="ADD_TABLE">
+            <SQLFragment>
+                INSERT INTO tables (name,status) VALUES (?,?);
+            </SQLFragment>
+        </SQLStatement>     
+        
+            <SQLStatement method="UPDATE_TABLE">
+            <SQLFragment>
+                UPDATE tables SET                
+                name=?,
+                status=?
                 WHERE id = ?;
             </SQLFragment>            
         </SQLStatement>    

@@ -189,6 +189,9 @@ public class JDBCUtilDAO implements UtilDAO {
 
     public static final String ADD_WAITER_KEY = "ADD_WAITER";
     public static final String UPDATE_WAITER_KEY = "UPDATE_WAITER";
+    
+    public static final String ADD_TABLE_KEY = "ADD_TABLE";
+    public static final String UPDATE_TABLE_KEY = "UPDATE_TABLE";
 
     private static final Logger logger = Logger.getLogger(JDBCUtilDAO.class.getCanonicalName());
 
@@ -2887,6 +2890,57 @@ public class JDBCUtilDAO implements UtilDAO {
         } catch (SQLException | IOException e) {
             DBManager.rollbackConn(conn);
             throw new DAOException("Could not properly update the Waiter", e);
+        } finally {
+            DBManager.closeStatement(update);
+            DBManager.closeConnection(conn);
+        }
+    }
+    
+    public void addTable(Table table) throws DAOException {
+        if (table == null) {
+            throw new IllegalArgumentException("Null table");
+        }
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = dataSource.getConnection();
+
+            conn.setAutoCommit(false);
+            Object[] parameters = {
+                table.getName(),
+                table.getStatus()
+            };
+            ps = sqlStatements.buildSQLStatement(conn, ADD_TABLE_KEY, parameters);
+
+            ps.executeUpdate();
+
+            conn.commit();
+        } catch (SQLException | IOException e) {
+            DBManager.rollbackConn(conn);
+            throw new DAOException("Cannot add Rol", e);
+        } finally {
+            DBManager.closeStatement(ps);
+            DBManager.closeConnection(conn);
+        }
+    }
+
+    public void updateTable(Table table) throws DAOException {
+        Connection conn = null;
+        PreparedStatement update = null;
+        try {
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+            Object[] parameters = {
+                table.getName(),
+                table.getStatus(),
+                table.getId()
+            };
+            update = sqlStatements.buildSQLStatement(conn, UPDATE_TABLE_KEY, parameters);
+            update.executeUpdate();
+            conn.commit();
+        } catch (SQLException | IOException e) {
+            DBManager.rollbackConn(conn);
+            throw new DAOException("Could not properly update the Table", e);
         } finally {
             DBManager.closeStatement(update);
             DBManager.closeConnection(conn);

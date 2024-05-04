@@ -769,7 +769,6 @@ public class Control {
             return false;
         }
     }
-    
 
     public boolean updateClient(Client client) {
         try {
@@ -1615,7 +1614,7 @@ public class Control {
 
         return data;
     }
-    
+
     public boolean addWaiter(Waiter waiter) {
         try {
             JDBCUtilDAO utilDao = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
@@ -1628,7 +1627,7 @@ public class Control {
             return false;
         }
     }
-    
+
     public boolean updateWaiter(Waiter waiter) {
         try {
             JDBCUtilDAO utilDao = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
@@ -1636,6 +1635,32 @@ public class Control {
             return true;
         } catch (DAOException ex) {
             String msg = "Error adding waiter";
+            logger.error(msg, ex);
+            GUIManager.showErrorMessage(null, msg, "Error");
+            return false;
+        }
+    }
+
+    public boolean addTable(Table table) {
+        try {
+            JDBCUtilDAO utilDao = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
+            utilDao.addTable(table);
+            return true;
+        } catch (DAOException ex) {
+            String msg = "Error adding table";
+            logger.error(msg, ex);
+            GUIManager.showErrorMessage(null, msg, "Error");
+            return false;
+        }
+    }
+
+    public boolean updateTable(Table table) {
+        try {
+            JDBCUtilDAO utilDao = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
+            utilDao.updateTable(table);
+            return true;
+        } catch (DAOException ex) {
+            String msg = "Error adding table";
             logger.error(msg, ex);
             GUIManager.showErrorMessage(null, msg, "Error");
             return false;

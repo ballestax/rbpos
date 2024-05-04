@@ -51,6 +51,7 @@ public class PanelAdminWaiters extends PanelCaptura implements ActionListener, P
     private MyPopupListener popupListenerTabla;
 
     public static final String AC_MOD_WAITER = "AC_MOD_WAITER";
+   
     private JButton btUpdate;
     private JButton btNewWaiter;
 
@@ -365,57 +366,6 @@ public class PanelAdminWaiters extends PanelCaptura implements ActionListener, P
                 Waiter waiter = app.getControl().getWaitressByID(Integer.parseInt(ID));
                 app.getGuiManager().showNewWaiter(PanelAdminWaiters.this, waiter);
 
-            }
-            try {
-                fireEditingStopped();
-            } catch (Exception ex) {
-                System.err.println(ex.getMessage());
-            }
-        }
-    }
-
-    public class ColorEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
-
-        private JTextField campo;
-        Color currentValue;
-        JColorChooser colorChooser;
-        protected static final String EDIT = "edit";
-        private JTable tabla;
-        private ActionListener acList;
-        private String acCommand;
-
-        public ColorEditor(JTable tabla, ActionListener listener, String acCommand) {
-            colorChooser = new JColorChooser();
-            this.tabla = tabla;
-        }
-
-        @Override
-        public boolean isCellEditable(EventObject e) {
-            if (e instanceof MouseEvent) {
-                return ((MouseEvent) e).getClickCount() >= 1;
-            }
-            return true;
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return currentValue;
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            currentValue = (Color) value;
-            return colorChooser;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            final int c = tabla.getEditingColumn();
-            final int f = tabla.getEditingRow();
-            if (f != -1 && c != -1) {
-                int row = tabla.convertRowIndexToModel(f);
-                String name = tabla.getModel().getValueAt(row, 1).toString();
-                // TODO
             }
             try {
                 fireEditingStopped();

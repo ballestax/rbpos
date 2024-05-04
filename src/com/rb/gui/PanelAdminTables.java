@@ -31,6 +31,7 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import static javax.swing.BorderFactory.createLineBorder;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -41,13 +42,13 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import org.dz.MyDefaultTableModel;
 import org.dz.MyTableCellRenderer;
-
+import org.dz.PanelCapturaMod;
 
 /**
  *
  * @author ballestax
  */
-public class PanelAdminTables extends javax.swing.JPanel implements ActionListener, PropertyChangeListener {
+public class PanelAdminTables extends PanelCapturaMod implements ActionListener, PropertyChangeListener {
 
     private final Aplication app;
     private MyDefaultTableModel model;
@@ -55,22 +56,40 @@ public class PanelAdminTables extends javax.swing.JPanel implements ActionListen
     private MyPopupListener popupListenerTabla;
 
     public static final String AC_MOD_TABLE = "AC_MOD_TABLE";
- 
+    private static final String ACTION_UPDATE = "ACTION_UPDATE";
+     private static final String ACTION_UPDATE_TABLE = "ACTION_UPDATE_TABLE";
+    private static final String ACTION_NEW_TABLE = "ACTION_NEW_TABLE";
+    private JButton btNewTable;
+    private JButton btUpdate;
 
     /**
      * Creates new form PanelAdminUsers
      *
      * @param app
      */
-    public PanelAdminTables(Aplication app) {
+    public PanelAdminTables(Aplication app, PropertyChangeListener pcl) {
+        super();
         this.app = app;
         initComponents();
         createComponents();
+        addPropertyChangeListener(pcl);
+
     }
 
     private void createComponents() {
-        toolbar.setFloatable(false);        
-        
+        toolbar.setFloatable(false);
+
+        btNewTable = new JButton("Nueva Mesa");
+        btNewTable.setActionCommand(ACTION_NEW_TABLE);
+        btNewTable.addActionListener(this);
+
+        btUpdate = new JButton("Actualizar");
+        btUpdate.setActionCommand(ACTION_UPDATE);
+        btUpdate.addActionListener(this);
+
+        toolbar.add(btNewTable);
+        toolbar.add(btUpdate);
+
         String[] colNames = {"N°", "Nombre", "Estado", "Modificar"};
         model = new MyDefaultTableModel(colNames, 0);
         tableTables.setModel(model);
@@ -80,7 +99,7 @@ public class PanelAdminTables extends javax.swing.JPanel implements ActionListen
         for (int i = 0; i < colW.length; i++) {
             tableTables.getColumnModel().getColumn(i).setMinWidth(colW[i]);
             tableTables.getColumnModel().getColumn(i).setPreferredWidth(colW[i]);
-            tableTables.getColumnModel().getColumn(i).setCellRenderer(new MyTableCellRenderer(true));
+            tableTables.getColumnModel().getColumn(i).setCellRenderer(new TableCellRender(""));
         }
         tableTables.getColumnModel().getColumn(model.getColumnCount() - 1).setCellEditor(new BotonEditor(tableTables, this, AC_MOD_TABLE));
         tableTables.getColumnModel().getColumn(model.getColumnCount() - 1).setCellRenderer(new ButtonCellRenderer("Modificar"));
@@ -93,13 +112,24 @@ public class PanelAdminTables extends javax.swing.JPanel implements ActionListen
             @Override
             public void actionPerformed(ActionEvent e) {
                 int r = tableTables.getSelectedRow();
-                try {
-                    String idTable = tableTables.getValueAt(r, 1).toString();
-                   
-                } catch (Exception ex) {
-                    GUIManager.showErrorMessage(null, "Error al eliminar mesa", "Eliminar mesa");
-                }
+                int confirm = JOptionPane.showConfirmDialog(null, "Desea borrar la mesa permanentemente",
+                        "Eliminar mesa", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (confirm == JOptionPane.OK_OPTION) {
 
+                    try {
+                        String ID = tableTables.getValueAt(r, 0).toString();
+                        Table table = app.getControl().getTableByID(Integer.parseInt(ID));
+                        if (table != null) {
+                            table.setName(table.getName() + "[DEL]");
+                            table.setStatus(-1);
+                            app.getControl().updateTable(table);
+                            pcs.firePropertyChange(PanelNewTable.AC_NEW_TABLE, true, true);
+                            loadTables();
+                        }
+                    } catch (Exception ex) {
+                        GUIManager.showErrorMessage(null, "Error al intentar borrar el mesero", "Eliminar mesero");
+                    }
+                }
             }
         });
         popupTable.add(item1);
@@ -111,15 +141,15 @@ public class PanelAdminTables extends javax.swing.JPanel implements ActionListen
 
     private void loadTables() {
         try {
-            ArrayList<Table> tables = ((JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO()).getTablesList("", "");
+            ArrayList<Table> tables = ((JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO()).getTablesList("status!=-1", "");
 
             model.setRowCount(0);
             for (int i = 0; i < tables.size(); i++) {
                 Table table = tables.get(i);
                 model.addRow(new Object[]{
                     table.getId(),
-                    table.getName(),
-                    table.getStatus()==1?"ACTIVA":"INACTIVA",
+                    table.getName().toUpperCase(),
+                    table.getStatus() == 1 ? "ACTIVA" : "INACTIVA",
                     true
                 });
                 model.setRowEditable(model.getRowCount() - 1, false);
@@ -131,7 +161,7 @@ public class PanelAdminTables extends javax.swing.JPanel implements ActionListen
         }
     }
 
-   /**
+    /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
@@ -186,17 +216,57 @@ public class PanelAdminTables extends javax.swing.JPanel implements ActionListen
     @Override
     public void actionPerformed(ActionEvent e) {
         if (ACTION_NEW_TABLE.equals(e.getActionCommand())) {
-            //TODO New Waiter
-        } else if (ACTION_UPDATE_TABLE.equals(e.getActionCommand())) {
+            app.getGuiManager().showNewTable(this, null);
+        } else if (ACTION_UPDATE.equals(e.getActionCommand())) {
             loadTables();
         }
     }
-    public static final String ACTION_UPDATE_TABLE = "ACTION_UPDATE_TABLE";
-    public static final String ACTION_NEW_TABLE = "ACTION_NEW_TABLE";
+   
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-       
+        if (PanelNewTable.AC_NEW_TABLE.equals(evt.getPropertyName())) {
+            pcs.firePropertyChange(PanelNewTable.AC_NEW_TABLE, true, true);
+            loadTables();
+        } else if (PanelNewTable.AC_UPDATE_TABLE.equals(evt.getPropertyName())) {
+            pcs.firePropertyChange(PanelNewTable.AC_NEW_TABLE, true, true);
+            loadTables();
+        }
+
+    }
+
+    public class TableCellRender extends JLabel implements TableCellRenderer {
+
+        private Color color;
+
+        public TableCellRender(String text) {
+            setText(text);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Object act = table.getValueAt(row, 2);
+            setEnabled(act != null && "ACTIVA".equals(act.toString()));
+            if (value != null) {
+
+                setText(value.toString());
+            }
+
+            if (isSelected) {
+                setForeground(Color.black);
+                //setBackground(column == 3 ? color.darker() : Color.white);
+                if (hasFocus) {
+                    setBorder(BorderFactory.createLineBorder(Color.darkGray));
+                } else {
+                    setBorder(createLineBorder(Color.lightGray));
+                }
+            } else {
+                setForeground(Color.black);
+                //setBackground(column == 3 ? color : Color.white);
+                setBorder(UIManager.getBorder("Table.cellBorder"));
+            }
+            return this;
+        }
     }
 
     public class ButtonCellRenderer extends JButton implements TableCellRenderer {
@@ -270,8 +340,9 @@ public class PanelAdminTables extends javax.swing.JPanel implements ActionListen
             final int f = tabla.getEditingRow();
             if (f != -1 && c != -1) {
                 int row = tabla.convertRowIndexToModel(f);
-                String name = tabla.getModel().getValueAt(row, 1).toString();
-                // TODO
+                String ID = tabla.getModel().getValueAt(row, 0).toString();
+                Table table = app.getControl().getTableByID(Integer.parseInt(ID));
+                app.getGuiManager().showNewTable(PanelAdminTables.this, table);
             }
             try {
                 fireEditingStopped();

@@ -14,6 +14,7 @@ import com.rb.domain.Permission;
 import com.rb.domain.Presentation;
 import com.rb.domain.Product;
 import com.rb.domain.Rol;
+import com.rb.domain.Table;
 import com.rb.domain.User;
 import com.rb.domain.Waiter;
 import com.rb.gui.GuiPanelNewUser;
@@ -51,6 +52,7 @@ import com.rb.gui.PanelList;
 import com.rb.gui.PanelNewConciliacion;
 import com.rb.gui.PanelNewCycle;
 import com.rb.gui.PanelNewLocation;
+import com.rb.gui.PanelNewTable;
 import com.rb.gui.PanelNewWaiter;
 import com.rb.gui.PanelOrderList;
 import com.rb.gui.PanelOtherProduct;
@@ -420,7 +422,7 @@ public class GUIManager {
 
     public PanelAdminTables getPanelAdminTables() {
         if (pnAdminTables == null) {
-            pnAdminTables = new PanelAdminTables(app);
+            pnAdminTables = new PanelAdminTables(app, getPanelPedido());
 
         }
         return pnAdminTables;
@@ -596,6 +598,12 @@ public class GUIManager {
         PanelNewWaiter panelNewWaiter = new PanelNewWaiter(app, waiter);
         panelNewWaiter.addPropertyChangeListener(pcl);
         return panelNewWaiter;
+    }
+    
+    private PanelNewTable getPanelNewTable(PropertyChangeListener pcl, Table table) {
+        PanelNewTable panelNewTable = new PanelNewTable(app, table);
+        panelNewTable.addPropertyChangeListener(pcl);
+        return panelNewTable;
     }
 
     public void agregarSplitPaneAbajo(JComponent componente) {
@@ -954,6 +962,19 @@ public class GUIManager {
         dialog.add(getPanelNewWaiter(pcl, waiter));
         dialog.setResizable(false);
         dialog.setTitle(waiter == null ? "Nuevo Mesero." : "Modificar Mesero");
+        dialog.pack();
+        dialog.setLocationRelativeTo(getFrame());
+        setDefaultCursor();
+        dialog.setVisible(true);
+    }
+    
+    public void showNewTable(PropertyChangeListener pcl, Table table) {
+        setWaitCursor();
+        JDialog dialog = getDialog(true);
+        dialog.setPreferredSize(null);
+        dialog.add(getPanelNewTable(pcl, table));
+        dialog.setResizable(false);
+        dialog.setTitle(table == null ? "Nuevo Mesa." : "Modificar Mesa");
         dialog.pack();
         dialog.setLocationRelativeTo(getFrame());
         setDefaultCursor();
