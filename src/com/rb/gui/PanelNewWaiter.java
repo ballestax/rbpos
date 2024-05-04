@@ -87,7 +87,6 @@ public class PanelNewWaiter extends PanelCapturaMod implements ActionListener {
     }
 
     public void loadWaiter(Waiter waiter) {
-        System.out.println("waiter = " + waiter.getName());
         tfUser.setText(waiter.getName().toUpperCase());
         cbStatus.setSelectedIndex(waiter.getStatus() == 0 ? 1 : 0);
         btColor.setBackground(waiter.getColor());
@@ -273,10 +272,10 @@ public class PanelNewWaiter extends PanelCapturaMod implements ActionListener {
 
                 }
         }
-    }
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+   
 }

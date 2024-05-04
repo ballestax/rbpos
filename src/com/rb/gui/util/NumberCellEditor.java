@@ -89,7 +89,7 @@ public class NumberCellEditor extends DefaultCellEditor {
             }
 
             // return an instance of column class
-            return new Float(n.floatValue());
+            return (n.floatValue());
 
         } catch (ParseException pex) {
             throw new RuntimeException(pex);
