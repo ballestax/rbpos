@@ -38,6 +38,7 @@ public class Configuration {
     public static final String BACKUP_LIST = "bck.list";
     public static final String DATABASE_STATION = "db.station";
     public static final String PRINTER_SELECTED = "cf.printer";
+    public static final String PRINTER_SELECTED_2 = "cf.printer2";
     public static final String DELIVERY_VALUE = "cf.delivery";
     public static final String PREFIX_INVOICES = "cf.prefix";
     public static final String ZEROS_INVOICES = "cf.zeros";

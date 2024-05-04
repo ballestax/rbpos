@@ -32,7 +32,7 @@ public final class Install {
 
         TWST = cld.getTime();
         
-        // writeHash();
+//         writeHash();
     }
 
     public Date getTWST() {
@@ -81,7 +81,7 @@ public final class Install {
         try {
             registro.flush();
         } catch (Exception e) {
-        }
+    }
     }
 
 //    protected final void writeHash() {

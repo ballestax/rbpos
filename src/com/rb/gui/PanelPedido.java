@@ -651,7 +651,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
                 app.getPrinterService().imprimirFactura(invoice, propPrinter);
             }
         } else if (AC_PRINT_ORDER.equals(e.getActionCommand())) {
-            ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED);
+            ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED_2);
             String propPrinter = config != null ? config.getValor() : "";
             if (invoice != null) {
                 app.getPrinterService().imprimirPedido(invoice, propPrinter);
@@ -1602,6 +1602,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
     }
 
     private String getInfoCiclo(Cycle ciclo) {
+        if(ciclo==null) return "";
         boolean status = ciclo.getStatus() == Cycle.CLOSED;
         PrettyTime pt = new PrettyTime(new Locale("es"));
         List<Duration> presDur = pt.calculatePreciseDuration(ciclo.getInit());

@@ -29,6 +29,7 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
     private final Aplication app;
     private String selectedPrinter;
     private String printerName;
+    private String printerName2;
 
     /**
      * Creates new form PanelConfigMotor
@@ -45,32 +46,53 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
 
         lbTitle.setText("Configurar impresion");
 
-        lbInfo.setText("Selecccione la impresora POS");
+        lbInfo.setText("Selecccione la impresora POS 1");
+
+        lbInfo1.setText("Selecccione la impresora POS 2");
 
         ConfigDB config = app.getControl().getConfigLocal(com.rb.Configuration.PRINTER_SELECTED);
         printerName = config != null ? config.getValor() : app.getConfiguration().getProperty(com.rb.Configuration.PRINTER_SELECTED, "");
         lbPrinter.setText("<html>Impresora seleccionada: <font color=blue>" + printerName + "</font></html>");
+
+        config = app.getControl().getConfigLocal(com.rb.Configuration.PRINTER_SELECTED_2);
+        printerName2 = config != null ? config.getValor() : app.getConfiguration().getProperty(com.rb.Configuration.PRINTER_SELECTED, "");
+        lbPrinter.setText("<html>Impresora 1 seleccionada: <font color=green>" + printerName + "</font><br><br>"
+                + "Impresora 2 seleccionada: <font color=green>" + printerName2 + "</font></html>");
 
 //        exportDIR = property;
         PrintService[] listPrinters = listPrinters();
         regPrinter.setText(listPrinters);
         regPrinter.setActionCommand(AC_SEL_PRINTER);
         regPrinter.addActionListener(this);
+        
+        regPrinter1.setText(listPrinters);
+        regPrinter1.setActionCommand(AC_SEL_PRINTER_2);
+        regPrinter1.addActionListener(this);
 
         btApply.setText("Aplicar");
         btApply.setActionCommand(ACTION_APPLY);
         btApply.addActionListener(this);
-        
-         panelPrinters.setLayout(new FlowLayout(FlowLayout.LEADING));
-        
+
+        panelPrinters.setLayout(new FlowLayout(FlowLayout.LEADING));
+
+        jButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                PrintService[] listPrinters = listPrinters();
+                regPrinter.setText(listPrinters);
+                regPrinter1.setText(listPrinters);
+            }
+        });
+
     }
     public static final String AC_SEL_PRINTER = "AC_SEL_PRINTER";
+    public static final String AC_SEL_PRINTER_2 = "AC_SEL_PRINTER2";
 
     private PrintService[] listPrinters() {
         PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
         return printServices;
     }
-    
+
 //    public void loadPrinters(Printer printer) {
 //        ArrayList<Presentation> presList = app.getControl().getAllPresentationsByProduct(printer.getId());
 //        lbTitlePress.setText("Presentaciones [ " + presList.size() + " ]");
@@ -82,7 +104,6 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
 //        }
 //        panelContainPress.updateUI();
 //    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -99,6 +120,9 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
         lbPrinter = new javax.swing.JLabel();
         regPrinter = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "Impresora", new String[0]);
         panelPrinters = new javax.swing.JPanel();
+        lbInfo1 = new javax.swing.JLabel();
+        regPrinter1 = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "Impresora", new String[0]);
+        jButton1 = new javax.swing.JButton();
 
         lbTitle.setBackground(java.awt.Color.lightGray);
         lbTitle.setOpaque(true);
@@ -120,6 +144,11 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
             .addGap(0, 135, Short.MAX_VALUE)
         );
 
+        lbInfo1.setText("jLabel2");
+        lbInfo1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jButton1.setText("Actualizar impresoras");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -134,7 +163,12 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lbPrinter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btApply)))
+                        .addComponent(btApply))
+                    .addComponent(lbInfo1, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                    .addComponent(regPrinter1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -142,11 +176,17 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
             .addGroup(layout.createSequentialGroup()
                 .addGap(6, 6, 6)
                 .addComponent(lbTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(3, 3, 3)
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(regPrinter, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbInfo1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(regPrinter1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lbPrinter, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
                     .addComponent(btApply, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -160,11 +200,14 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btApply;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel lbInfo;
+    private javax.swing.JLabel lbInfo1;
     private javax.swing.JLabel lbPrinter;
     private javax.swing.JLabel lbTitle;
     private javax.swing.JPanel panelPrinters;
     private com.rb.gui.util.Registro regPrinter;
+    private com.rb.gui.util.Registro regPrinter1;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -174,11 +217,25 @@ public class PanelConfigPrint extends javax.swing.JPanel implements ActionListen
         if (ACTION_APPLY.equals(e.getActionCommand())) {
             String value = printerName;
             app.getControl().addConfig(new ConfigDB(Configuration.PRINTER_SELECTED, ConfigDB.STRING, value, userName, userDevice));
+            
+            value = printerName2;
+            app.getControl().addConfig(new ConfigDB(Configuration.PRINTER_SELECTED_2, ConfigDB.STRING, value, userName, userDevice));
+        
+            lbPrinter.setText("<html>Impresora 1 seleccionada: <font color=green>" + printerName + "</font><br><br>"
+                + "Impresora 2 seleccionada: <font color=green>" + printerName2 + "</font></html>");
         } else if (AC_SEL_PRINTER.equals(e.getActionCommand())) {
             PrintService printer = (PrintService) regPrinter.getSelectedItem();
-            lbPrinter.setText("<html>Impresora seleccionada: <font color=blue>" + printer.getName() + "</font></html>");
-            String value = printer.getName();
-            app.getControl().addConfig(new ConfigDB(Configuration.PRINTER_SELECTED, ConfigDB.STRING, value, userName, userDevice));
+            printerName = printer.getName();
+            lbPrinter.setText("<html>Impresora 1 seleccionada: <font color=blue>" + printerName + "</font><br><br>"
+                    + "Impresora 2 seleccionada: <font color=blue>" + printerName2 + "</font></html>");
+            //app.getControl().addConfig(new ConfigDB(Configuration.PRINTER_SELECTED, ConfigDB.STRING, value, userName, userDevice));
+        } else if (AC_SEL_PRINTER_2.equals(e.getActionCommand())) {
+            PrintService printer = (PrintService) regPrinter1.getSelectedItem();
+            printerName2 = printer.getName();
+            lbPrinter.setText("<html>Impresora 1 seleccionada: <font color=blue>" + printerName + "</font><br><br>"
+                    + "Impresora 2 seleccionada: <font color=blue>" + printerName2 + "</font></html>");
+            //app.getControl().addConfig(new ConfigDB(Configuration.PRINTER_SELECTED, ConfigDB.STRING, value, userName, userDevice));
         }
+
     }
 }

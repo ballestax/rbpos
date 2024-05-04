@@ -1109,8 +1109,7 @@ public class JDBCUtilDAO implements UtilDAO {
                 cycle.setInit(rs.getTimestamp(2));
                 cycle.setEnd(rs.getTimestamp(3));
                 cycle.setInitialBalance(rs.getBigDecimal(4));
-                cycle.setStatus(rs.getInt(5));
-                
+                cycle.setStatus(rs.getInt(5));                
             }
             
         } catch (SQLException e) {

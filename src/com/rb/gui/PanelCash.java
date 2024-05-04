@@ -265,7 +265,9 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         lbData1.setText("0");
         lbData2.setText("0");
         lbData3.setText("0");
+        lbData4.setText("0");
         lbData5.setText("0");
+        lbData6.setText("0");
 
         regFilter1.setActionCommand(AC_FILTER);
         regFilter1.addActionListener(this);
@@ -304,7 +306,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             showCycle(cycle);
         }
     }
-    
+
     private static final String AC_ADD_GASTO = "AC_ADD_GASTO";
     public static final String AC_CLOSE_CYCLE = "AC_CLOSE_CYCLE";
     public static final String AC_NEW_CYCLE = "AC_NEW_CYCLE";
@@ -418,14 +420,17 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
     }
 
     private void calculateTotals() {
-
-        BigDecimal initial = cycle.getInitialBalance();
-        BigDecimal sales = app.getControl().getValueSalesByCycle(cycle.getId());
-        BigDecimal expenses = app.getControl().getValueExpenseIncomeByCycle(cycle.getId(), CashMov.EXPENSE);
-        BigDecimal incomes = app.getControl().getValueExpenseIncomeByCycle(cycle.getId(), CashMov.INCOME);
-        BigDecimal transfer = app.getControl().getValueTranfersByCycle(cycle.getId());
+        long cycle_id = 0L;
+        BigDecimal initial = BigDecimal.ZERO;
+        if (cycle != null) {
+            initial = cycle.getInitialBalance();
+            cycle_id = cycle.getId();
+        }
+        BigDecimal sales = app.getControl().getValueSalesByCycle(cycle_id);
+        BigDecimal expenses = app.getControl().getValueExpenseIncomeByCycle(cycle_id, CashMov.EXPENSE);
+        BigDecimal incomes = app.getControl().getValueExpenseIncomeByCycle(cycle_id, CashMov.INCOME);
+        BigDecimal transfer = app.getControl().getValueTranfersByCycle(cycle_id);
         BigDecimal outcome = initial.add(sales).add(incomes).add(expenses.negate()).subtract(transfer);
-        
 
         lbData4.setText("<html><font size=4>" + app.DCFORM_P.format(initial) + "</font></html>");
 
@@ -436,28 +441,30 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         lbData5.setText("<html><font size=4>" + app.DCFORM_P.format(incomes) + "</font></html>");
 
         lbData2.setText("<html><font size=4>" + app.DCFORM_P.format(expenses) + "</font></html>");
-        
+
         lbData6.setText("<html><font size=4>" + app.DCFORM_P.format(transfer) + "</font></html>");
 
     }
 
     public void loadExtras() {
-        modelExt.setRowCount(0);
-        ArrayList<CashMov> movs = app.getControl().getExpenseIncomeList("cycle_id=" + cycle.getId(), "eventDate");
-        Map<Long, CashMov.Category> categories = app.getControl().getExpensesCategoriesMap("", "");
+        if (cycle != null) {
+            modelExt.setRowCount(0);
+            ArrayList<CashMov> movs = app.getControl().getExpenseIncomeList("cycle_id=" + cycle.getId(), "eventDate");
+            Map<Long, CashMov.Category> categories = app.getControl().getExpensesCategoriesMap("", "");
 //        Map<Integer, String> mapCategories = categories.stream().collect(Collectors.toMap(cat -> {cat}); 
 
-        for (CashMov mov : movs) {
-            modelExt.addRow(
-                    new Object[]{
-                        mov.getType() == CashMov.EXPENSE ? PanelAddExtra.STR_EXPENSE : PanelAddExtra.STR_INCOME,
-                        categories.get(mov.getIdCategory()).getName().toUpperCase(),
-                        mov.getDescription().toUpperCase(),
-                        app.DCFORM_P.format(mov.getValue())
-                    });
-            modelExt.setRowEditable(modelExt.getRowCount() - 1, false);
+            for (CashMov mov : movs) {
+                modelExt.addRow(
+                        new Object[]{
+                            mov.getType() == CashMov.EXPENSE ? PanelAddExtra.STR_EXPENSE : PanelAddExtra.STR_INCOME,
+                            categories.get(mov.getIdCategory()).getName().toUpperCase(),
+                            mov.getDescription().toUpperCase(),
+                            app.DCFORM_P.format(mov.getValue())
+                        });
+                modelExt.setRowEditable(modelExt.getRowCount() - 1, false);
+            }
+            calculateTotals();
         }
-        calculateTotals();
 
     }
 
@@ -498,7 +505,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        logger.info(evt.getPropertyName()+":"+evt);
+        logger.info(evt.getPropertyName() + ":" + evt);
         if (AC_NEW_CYCLE.equals(evt.getPropertyName())) {
             Cycle lastCycle = app.getControl().getLastCycle();
             this.cycle = lastCycle;
@@ -591,23 +598,19 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel1.setBackground(java.awt.Color.lightGray);
-        jLabel1.setText("jLabel1");
         jLabel1.setOpaque(true);
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel2.setText("jLabel2");
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
-        lbInit.setText("jLabel3");
         lbInit.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lbInit.setBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(1, 17, 95), new java.awt.Color(10, 18, 180)));
 
-        lbEnd.setText("jLabel4");
         lbEnd.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         lbEnd.setBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(1, 17, 95), new java.awt.Color(10, 18, 180)));
 
-        lbStatus.setText("jLabel1");
+        lbStatus.setText("Estado");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -670,7 +673,6 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         jScrollPane1.setViewportView(tableInvoices);
 
         lbFacturas.setBackground(java.awt.Color.gray);
-        lbFacturas.setText("jLabel1");
         lbFacturas.setOpaque(true);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -773,7 +775,6 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         );
 
         lbGastos.setBackground(java.awt.Color.gray);
-        lbGastos.setText("jLabel1");
         lbGastos.setOpaque(true);
 
         tableExtras.setModel(new javax.swing.table.DefaultTableModel(

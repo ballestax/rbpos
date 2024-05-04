@@ -157,14 +157,12 @@
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="c0" green="c0" id="lightGray" palette="1" red="c0" type="palette"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="jLabel1"/>
             <Property name="opaque" type="boolean" value="true"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
             <Property name="horizontalAlignment" type="int" value="4"/>
-            <Property name="text" type="java.lang.String" value="jLabel2"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JSeparator" name="jSeparator1">
@@ -174,7 +172,6 @@
         </Component>
         <Component class="javax.swing.JLabel" name="lbInit">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jLabel3"/>
             <Property name="verticalAlignment" type="int" value="1"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
@@ -188,7 +185,6 @@
         </Component>
         <Component class="javax.swing.JLabel" name="lbEnd">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jLabel4"/>
             <Property name="verticalAlignment" type="int" value="1"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
@@ -202,7 +198,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="lbStatus">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jLabel1"/>
+            <Property name="text" type="java.lang.String" value="Estado"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btRefresh">
@@ -238,7 +234,6 @@
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="80" green="80" id="gray" palette="1" red="80" type="palette"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="jLabel1"/>
         <Property name="opaque" type="boolean" value="true"/>
       </Properties>
     </Component>
@@ -408,7 +403,6 @@
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="80" green="80" id="gray" palette="1" red="80" type="palette"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="jLabel1"/>
         <Property name="opaque" type="boolean" value="true"/>
       </Properties>
     </Component>
