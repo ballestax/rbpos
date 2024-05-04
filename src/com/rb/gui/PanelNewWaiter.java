@@ -11,28 +11,30 @@ import com.rb.domain.Waiter;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.*;
 import org.dz.PanelCaptura;
+import org.dz.PanelCapturaMod;
 
 /**
  *
  * @author LUISA
  */
-public class PanelNewWaiter extends PanelCaptura implements ActionListener {
+public class PanelNewWaiter extends PanelCapturaMod implements ActionListener {
 
         private final Aplication app;
 
     public static final String AC_NEW_WAITER = "AC_NEW_WAITER";
+    public static final String AC_UPDATE_WAITER = "AC_UPDATE_WAITER";
+
     private String title;
     private Color color;
     private int mode;
+    private Waiter waiter;
 
-    /**
-     * Creates new form PanelModPassword
-     */
     public PanelNewWaiter(Aplication app, Waiter waiter) {
         this.app = app;
         initComponents();
@@ -40,6 +42,7 @@ public class PanelNewWaiter extends PanelCaptura implements ActionListener {
         mode = 0;
         if (waiter != null) {
             mode = 1; //EDITANDO
+            this.waiter = waiter;
             loadWaiter(waiter);
         }
     }
@@ -84,16 +87,14 @@ public class PanelNewWaiter extends PanelCaptura implements ActionListener {
     }
 
     public void loadWaiter(Waiter waiter) {
-        tfUser.setName(waiter.getName());
+        System.out.println("waiter = " + waiter.getName());
+        tfUser.setText(waiter.getName().toUpperCase());
         cbStatus.setSelectedIndex(waiter.getStatus() == 0 ? 1 : 0);
-        btColor.setBackground(Color.decode(waiter.getColor()));
+        btColor.setBackground(waiter.getColor());
 
         btAcept.setActionCommand(AC_UPDATE_WAITER);
-        
-        
 
     }
-    private static final String AC_UPDATE_WAITER = "AC_UPDATE_WAITER";
 
         /**
          * This method is called from within the constructor to initialize the form.
@@ -129,62 +130,35 @@ public class PanelNewWaiter extends PanelCaptura implements ActionListener {
                 jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
                 jLabel4.setText("Nombre:");
 
-                jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-                jLabel5.setText("         Color:");
+        tfUser.setFont(new java.awt.Font("Liberation Sans", 0, 18)); // NOI18N
 
-                btColor.setText("jButton1");
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel5.setText("         Color:");
 
-                javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-                this.setLayout(layout);
-                layout.setHorizontalGroup(
-                                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addGroup(layout.createSequentialGroup()
-                                                                .addGap(12, 12, 12)
-                                                                .addGroup(layout.createParallelGroup(
-                                                                                javax.swing.GroupLayout.Alignment.LEADING,
-                                                                                false)
-                                                                                .addGroup(layout.createSequentialGroup()
-                                                                                                .addComponent(btCancel,
-                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                102,
-                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                                .addPreferredGap(
-                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                Short.MAX_VALUE)
-                                                                                                .addComponent(btAcept,
-                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                99,
-                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                                .addGroup(layout.createSequentialGroup()
-                                                                                                .addGroup(layout
-                                                                                                                .createParallelGroup(
-                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                                .addComponent(jLabel5,
-                                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                                                                .addComponent(jLabel2,
-                                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING)
-                                                                                                                .addComponent(jLabel4,
-                                                                                                                                javax.swing.GroupLayout.Alignment.TRAILING))
-                                                                                                .addPreferredGap(
-                                                                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                                                .addGroup(layout
-                                                                                                                .createParallelGroup(
-                                                                                                                                javax.swing.GroupLayout.Alignment.LEADING,
-                                                                                                                                false)
-                                                                                                                .addComponent(btColor,
-                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                232,
-                                                                                                                                Short.MAX_VALUE)
-                                                                                                                .addComponent(tfUser)
-                                                                                                                .addComponent(cbStatus,
-                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                                                                javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                                Short.MAX_VALUE)));
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btAcept, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btColor, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
+                            .addComponent(tfUser)
+                            .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
                 layout.linkSize(javax.swing.SwingConstants.HORIZONTAL,
                                 new java.awt.Component[] { jLabel2, jLabel4, jLabel5 });
@@ -272,7 +246,7 @@ public class PanelNewWaiter extends PanelCaptura implements ActionListener {
             if (!name.isEmpty()) {
                 Waiter waiter = new Waiter(name, status);
                 Color color = btColor.getBackground();
-                waiter.setColor(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
+                waiter.setStColor(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
                 app.getControl().addWaiter(waiter);
                 pcs.firePropertyChange(AC_NEW_WAITER, waiter, null);
 
@@ -281,17 +255,16 @@ public class PanelNewWaiter extends PanelCaptura implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Ingrese el nombre del mesero");
             }
 
-        }
-        
-        else if (AC_UPDATE_WAITER.equals(e.getActionCommand())) {
+        } else if (AC_UPDATE_WAITER.equals(e.getActionCommand())) {
             String name = tfUser.getText();
             int status = cbStatus.getSelectedIndex() == 0 ? 1 : 0;
             if (!name.isEmpty()) {
-                Waiter waiter = new Waiter(name, status);
+                waiter.setName(name);
+                waiter.setStatus(status);
                 Color color = btColor.getBackground();
-                waiter.setColor(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
+                waiter.setStColor(String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()));
                 app.getControl().updateWaiter(waiter);
-                pcs.firePropertyChange(AC_NEW_WAITER, waiter, null);
+                pcs.firePropertyChange(AC_UPDATE_WAITER, waiter, null);
 
                 getRootPane().getParent().setVisible(false);
             } else {
@@ -300,4 +273,10 @@ public class PanelNewWaiter extends PanelCaptura implements ActionListener {
 
                 }
         }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

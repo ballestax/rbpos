@@ -14,6 +14,7 @@ import com.rb.domain.Permission;
 import com.rb.domain.Presentation;
 import com.rb.domain.Product;
 import com.rb.domain.Rol;
+import com.rb.domain.Table;
 import com.rb.domain.User;
 import com.rb.domain.Waiter;
 import com.rb.gui.GuiPanelNewUser;
@@ -51,6 +52,7 @@ import com.rb.gui.PanelList;
 import com.rb.gui.PanelNewConciliacion;
 import com.rb.gui.PanelNewCycle;
 import com.rb.gui.PanelNewLocation;
+import com.rb.gui.PanelNewTable;
 import com.rb.gui.PanelNewWaiter;
 import com.rb.gui.PanelOrderList;
 import com.rb.gui.PanelOtherProduct;
@@ -413,14 +415,15 @@ public class GUIManager {
 
     public PanelAdminWaiters getPanelAdminWaiters() {
         if (pnAdminWaiters == null) {
-            pnAdminWaiters = new PanelAdminWaiters(app);
+            pnAdminWaiters = new PanelAdminWaiters(app, getPanelPedido());
         }
         return pnAdminWaiters;
     }
 
     public PanelAdminTables getPanelAdminTables() {
         if (pnAdminTables == null) {
-            pnAdminTables = new PanelAdminTables(app);
+            pnAdminTables = new PanelAdminTables(app, getPanelPedido());
+
         }
         return pnAdminTables;
     }
@@ -578,7 +581,7 @@ public class GUIManager {
         panelModPassword.setTitle(title);
         return panelModPassword;
     }
-    
+
     private PanelNewUser getPanelNewUser(PropertyChangeListener pcl) {
         PanelNewUser panelNewUser = new PanelNewUser(app);
         panelNewUser.addPropertyChangeListener(pcl);
@@ -591,10 +594,16 @@ public class GUIManager {
         return panelNewRol;
     }
 
-    private PanelNewWaiter getPanelNewWaiter(PropertyChangeListener pcl) {
-        PanelNewWaiter panelNewWaiter = new PanelNewWaiter(app, null);
+    private PanelNewWaiter getPanelNewWaiter(PropertyChangeListener pcl, Waiter waiter) {
+        PanelNewWaiter panelNewWaiter = new PanelNewWaiter(app, waiter);
         panelNewWaiter.addPropertyChangeListener(pcl);
         return panelNewWaiter;
+    }
+    
+    private PanelNewTable getPanelNewTable(PropertyChangeListener pcl, Table table) {
+        PanelNewTable panelNewTable = new PanelNewTable(app, table);
+        panelNewTable.addPropertyChangeListener(pcl);
+        return panelNewTable;
     }
 
     public void agregarSplitPaneAbajo(JComponent componente) {
@@ -946,13 +955,26 @@ public class GUIManager {
         dialog.setVisible(true);
     }
 
-    public void showNewWaiter(PropertyChangeListener pcl) {
+    public void showNewWaiter(PropertyChangeListener pcl, Waiter waiter) {
         setWaitCursor();
         JDialog dialog = getDialog(true);
         dialog.setPreferredSize(null);
-        dialog.add(getPanelNewWaiter(pcl));
+        dialog.add(getPanelNewWaiter(pcl, waiter));
         dialog.setResizable(false);
-        dialog.setTitle("Nuevo Mesero.");
+        dialog.setTitle(waiter == null ? "Nuevo Mesero." : "Modificar Mesero");
+        dialog.pack();
+        dialog.setLocationRelativeTo(getFrame());
+        setDefaultCursor();
+        dialog.setVisible(true);
+    }
+    
+    public void showNewTable(PropertyChangeListener pcl, Table table) {
+        setWaitCursor();
+        JDialog dialog = getDialog(true);
+        dialog.setPreferredSize(null);
+        dialog.add(getPanelNewTable(pcl, table));
+        dialog.setResizable(false);
+        dialog.setTitle(table == null ? "Nuevo Mesa." : "Modificar Mesa");
         dialog.pack();
         dialog.setLocationRelativeTo(getFrame());
         setDefaultCursor();
@@ -1075,6 +1097,7 @@ public class GUIManager {
         if (pnPedido == null) {
             pnPedido = new PanelPedido(app);
             pnPedido.addPropertyChangeListener(getPanelCash(null));
+
         }
         return pnPedido;
     }

@@ -1,5 +1,6 @@
 package com.rb.domain;
 
+import java.awt.Color;
 import java.util.Objects;
 
 /**
@@ -10,7 +11,7 @@ public class Waiter {
 
     private int id;
     private String name;
-    private String color;
+    private String stColor;
     private int status;
 
     public Waiter() {
@@ -45,12 +46,20 @@ public class Waiter {
         this.status = status;
     }
 
-    public String getColor() {
-        return color;
+    public String getStColor() {
+        return stColor;
+    }
+    
+    public Color getColor() {
+        try{
+            return Color.decode(stColor);
+        }catch (Exception e){
+            return Color.GRAY;
+        }
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setStColor(String color) {
+        this.stColor = color;
     }
 
     @Override
