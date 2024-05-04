@@ -413,7 +413,7 @@ public class GUIManager {
 
     public PanelAdminWaiters getPanelAdminWaiters() {
         if (pnAdminWaiters == null) {
-            pnAdminWaiters = new PanelAdminWaiters(app);
+            pnAdminWaiters = new PanelAdminWaiters(app, getPanelPedido());
         }
         return pnAdminWaiters;
     }
@@ -421,6 +421,7 @@ public class GUIManager {
     public PanelAdminTables getPanelAdminTables() {
         if (pnAdminTables == null) {
             pnAdminTables = new PanelAdminTables(app);
+
         }
         return pnAdminTables;
     }
@@ -578,7 +579,7 @@ public class GUIManager {
         panelModPassword.setTitle(title);
         return panelModPassword;
     }
-    
+
     private PanelNewUser getPanelNewUser(PropertyChangeListener pcl) {
         PanelNewUser panelNewUser = new PanelNewUser(app);
         panelNewUser.addPropertyChangeListener(pcl);
@@ -591,8 +592,8 @@ public class GUIManager {
         return panelNewRol;
     }
 
-    private PanelNewWaiter getPanelNewWaiter(PropertyChangeListener pcl) {
-        PanelNewWaiter panelNewWaiter = new PanelNewWaiter(app, null);
+    private PanelNewWaiter getPanelNewWaiter(PropertyChangeListener pcl, Waiter waiter) {
+        PanelNewWaiter panelNewWaiter = new PanelNewWaiter(app, waiter);
         panelNewWaiter.addPropertyChangeListener(pcl);
         return panelNewWaiter;
     }
@@ -946,13 +947,13 @@ public class GUIManager {
         dialog.setVisible(true);
     }
 
-    public void showNewWaiter(PropertyChangeListener pcl) {
+    public void showNewWaiter(PropertyChangeListener pcl, Waiter waiter) {
         setWaitCursor();
         JDialog dialog = getDialog(true);
         dialog.setPreferredSize(null);
-        dialog.add(getPanelNewWaiter(pcl));
+        dialog.add(getPanelNewWaiter(pcl, waiter));
         dialog.setResizable(false);
-        dialog.setTitle("Nuevo Mesero.");
+        dialog.setTitle(waiter == null ? "Nuevo Mesero." : "Modificar Mesero");
         dialog.pack();
         dialog.setLocationRelativeTo(getFrame());
         setDefaultCursor();
@@ -1075,6 +1076,7 @@ public class GUIManager {
         if (pnPedido == null) {
             pnPedido = new PanelPedido(app);
             pnPedido.addPropertyChangeListener(getPanelCash(null));
+
         }
         return pnPedido;
     }

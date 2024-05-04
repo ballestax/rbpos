@@ -107,6 +107,11 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="tfUser">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Liberation Sans" size="18" style="0"/>
+        </Property>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel5">
       <Properties>
@@ -115,9 +120,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btColor">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jButton1"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JComboBox" name="cbStatus">
       <Properties>

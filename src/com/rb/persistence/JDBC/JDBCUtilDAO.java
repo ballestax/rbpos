@@ -996,7 +996,7 @@ public class JDBCUtilDAO implements UtilDAO {
                 waiter.setId(rs.getInt(1));
                 waiter.setName(rs.getString(2));
                 waiter.setStatus(rs.getInt(3));
-                waiter.setColor(rs.getString("color"));
+                waiter.setStColor(rs.getString("color"));
                 waiters.add(waiter);
             }
         } catch (SQLException e) {
@@ -2853,7 +2853,7 @@ public class JDBCUtilDAO implements UtilDAO {
             Object[] parameters = {
                 waiter.getName(),
                 waiter.getStatus(),
-                waiter.getColor()
+                waiter.getStColor()
             };
             ps = sqlStatements.buildSQLStatement(conn, ADD_WAITER_KEY, parameters);
 
@@ -2878,7 +2878,7 @@ public class JDBCUtilDAO implements UtilDAO {
             Object[] parameters = {
                 waiter.getName(),
                 waiter.getStatus(),
-                waiter.getColor(),
+                waiter.getStColor(),
                 waiter.getId()
             };
             update = sqlStatements.buildSQLStatement(conn, UPDATE_WAITER_KEY, parameters);

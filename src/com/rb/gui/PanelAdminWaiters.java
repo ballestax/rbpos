@@ -20,6 +20,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EventObject;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
@@ -28,6 +29,7 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -35,13 +37,13 @@ import javax.swing.UIManager;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import org.dz.MyDefaultTableModel;
-import org.dz.MyTableCellRenderer;
+import org.dz.PanelCaptura;
 
 /**
  *
  * @author ballestax
  */
-public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListener, PropertyChangeListener {
+public class PanelAdminWaiters extends PanelCaptura implements ActionListener, PropertyChangeListener {
 
     private final Aplication app;
     private MyDefaultTableModel model;
@@ -57,10 +59,13 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
      *
      * @param app
      */
-    public PanelAdminWaiters(Aplication app) {
+    public PanelAdminWaiters(Aplication app, PropertyChangeListener pcl) {
+        super();
         this.app = app;
         initComponents();
         createComponents();
+        addPropertyChangeListener(pcl);
+
     }
 
     private void createComponents() {
@@ -73,7 +78,7 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
         btUpdate = new JButton("Actualizar");
         btUpdate.setActionCommand(ACTION_UPDATE);
         btUpdate.addActionListener(this);
-        
+
         toolbar.add(btNewWaiter);
         toolbar.add(btUpdate);
 
@@ -86,9 +91,9 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
         for (int i = 0; i < colW.length; i++) {
             tableWaiters.getColumnModel().getColumn(i).setMinWidth(colW[i]);
             tableWaiters.getColumnModel().getColumn(i).setPreferredWidth(colW[i]);
-            tableWaiters.getColumnModel().getColumn(i).setCellRenderer(new MyTableCellRenderer(true));
+            tableWaiters.getColumnModel().getColumn(i).setCellRenderer(new WaiterCellRender(""));
         }
-        tableWaiters.getColumnModel().getColumn(model.getColumnCount() - 2).setCellRenderer(new ColorCellRenderer(""));
+//        tableWaiters.getColumnModel().getColumn(model.getColumnCount() - 2).setCellRenderer(new WaiterCellRender(""));
         tableWaiters.getColumnModel().getColumn(model.getColumnCount() - 1).setCellEditor(new BotonEditor(tableWaiters, this, AC_MOD_WAITER));
         tableWaiters.getColumnModel().getColumn(model.getColumnCount() - 1).setCellRenderer(new ButtonCellRenderer("Modificar"));
 
@@ -100,13 +105,25 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
             @Override
             public void actionPerformed(ActionEvent e) {
                 int r = tableWaiters.getSelectedRow();
-                try {
-                    String username = tableWaiters.getValueAt(r, 1).toString();
+                int confirm = JOptionPane.showConfirmDialog(null, "Desea borrar el mesero permanentemente",
+                        "Eliminar mesero", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (confirm == JOptionPane.OK_OPTION) {
 
-                } catch (Exception ex) {
-                    GUIManager.showErrorMessage(null, "Error al intentar borrar el usuario", "Eliminar usuario");
+                    try {
+                        String ID = tableWaiters.getValueAt(r, 0).toString();
+                        Waiter waiter = app.getControl().getWaitressByID(Integer.parseInt(ID));
+                        if (waiter != null) {
+                            waiter.setName(waiter.getName() + "[DEL]");
+                            waiter.setStatus(-1);
+                            app.getControl().updateWaiter(waiter);
+                            System.out.println(Arrays.toString(pcs.getPropertyChangeListeners()));
+                            pcs.firePropertyChange(PanelNewWaiter.AC_NEW_WAITER, true, true);
+                            loadWaiters();
+                        }
+                    } catch (Exception ex) {
+                        GUIManager.showErrorMessage(null, "Error al intentar borrar el mesero", "Eliminar mesero");
+                    }
                 }
-
             }
         });
         popupTable.add(item1);
@@ -114,26 +131,28 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
 
         loadWaiters();
 
+        pcs.firePropertyChange("AC_REPORT", null, WIDTH);
+
     }
     private static final String ACTION_UPDATE = "ACTION_UPDATE";
     private static final String ACTION_NEW_WAITER = "ACTION_NEW_WAITER";
 
     private void loadWaiters() {
         try {
-            ArrayList<Waiter> waiters = ((JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO()).getWaitersList("", "");
+            ArrayList<Waiter> waiters = ((JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO()).getWaitersList("status!=-1", "");
 
             model.setRowCount(0);
             for (int i = 0; i < waiters.size(); i++) {
                 Waiter waiter = waiters.get(i);
                 model.addRow(new Object[]{
                     waiter.getId(),
-                    waiter.getName(),
+                    waiter.getName().toUpperCase(),
                     waiter.getStatus() == 1 ? "ACTIVO" : "INACTIVO",
-                    waiter.getColor(),
+                    waiter.getStColor() == null ? "#555555" : waiter.getStColor(),
                     true
                 });
                 model.setRowEditable(model.getRowCount() - 1, false);
-                model.setCellEditable(model.getRowCount() - 1, 3, true);
+                model.setCellEditable(model.getRowCount() - 1, 4, true);
             }
 
         } catch (DAOException ex) {
@@ -196,18 +215,26 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
     @Override
     public void actionPerformed(ActionEvent e) {
         if (ACTION_NEW_WAITER.equals(e.getActionCommand())) {
-            app.getGuiManager().showNewWaiter(this);
+            app.getGuiManager().showNewWaiter(this, null);
         } else if (ACTION_UPDATE.equals(e.getActionCommand())) {
             loadWaiters();
         }
     }
-   
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(PanelNewWaiter.AC_NEW_WAITER)) {
+        if (PanelNewWaiter.AC_NEW_WAITER.equals(evt.getPropertyName())) {
+            pcs.firePropertyChange(PanelNewWaiter.AC_NEW_WAITER, true, true);
+            loadWaiters();
+        } else if (PanelNewWaiter.AC_UPDATE_WAITER.equals(evt.getPropertyName())) {
+            pcs.firePropertyChange(PanelNewWaiter.AC_NEW_WAITER, true, true);
             loadWaiters();
         }
+    }
+
+    @Override
+    public void reset() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     public class ButtonCellRenderer extends JButton implements TableCellRenderer {
@@ -239,11 +266,11 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
         }
     }
 
-    public class ColorCellRenderer extends JLabel implements TableCellRenderer {
+    public class WaiterCellRender extends JLabel implements TableCellRenderer {
 
         private Color color;
 
-        public ColorCellRenderer(String text) {
+        public WaiterCellRender(String text) {
             setText(text);
             setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
             color = getColor(text);
@@ -262,22 +289,27 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-
+            Object act = table.getValueAt(row, 2);
+            setEnabled(act != null && "ACTIVO".equals(act.toString()));
             if (value != null) {
-                color = getColor(value.toString());
+                if (column == 3) {
+                    color = getColor(value.toString());
+                } else {
+                    setText(value.toString());
+                }
             }
 
             if (isSelected) {
                 setForeground(Color.black);
-                setBackground(color.darker());
+                setBackground(column == 3 ? color.darker() : Color.white);
                 if (hasFocus) {
                     setBorder(BorderFactory.createLineBorder(Color.darkGray));
                 } else {
                     setBorder(createLineBorder(Color.lightGray));
                 }
             } else {
-                setBackground(color);
                 setForeground(Color.black);
+                setBackground(column == 3 ? color : Color.white);
                 setBorder(UIManager.getBorder("Table.cellBorder"));
             }
             return this;
@@ -329,9 +361,10 @@ public class PanelAdminWaiters extends javax.swing.JPanel implements ActionListe
             final int f = tabla.getEditingRow();
             if (f != -1 && c != -1) {
                 int row = tabla.convertRowIndexToModel(f);
-                String name = tabla.getModel().getValueAt(row, 1).toString();
-                // TODO
-                
+                String ID = tabla.getModel().getValueAt(row, 0).toString();
+                Waiter waiter = app.getControl().getWaitressByID(Integer.parseInt(ID));
+                app.getGuiManager().showNewWaiter(PanelAdminWaiters.this, waiter);
+
             }
             try {
                 fireEditingStopped();

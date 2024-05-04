@@ -14,6 +14,7 @@ import com.rb.domain.Cycle;
 import com.rb.domain.Invoice;
 import com.rb.domain.Table;
 import com.rb.domain.Waiter;
+import static com.rb.gui.PanelPedido.logger;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -494,6 +495,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        logger.info(evt.getPropertyName()+":"+evt);
         if (AC_NEW_CYCLE.equals(evt.getPropertyName())) {
             Cycle lastCycle = app.getControl().getLastCycle();
             this.cycle = lastCycle;
