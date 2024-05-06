@@ -975,7 +975,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        logger.info(evt.getPropertyName()+":"+evt);
+        logger.info(evt.getPropertyName() + ":" + evt);
         if (PanelProduct2.AC_ADD_QUICK.equals(evt.getPropertyName())) {
             Product prod = (Product) evt.getNewValue();
             Presentation pres = app.getControl().getPresentationsByDefault(prod.getId());
@@ -1429,6 +1429,10 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         //checkCiclo
         Cycle lastCycle = app.getControl().getLastCycle();
+        if (lastCycle == null) {
+            GUIManager.showErrorMessage(null, "No existe ciclo de facturacion", "Ciclo cerrado");
+            return false;
+        }
         if (lastCycle.getStatus() == Cycle.CLOSED) {
             GUIManager.showErrorMessage(null, "El ciclo: " + lastCycle.getId() + " esta cerrado\n"
                     + "Empiece un nuevo ciclo para facturar", "Ciclo cerrado");
@@ -1602,7 +1606,9 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
     }
 
     private String getInfoCiclo(Cycle ciclo) {
-        if(ciclo==null) return "";
+        if (ciclo == null) {
+            return "";
+        }
         boolean status = ciclo.getStatus() == Cycle.CLOSED;
         PrettyTime pt = new PrettyTime(new Locale("es"));
         List<Duration> presDur = pt.calculatePreciseDuration(ciclo.getInit());
@@ -1792,9 +1798,13 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         long maxValue = control.getMaxIDTabla("invoices");
         Object code = control.getCodeFromInvoice(maxValue);
+        if(code == null){
+            code = "0";
+        }
 
         long value = 0;
         try {
+
             value = Long.parseLong(StringUtils.getDigits(code.toString()));
         } catch (NumberFormatException ex) {
             logger.debug(ex.getMessage() + ": Number in invoice");

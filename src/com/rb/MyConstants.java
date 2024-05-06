@@ -60,8 +60,12 @@ public class MyConstants {
     public static final String PERM_ORDERLIST_MODULE = "show-orderlist-module";
     public static final String PERM_INVENTORY_MODULE = "show-inventory-module";
     public static final String PERM_PRODUCTS_MODULE = "show-products-module";
+    public static final String PERM_ANULATE_INVOICE = "allow-anulate-invoice";
+    public static final String PERM_MOD_ORDER = "allow-mod-order";
 
     public static final Permission[] PERMISSIONS = {
+        new Permission(PERM_ANULATE_INVOICE, "Anular factura"),
+        new Permission(PERM_MOD_ORDER, "Modificar orden"),
         new Permission(PERM_ADMIN_MODULE, "Ver el modulo administrador"),
         new Permission(PERM_ORDERS_MODULE, "Ver el modulo pedidos"),
         new Permission(PERM_CASH_MODULE, "Ver el modulo caja"),

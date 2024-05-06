@@ -130,9 +130,9 @@ public class PanelList<T> extends PanelCapturaMod implements ListSelectionListen
     }
 
     public void agregar() {
-        String nombre = JOptionPane.showInputDialog(this, "Ingrese la nueva unidad de medida");
+        String nombre = JOptionPane.showInputDialog(this, "Ingrese el nuevo item");
         if (lista.contains(nombre.toUpperCase())) {
-            GUIManager.showErrorMessage(tabla, "Ya existe la unidad: " + nombre, "Error");
+            GUIManager.showErrorMessage(tabla, "Ya existe el item: " + nombre, "Error");
             return;
         }
         if (nombre != null && !nombre.isEmpty()) {

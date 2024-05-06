@@ -542,7 +542,7 @@ public class PanelPayInvoice extends PanelCapturaMod implements ActionListener, 
         System.out.println(Arrays.toString(map.values().toArray()));
         if (map != null && !map.isEmpty()) {
             pay = app.getControl().getPay(Integer.parseInt(map.get("id").toString()));
-            System.out.println("pay = " + pay);
+//            System.out.println("pay = " + pay);
             lbValCambio.setText(app.DCFORM_P.format(pay.getCambio()));
             lbInfo.setText("<html><font size=+1 color=blue>Factura paga</font></html>");
             lbInfo.setVisible(true);
