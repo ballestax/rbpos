@@ -38,6 +38,7 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
     private Registro regNumColumnsV1;
     private Registro regNumColumnsV2;
     private Registro regNumCategories;
+    private Registro regRowCategories;
 
     /**
      * Creates new form PanelConfigMotor
@@ -53,9 +54,11 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
 
     private void createComponents() {
         
+        jScrollPane1.getVerticalScrollBar().setUnitIncrement(20);
+
         Color color1 = new Color(205, 176, 225);
-        Font font = new Font("Sans",1,16);
-        
+        Font font = new Font("Sans", 1, 16);
+
         jPanel1.setLayout(new BoxLayout(jPanel1, BoxLayout.Y_AXIS));
 
         regDelivery = new Registro(BoxLayout.X_AXIS, "Domicilio", "", 100);
@@ -63,7 +66,7 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         regDelivery.setFontCampo(font);
         regDelivery.setDocument(TextFormatter.getDoubleLimiter());
         ConfigCont cCont = new ConfigCont(app);
-        cCont.setBackgroundTitle(new Color(200,210,220));
+        cCont.setBackgroundTitle(new Color(200, 210, 220));
         cCont.setTitle("Valor del domicilio");
         cCont.addCampo(regDelivery);
         jPanel1.add(cCont);
@@ -73,7 +76,7 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         regDocName.setBackground(color1);
         regDocName.setFontCampo(font);
         cCont = new ConfigCont(app);
-        cCont.setBackgroundTitle(new Color(200,210,220));
+        cCont.setBackgroundTitle(new Color(200, 210, 220));
         cCont.setTitle("Nombre del documento");
         cCont.addCampo(regDocName);
         jPanel1.add(cCont);
@@ -84,7 +87,7 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         regNumZeros.setFontCampo(font);
         regNumZeros.setDocument(TextFormatter.getIntegerLimiter());
         cCont = new ConfigCont(app);
-        cCont.setBackgroundTitle(new Color(200,210,220));
+        cCont.setBackgroundTitle(new Color(200, 210, 220));
         cCont.setTitle("Numero de ceros a formatear el consecutivo");
         cCont.addCampo(regNumZeros);
         jPanel1.add(cCont);
@@ -94,7 +97,7 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         regPrefix.setBackground(color1);
         regPrefix.setFontCampo(font);
         cCont = new ConfigCont(app);
-        cCont.setBackgroundTitle(new Color(200,210,220));
+        cCont.setBackgroundTitle(new Color(200, 210, 220));
         cCont.setTitle("Prefijo del consecutivo");
         cCont.addCampo(regPrefix);
         jPanel1.add(cCont);
@@ -104,7 +107,7 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         regAllowFact.setBackground(color1);
         regAllowFact.setFontCampo(font);
         cCont = new ConfigCont(app);
-        cCont.setBackgroundTitle(new Color(200,210,220));
+        cCont.setBackgroundTitle(new Color(200, 210, 220));
         cCont.setTitle("Permitir facturar sin existencias");
         cCont.addCampo(regAllowFact);
         jPanel1.add(cCont);
@@ -114,7 +117,7 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         regAllowPreview.setBackground(color1);
         regAllowPreview.setFontCampo(font);
         cCont = new ConfigCont(app);
-        cCont.setBackgroundTitle(new Color(200,210,220));
+        cCont.setBackgroundTitle(new Color(200, 210, 220));
         cCont.setTitle("Permitir imprimir pedido previo");
         cCont.addCampo(regAllowPreview);
         jPanel1.add(cCont);
@@ -124,45 +127,57 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         regShowExclusions.setBackground(color1);
         regShowExclusions.setFontCampo(font);
         cCont = new ConfigCont(app);
-        cCont.setBackgroundTitle(new Color(200,210,220));
+        cCont.setBackgroundTitle(new Color(200, 210, 220));
         cCont.setTitle("Mostrar exclusiones y notas del producto");
         cCont.addCampo(regShowExclusions);
         jPanel1.add(cCont);
         jPanel1.add(Box.createVerticalStrut(5));
-        
+
         regNumColumnsV1 = new Registro(BoxLayout.X_AXIS, "Columnas V1", "", 100);
         regNumColumnsV1.setBackground(color1);
         regNumColumnsV1.setFontCampo(font);
         regNumColumnsV1.setDocument(TextFormatter.getIntegerLimiter());
-        
+
         regNumColumnsV2 = new Registro(BoxLayout.X_AXIS, "Columnas V2", "", 100);
         regNumColumnsV2.setBackground(color1);
         regNumColumnsV2.setFontCampo(font);
         regNumColumnsV2.setDocument(TextFormatter.getIntegerLimiter());
-                
+
         Box boxHoriz = new Box(BoxLayout.X_AXIS);
         boxHoriz.add(regNumColumnsV1);
         boxHoriz.add(Box.createVerticalStrut(4));
         boxHoriz.add(regNumColumnsV2);
-                
+
         cCont = new ConfigCont(app);
-        cCont.setBackgroundTitle(new Color(200,210,220));
+        cCont.setBackgroundTitle(new Color(200, 210, 220));
         cCont.setTitle("Numero de columnas en el panel pedidos");
         cCont.addCampo(boxHoriz);
-        jPanel1.add(cCont);        
+        jPanel1.add(cCont);
         jPanel1.add(Box.createVerticalStrut(5));
-                
+
         regNumCategories = new Registro(BoxLayout.X_AXIS, "Max. Categorias", "", 100);
         regNumCategories.setBackground(color1);
         regNumCategories.setFontCampo(font);
         regNumCategories.setDocument(TextFormatter.getIntegerLimiter());
         cCont = new ConfigCont(app);
-        cCont.setBackgroundTitle(new Color(200,210,220));
+        cCont.setBackgroundTitle(new Color(200, 210, 220));
         cCont.setTitle("Numero de categorias a visualizar");
         cCont.addCampo(regNumCategories);
-            jPanel1.add(cCont);
-            jPanel1.add(Box.createVerticalGlue());
-            jPanel1.add(Box.createVerticalStrut(5));
+        jPanel1.add(cCont);
+        jPanel1.add(Box.createVerticalGlue());
+        jPanel1.add(Box.createVerticalStrut(5));
+
+        regRowCategories = new Registro(BoxLayout.X_AXIS, "Filas", "", 100);
+        regRowCategories.setBackground(color1);
+        regRowCategories.setFontCampo(font);
+        regRowCategories.setDocument(TextFormatter.getIntegerLimiter());
+        cCont = new ConfigCont(app);
+        cCont.setBackgroundTitle(new Color(200, 210, 220));
+        cCont.setTitle("Numero de filas de categorias a visualizar");
+        cCont.addCampo(regRowCategories);
+        jPanel1.add(cCont);
+        jPanel1.add(Box.createVerticalGlue());
+        jPanel1.add(Box.createVerticalStrut(5));
 
         btApply.setText("Aplicar");
         btApply.setActionCommand(ACTION_APPLY);
@@ -197,18 +212,22 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         config = app.getControl().getConfigLocal(Configuration.INVOICE_OUT_STOCK);
         boolean showOutStock = config != null ? (boolean) config.castValor() : false;
         regAllowFact.setSelected(showOutStock);
-        
+
         config = app.getControl().getConfigLocal(Configuration.NUM_COLUMNS_VIEW1);
         int numColumns1 = config != null ? (int) config.castValor() : 2;
         regNumColumnsV1.setText(app.getDCFORM_W().format(numColumns1));
-        
+
         config = app.getControl().getConfigLocal(Configuration.NUM_COLUMNS_VIEW2);
         int numColumns2 = config != null ? (int) config.castValor() : 2;
         regNumColumnsV2.setText(app.getDCFORM_W().format(numColumns2));
-        
+
         config = app.getControl().getConfigLocal(Configuration.MAX_CATEGORIES_LIST);
         int numCategories = config != null ? (int) config.castValor() : 5;
         regNumCategories.setText(app.getDCFORM_W().format(numCategories));
+
+        config = app.getControl().getConfigLocal(Configuration.CATEGORY_ROWS);
+        int rowCategories = config != null ? (int) config.castValor() : 1;
+        regRowCategories.setText(app.getDCFORM_W().format(rowCategories));
 
     }
 
@@ -275,10 +294,10 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
     public void actionPerformed(ActionEvent e) {
         if (ACTION_APPLY.equals(e.getActionCommand())) {
             String value = regDelivery.getText();
-            
+
             String userName = app.getUser().getUsername();
             String userDevice = Aplication.getUserDevice();
-            
+
             app.getControl().addConfig(new ConfigDB(com.rb.Configuration.DELIVERY_VALUE, ConfigDB.DOUBLE, value, userName, userDevice));
 
             boolean selected = regAllowPreview.isSelected();
@@ -301,15 +320,18 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
 
             String docName = regDocName.getText();
             app.getControl().addConfig(new ConfigDB(com.rb.Configuration.DOCUMENT_NAME, ConfigDB.STRING, docName, userName, userDevice));
-            
+
             String columnsV1 = regNumColumnsV1.getText();
             app.getControl().addConfig(new ConfigDB(Configuration.NUM_COLUMNS_VIEW1, ConfigDB.INTEGER, columnsV1, userName, userDevice));
-            
+
             String columnsV2 = regNumColumnsV2.getText();
             app.getControl().addConfig(new ConfigDB(Configuration.NUM_COLUMNS_VIEW2, ConfigDB.INTEGER, columnsV2, userName, userDevice));
-            
+
             String categories = regNumCategories.getText();
             app.getControl().addConfig(new ConfigDB(Configuration.MAX_CATEGORIES_LIST, ConfigDB.INTEGER, categories, userName, userDevice));
+
+            String rowCategories = regRowCategories.getText();
+            app.getControl().addConfig(new ConfigDB(Configuration.CATEGORY_ROWS, ConfigDB.INTEGER, rowCategories, userName, userDevice));
 
             app.getConfiguration().save();
         }

@@ -30,7 +30,8 @@ public class PanelSelCategory extends PanelCapturaMod implements ActionListener 
 
     private ArrayList<Category> categories;
     private final Aplication app;
-    private Box boxContainer;
+    private Box boxContainer1;
+    private Box boxContainer2;
     private JPopupMenu popupExtraCategories;
     private JButton btExtras;
     private JButton lastButtonSel;
@@ -44,32 +45,41 @@ public class PanelSelCategory extends PanelCapturaMod implements ActionListener 
     }
 
     private void createComponents() {
-        setLayout(new BorderLayout());
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         Border marginBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
         setBorder(BorderFactory.createCompoundBorder(marginBorder,
                 BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)));
 
-        boxContainer = new Box(BoxLayout.X_AXIS);
+        boxContainer1 = new Box(BoxLayout.X_AXIS);
+        boxContainer2 = new Box(BoxLayout.X_AXIS);
 
         loadCategories();
-        add(boxContainer);
+        add(boxContainer1);
+        add(boxContainer2);
     }
 
     private void loadCategories() {
-       
-        boxContainer.removeAll();
-        remove(boxContainer);
-        
-        ConfigDB config = app.getControl().getConfigLocal(Configuration.MAX_CATEGORIES_LIST);        
+
+        ConfigDB config = app.getControl().getConfigLocal(Configuration.MAX_CATEGORIES_LIST);
         int MAX = config != null ? (int) config.castValor() : 6;
+
+        config = app.getControl().getConfigLocal(Configuration.CATEGORY_ROWS);
+        int ROWS = config != null ? (int) config.castValor() : 1;
+        System.out.println("ROWS = " + ROWS);
+
+        boxContainer1.removeAll();
+        //remove(boxContainer1);
+
+        boxContainer2.removeAll();
+        //remove(boxContainer2);
 
         Border marginBorder = BorderFactory.createEmptyBorder(7, 5, 7, 5);
         if (categories != null) {
-            for (int i = 0; i < categories.size() && i <= MAX; i++) {
-                JButton btCategory = new JButton();                
+            for (int i = 0; i < categories.size(); i++) {
+                JButton btCategory = new JButton();
                 btCategory.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), marginBorder));
-                
+                        BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), marginBorder));
+
                 btCategory.setBackground(categories.get(i).getColor());
                 btCategory.setForeground(Color.black);
                 btCategory.setMargin(new Insets(1, 1, 1, 1));
@@ -77,35 +87,52 @@ public class PanelSelCategory extends PanelCapturaMod implements ActionListener 
                 btCategory.setText(name);
                 btCategory.setActionCommand(SEL_CAT_ + name);
                 btCategory.addActionListener(this);
-                boxContainer.add(btCategory);
-                boxContainer.add(Box.createHorizontalStrut(4));
+                if (i < MAX) {
+                    boxContainer1.add(btCategory);
+                    boxContainer1.add(Box.createHorizontalStrut(4));
+                } else if (ROWS > 1 && i < MAX * 2) {
+                    boxContainer2.add(btCategory);
+                    boxContainer2.add(Box.createHorizontalStrut(4));
+
+                }
             }
-            if (categories.size() - 1 > MAX) {
+            boxContainer1.add(Box.createHorizontalGlue());
+            boxContainer2.add(Box.createHorizontalGlue());
+
+            int lim = ROWS > 1 ? 2 : 1;
+            if (categories.size() - 1 > MAX * lim) {
                 btExtras = new JButton();
                 btExtras.setBackground(Utiles.colorAleatorio(125, 255));
                 btExtras.setMargin(new Insets(1, 1, 1, 1));
-                
+
                 btExtras.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), marginBorder));
+                        BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), marginBorder));
                 String name = "...";
                 btExtras.setText(name);
                 btExtras.setForeground(Color.black);
                 btExtras.setActionCommand(SHOW_EXTRA_CATEGORIES);
                 btExtras.addActionListener(this);
-                boxContainer.add(Box.createHorizontalGlue());
-                boxContainer.add(btExtras);
+                if (ROWS > 1) {
+                    boxContainer1.add(Box.createHorizontalGlue());
+                    boxContainer2.add(Box.createHorizontalGlue());
+                    boxContainer2.add(btExtras);
+                } else {
+                    boxContainer1.add(Box.createHorizontalGlue());
+                    boxContainer1.add(btExtras);
+                }
 
                 popupExtraCategories = new JPopupMenu();
-                for (int i = MAX + 1; i < categories.size(); i++) {
+
+                for (int i = (ROWS > 1 ? MAX * 2 : MAX); i < categories.size(); i++) {
                     JMenuItem item = new JMenuItem(categories.get(i).getName().toUpperCase());
                     item.addActionListener(this);
                     item.setActionCommand(SEL_CAT_ + categories.get(i).getName());
                     popupExtraCategories.add(item);
                 }
             }
-        }        
+        }
     }
-    
+
     private static final String SHOW_EXTRA_CATEGORIES = "SHOW_EXTRA_CATEGORIES";
     public static final String SEL_CAT_ = "SEL_CAT_";
 
@@ -129,15 +156,15 @@ public class PanelSelCategory extends PanelCapturaMod implements ActionListener 
             popupExtraCategories.show(btExtras, -popupExtraCategories.getWidth() + btExtras.getWidth(), btExtras.getHeight());
         } else {
             pcs.firePropertyChange(e.getActionCommand(), null, null);
-            if(lastButtonSel != null){
+            if (lastButtonSel != null) {
                 lastButtonSel.setForeground(Color.black);
             }
-            if(e.getSource() instanceof JButton){
-            lastButtonSel = (JButton) e.getSource();
-            lastButtonSel.setForeground(Color.red);
+            if (e.getSource() instanceof JButton) {
+                lastButtonSel = (JButton) e.getSource();
+                lastButtonSel.setForeground(Color.red);
             }
-            
-            lastCategorySel = e.getActionCommand().substring(8);            
+
+            lastCategorySel = e.getActionCommand().substring(8);
         }
     }
 
