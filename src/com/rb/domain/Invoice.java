@@ -30,9 +30,12 @@ public class Invoice {
     private double porcService;
     private int status;
     private int numItems;
-    public static final String[] STATUSES = {"NORMAL", "ANULADA"};
+    public static final String[] STATUSES = {"NORMAL", "ANULADA", "MODIFICADA", "ENVIADA", "PAGADA"};
     public static final int ST_NORMAL = 0;
     public static final int ST_ANULADA = 1;
+    public static final int ST_MODIFICADA = 2;
+    public static final int ST_ENVIADA = 3;
+    public static final int ST_PAGADA = 4;
 
     public Invoice() {
         numItems = 0;
@@ -73,7 +76,7 @@ public class Invoice {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {        
+    public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
 

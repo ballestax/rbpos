@@ -48,7 +48,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -821,44 +823,51 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
             SimpleDateFormat formFecha = new SimpleDateFormat("dd MMMM yyyy");
 
             Invoice inv = invoice;
-            StringBuilder msg = new StringBuilder();
-            msg.append("<html>Esta seguro que desea anular la factura N° ");
-            msg.append("<font color=blue>").append(inv.getFactura());
-            msg.append(" </font> del ");
-            msg.append("<font color=blue>").append(formFecha.format(inv.getFecha())).append("</font>");
-            msg.append("<p>Por valor de: ").append("<font color=blue>").append(app.getDCFORM_P().format(inv.getValor())).append("</font></p></html>");
-            msg.append("</html>");
-            int opt = JOptionPane.showConfirmDialog(null, msg, "Advertencia", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-            if (opt == JOptionPane.OK_OPTION) {
-                if (inv.getStatus() != Invoice.ST_ANULADA) {
-                    inv.setStatus(Invoice.ST_ANULADA);
-                    app.getControl().updateInvoice(inv);
-                    List<ProductoPed> list = inv.getProducts();
-                    app.getControl().restoreInventory(list, inv.getTipoEntrega());
-                } else {
-                    GUIManager.showErrorMessage(this, "La factura ya fue anulada, se cargara una nueva con los mismos datos", "Factura anulada");
-                }
-                lbFactura.setText(calculateProximoRegistro());
 
-                enablePedido(true);
-
-                block = false;
-
-                btConfirm.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "update.png", 10, 10)));
-                btConfirm.setBackground(new Color(153, 153, 255));
-                btConfirm.setActionCommand(AC_CONFIRMAR_PEDIDO);
-                btConfirm.setText("GUARDAR");
-
-                lbCliente.setText("");
-
-                btPrint.setVisible(false);
-                btPrint1.setVisible(false);
-
+            Map pago = app.getControl().facturaIsPaga(inv.getFactura());
+            if (pago != null && !pago.isEmpty()) {
+                GUIManager.showErrorMessage(this, "La factura esta paga, no puede modifcarse", "Factura paga");
             }
 
+            inv.setStatus(Invoice.ST_MODIFICADA);
+
+//            List<ProductoPed> list = inv.getProducts();
+//            app.getControl().restoreInventory(list, inv.getTipoEntrega());
+            enablePedido(true);
+
+            block = false;
+
+            btConfirm.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "update.png", 10, 10)));
+            btConfirm.setBackground(new Color(153, 153, 255));
+            btConfirm.setActionCommand(AC_UPDATE_PEDIDO);
+            btConfirm.setText("GUARDAR");
+
+            lbCliente.setText("");
+
+            btPrint.setVisible(false);
+            btPrint1.setVisible(false);
+
         } else if (AC_UPDATE_PEDIDO.equals(e.getActionCommand())) {
+
             Invoice invoice1 = getInvoice();
-            app.getControl().updateInvoiceFull(invoice1, oldProducts);
+
+            Map<ProductoPed, Integer> diffProd = new HashMap<>();
+
+            Map<Integer, Integer> productMap = oldProducts.stream().collect(Collectors.toMap(ProductoPed::hashCode, productPed -> productPed.getCantidad()));
+
+//            Map<Integer, ProductoPed> productMap = oldProducts.stream().collect(Collectors.toMap(ProductPed::hashCode, productPed -> productPed));
+            for (ProductoPed product : invoice1.getProducts()) {
+                if (oldProducts.contains(product)) {    
+                    int q1 = product.getCantidad();
+                    int q2 = productMap.get(product.hashCode());
+                    System.out.println("q1-q2 = " + q1 + "-" + q2);
+
+                } else {
+                    System.out.println("No exist:" + product);
+                }
+            }
+
+            //app.getControl().updateInvoiceFull(invoice1, oldProducts);
             block = true;
         } else if (AC_CHANGE_SELECTED.equals(e.getActionCommand())) {
             Waiter waitres = (Waiter) regMesera.getSelectedItem();
@@ -1798,7 +1807,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         long maxValue = control.getMaxIDTabla("invoices");
         Object code = control.getCodeFromInvoice(maxValue);
-        if(code == null){
+        if (code == null) {
             code = "0";
         }
 

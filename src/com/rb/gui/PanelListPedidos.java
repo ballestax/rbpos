@@ -225,7 +225,7 @@ public class PanelListPedidos extends PanelCapturaMod implements ActionListener,
 
                 pcs.firePropertyChange(AC_SHOW_INVOICE, inv, null);
 
-                Permission perm = app.getControl().getPermissionByName("show-pedidos-module");
+                Permission perm = app.getControl().getPermissionByName(MyConstants.PERM_ORDERS_MODULE   );
                 app.getGuiManager().showBasicPanel(app.getGuiManager().getPanelBasicPedidos(), perm);
 
             }
