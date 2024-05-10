@@ -923,6 +923,14 @@ public class PanelPedido extends PanelCapturaMod
                             new ImageIcon(
                                     app.getImgManager().getImagen(app.getFolderIcons() + "new-file.png", 18, 18)));
 
+                    btConfirm
+                            .setIcon(new ImageIcon(
+                                    app.getImgManager().getImagen(app.getFolderIcons() + "update.png", 10, 10)));
+                    btConfirm.setBackground(new Color(153, 153, 255));
+                    btConfirm.setActionCommand(AC_EDITAR_PEDIDO);
+                    btConfirm.setText("GUARDAR");
+                    btConfirm.setEnabled(false);
+
                 }
 
             }

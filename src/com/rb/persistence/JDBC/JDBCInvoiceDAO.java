@@ -1142,7 +1142,7 @@ public class JDBCInvoiceDAO implements InvoiceDAO {
         }
     }
 
-    public boolean updateInvoiceDiff(Invoice invoice, List<ProductoPed> oldProducts,Map<ProductoPed, Integer> diffProducts) throws DAOException {
+    public void updateInvoiceDiff(Invoice invoice, List<ProductoPed> oldProducts,Map<ProductoPed, Integer> diffProducts) throws DAOException {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;

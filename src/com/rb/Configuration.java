@@ -44,6 +44,7 @@ public class Configuration {
     public static final String ZEROS_INVOICES = "cf.zeros";
     public static final String MAX_SERVICE_PORC = "cf.maxservice";
     public static final String DEF_SERVICE_PORC = "cf.defservice";
+    public static final String PULSE_PIN = "cf.pulsepin";
     public static final String IS_SERVICE_DEF = "cf.isservice";
     public static final String PATH_IMG = "cf.pathimg";
     public static final String PRINT_PREV_DELIVERY = "cf.printprevius";

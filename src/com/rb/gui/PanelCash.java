@@ -472,6 +472,10 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
     public void actionPerformed(ActionEvent e) {
         if (AC_NEW_CYCLE.equals(e.getActionCommand())) {
             app.getGuiManager().showPanelNewCycle(this);
+            ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED);
+            String printer = config != null ? config.getValor() : "";
+            app.getPrinterService().sendPulsePin(printer);
+
         } else if (AC_CLOSE_CYCLE.equals(e.getActionCommand())) {
             if (cycle.getStatus() == 1) {
                 cycle.setStatus(0);
