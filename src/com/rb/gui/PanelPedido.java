@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -850,6 +851,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         } else if (AC_UPDATE_PEDIDO.equals(e.getActionCommand())) {
 
             Invoice invoice1 = getInvoice();
+            invoice1.setId(this.invoice.getId());
 
             Map<ProductoPed, Integer> diffProd = new HashMap<>();
 
@@ -857,16 +859,24 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
 //            Map<Integer, ProductoPed> productMap = oldProducts.stream().collect(Collectors.toMap(ProductPed::hashCode, productPed -> productPed));
             for (ProductoPed product : invoice1.getProducts()) {
-                if (oldProducts.contains(product)) {    
+                if (oldProducts.contains(product)) {
                     int q1 = product.getCantidad();
                     int q2 = productMap.get(product.hashCode());
-                    System.out.println("q1-q2 = " + q1 + "-" + q2);
-
+                    diffProd.put(product, q1 - q2);
                 } else {
-                    System.out.println("No exist:" + product);
+                    diffProd.put(product, product.getCantidad());
                 }
             }
 
+            app.getControl().updateInvoiceDiff(invoice1, oldProducts, diffProd);
+
+            System.out.println("Result");
+            for (Map.Entry<ProductoPed, Integer> entry : diffProd.entrySet()) {
+                ProductoPed key = entry.getKey();
+                Integer val = entry.getValue();
+                System.out.println(key.getProduct().getName() + ": " + val);
+
+            }
             //app.getControl().updateInvoiceFull(invoice1, oldProducts);
             block = true;
         } else if (AC_CHANGE_SELECTED.equals(e.getActionCommand())) {
@@ -1146,11 +1156,13 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         if (products.contains(productPed) && price == productPed.getPrecio()) {
             try {
+
                 int row = products.indexOf(productPed);
                 int cant = Integer.valueOf(modeloTb.getValueAt(row, 0).toString());
                 modeloTb.setValueAt(cant + cantidad, row, 0);
                 productPed.setCantidad(cantidad);
                 products.set(row, productPed);
+
             } catch (Exception e) {
             }
         } else {
@@ -1352,34 +1364,42 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
     }
 
-    private void loadInvoice(Invoice invoice) {
+    private void loadInvoice(Invoice invoice1) {
 
         block = false;
 
-        oldProducts = invoice.getProducts();
+        oldProducts = new ArrayList<>();
+        for (ProductoPed product : invoice1.getProducts()) {
+            try {
+                oldProducts.add(product.clone());
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
+
+        }
 
         clearPedido();
 
         enablePedido(false);
 
-        int delivery = invoice.getTipoEntrega();
+        int delivery = invoice1.getTipoEntrega();
 
-        Long idClient = invoice.getIdCliente();
-        Waiter waiter = app.getControl().getWaitressByID(invoice.getIdWaitress());
+        Long idClient = invoice1.getIdCliente();
+        Waiter waiter = app.getControl().getWaitressByID(invoice1.getIdWaitress());
 
-        lbFactura.setText("<html><font>" + invoice.getFactura() + "</font></html>");
+        lbFactura.setText("<html><font>" + invoice1.getFactura() + "</font></html>");
         lbFactura.removeMouseListener(lbFacturaMouseListener);
 
         PrettyTime pt = new PrettyTime(new Locale("es"));
-        String text = "<html><font size=-1 color=blue>" + app.DF_FULL3.format(invoice.getFecha()) + "</font><p><font color=red size=-2>" + pt.format(invoice.getFecha()) + "</font><html>";
+        String text = "<html><font size=-1 color=blue>" + app.DF_FULL3.format(invoice1.getFecha()) + "</font><p><font color=red size=-2>" + pt.format(invoice1.getFecha()) + "</font><html>";
 
         if (delivery == TIPO_LOCAL) {
             showLocal();
-            regMesa.setText(String.valueOf(invoice.getTable()));
+            regMesa.setText(String.valueOf(invoice1.getTable()));
             regMesera.setSelected(waiter);
 
-            chServ.setSelected(invoice.isService());
-            regService.setText(String.valueOf(invoice.getPorcService()));
+            chServ.setSelected(invoice1.isService());
+            regService.setText(String.valueOf(invoice1.getPorcService()));
 
         } else {
 
@@ -1391,8 +1411,8 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
                 regDireccion.setText(client.getAddresses().get(0).toString());
             }
 
-            spNumDom.setValue(invoice.getNumDeliverys());
-            lbEntregas.setText(DCFORM_P.format(invoice.getValorDelivery().doubleValue()));
+            spNumDom.setValue(invoice1.getNumDeliverys());
+            lbEntregas.setText(DCFORM_P.format(invoice1.getValorDelivery().doubleValue()));
 
             if (delivery == TIPO_PARA_LLEVAR) {
                 chRecogido.setSelected(true);
@@ -1403,7 +1423,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         }
 
-        for (ProductoPed product : invoice.getProducts()) {
+        for (ProductoPed product : invoice1.getProducts()) {
             addProductPed(product, product.getCantidad(), product.getPrecio());
         }
 
@@ -1422,7 +1442,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         block = true;
 
-        this.invoice = invoice;
+        this.invoice = invoice1;
     }
 
     private boolean verificarDatosFactura() throws ParseException {

@@ -735,6 +735,17 @@ public class Control {
         }
     }
 
+    public void updateInvoiceDiff(Invoice invoice, List<ProductoPed> oldProducts, Map<ProductoPed, Integer> diffProducts) {
+        try {
+            JDBCInvoiceDAO invoiceDAO = (JDBCInvoiceDAO) DAOFactory.getInstance().getInvoiceDAO();
+            invoiceDAO.updateInvoiceDiff(invoice, oldProducts, diffProducts);
+        } catch (DAOException ex) {
+            String msg = "Error updating invoice diff";
+            logger.error(msg, ex);
+            GUIManager.showErrorMessage(null, msg, "Error");
+        }
+    }
+
     public void anulateInvoice(Invoice invoice) {
         try {
             JDBCInvoiceDAO invoiceDAO = (JDBCInvoiceDAO) DAOFactory.getInstance().getInvoiceDAO();
@@ -870,7 +881,7 @@ public class Control {
     public Cycle getLastCycle() {
         try {
             JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
-            return utilDAO.getLastCycle("","");
+            return utilDAO.getLastCycle("", "");
         } catch (DAOException ex) {
             String msg = "Error getting cycle";
             logger.error(msg, ex);

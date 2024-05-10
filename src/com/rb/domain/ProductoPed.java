@@ -10,8 +10,9 @@ import org.apache.commons.collections.CollectionUtils;
  *
  * @author lrod
  */
-public class ProductoPed {
+public class ProductoPed implements Cloneable {
 
+    protected Long id;
     protected Product producto;
     protected ArrayList<AdditionalPed> adicionales;
     protected ArrayList<Ingredient> exclusiones;
@@ -31,6 +32,14 @@ public class ProductoPed {
         adicionales = new ArrayList<>();
         exclusiones = new ArrayList<>();
         this.precio = producto.getPrice();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Product getProduct() {
@@ -187,7 +196,7 @@ public class ProductoPed {
         }
         this.data.put(key, data);
     }
-    
+
     public void addData(HashMap<Integer, HashMap> data) {
         if (this.data == null) {
             this.data = new HashMap<>();
@@ -195,9 +204,9 @@ public class ProductoPed {
         for (Map.Entry<Integer, HashMap> entry : data.entrySet()) {
             Integer key = entry.getKey();
             HashMap value = entry.getValue();
-             this.data.put(key, data);
+            this.data.put(key, data);
         }
-       
+
     }
 
     @Override
@@ -241,6 +250,17 @@ public class ProductoPed {
         hash = 97 * hash + Objects.hashCode(this.presentation);
         hash = 97 * hash + (int) (Double.doubleToLongBits(this.precio) ^ (Double.doubleToLongBits(this.precio) >>> 32));
         return hash;
+    }
+
+    @Override
+    public ProductoPed clone() throws CloneNotSupportedException {
+        try {
+            return (ProductoPed) super.clone();
+        } catch (CloneNotSupportedException e) {
+            // Manejar la excepción o relanzarla según tu lógica
+            System.err.println(e.getMessage());
+            return null;
+        }
     }
 
 }

@@ -29,10 +29,10 @@
                     |CREATE_INGREDIENTS_TABLE|ADD_INGREDIENT|GET_INGREDIENT|DELETE_INGREDIENT|UPDATE_INGREDIENT
                     |CREATE_PRODUCT_INGREDIENT_TABLE|GET_INGREDIENTS_BY_PRODUCT
                     |CREATE_ADDITIONALS_TABLE|ADD_ADDITIONAL|GET_ADDITIONAL|DELETE_ADDITIONAL|UPDATE_ADDITIONAL
-                    |CREATE_INVOICES_TABLE|ADD_INVOICE|GET_INVOICE|DELETE_INVOICE|UPDATE_INVOICE
+                    |CREATE_INVOICES_TABLE|ADD_INVOICE|GET_INVOICE|DELETE_INVOICE|UPDATE_INVOICE|UPDATE_INVOICE_BY_ID
                     |CREATE_WAITERS_TABLE|CREATE_TABLES_TABLE|CREATE_INVOICE_PRODUCT_TABLE
                     |GET_WAITERS|GET_TABLES
-                    |ADD_INVOICE_PRODUCT|GET_INVOICE_PRODUCT
+                    |ADD_INVOICE_PRODUCT|GET_INVOICE_PRODUCT|DELETE_INVOICE_PRODUCT
                     |CREATE_ADDITIONAL_PRODUCT_TABLE|ADD_ADDITIONAL_PRODUCT|GET_ADDITIONAL_PRODUCT
                     |CREATE_EXCLUSION_PRODUCT_TABLE|ADD_EXCLUSION_PRODUCT|GET_EXCLUSION_PRODUCT
                     |GET_FIRST_REGISTRO|GET_LAST_REGISTRO
@@ -948,6 +948,26 @@
             </SQLFragment>
         </SQLStatement> 
         
+        <SQLStatement method="UPDATE_INVOICE_BY_ID">
+            <SQLFragment>
+                UPDATE invoices SET                          
+                deliveryType=?,
+                value=?,
+                numDeliverys=?,
+                valueDelivery=?,
+                discount=?,
+                idClient=?,
+                idMesero=?,
+                mesa=?,
+                ciclo=?,
+                isservice=?,
+                service_porc=?,
+                status=?,
+                code = ?
+                WHERE id = ?
+            </SQLFragment>
+        </SQLStatement> 
+        
         <SQLStatement method="GET_INVOICE_BY_PRODUCT">
             <SQLFragment>
                 SELECT
@@ -1042,6 +1062,12 @@
                 SELECT p.id, p.name, p.code, p.description, p.price, p.variable, p.image, p.category, ip.price, ip.cantidad, ip.id, ip.id_presentation
                 FROM products p, invoice_product ip, invoices i 
                 WHERE p.id = ip.id_product AND ip.id_invoice = i.id  AND i.code=?
+            </SQLFragment>
+        </SQLStatement>
+        
+        <SQLStatement method="DELETE_INVOICE_PRODUCT">
+            <SQLFragment>
+                DELETE FROM invoice_product WHERE id = ?;
             </SQLFragment>
         </SQLStatement>
         
