@@ -72,13 +72,15 @@ public class Control {
 
             logger.debug("Init database...");
 
-            /*if (Aplication.INSTALL_DB) {
-                //preguntas la contraseña y crea la database
-                new JDBCDAOFactory().createDatabase();
-            } else {
-                //crea la database from properties pass
-                new JDBCDAOFactory().createDatabaseFromProperties();
-            }*/
+            /*
+             * if (Aplication.INSTALL_DB) {
+             * //preguntas la contraseña y crea la database
+             * new JDBCDAOFactory().createDatabase();
+             * } else {
+             * //crea la database from properties pass
+             * new JDBCDAOFactory().createDatabaseFromProperties();
+             * }
+             */
             JDBCUserDAO userDAO = (JDBCUserDAO) DAOFactory.getInstance().getUserDAO();
             userDAO.init();
 
@@ -124,7 +126,7 @@ public class Control {
     public User verifyUser(String user, char[] pass) {
         try {
             JDBCUserDAO userDAO = (JDBCUserDAO) DAOFactory.getInstance().getUserDAO();
-            //userDAO.init();
+            // userDAO.init();
             return userDAO.checkPassword(user, String.valueOf(pass));
         } catch (DAOException ex) {
             logger.error("Error checking user: " + user, ex);
@@ -135,8 +137,8 @@ public class Control {
     public boolean tableUserEmpty() {
         try {
             JDBCUserDAO userDAO = (JDBCUserDAO) DAOFactory.getInstance().getUserDAO();
-            //userDAO.init();
-//            System.out.println(userDAO.checkTableEmpty());
+            // userDAO.init();
+            // System.out.println(userDAO.checkTableEmpty());
             return userDAO.checkTableEmpty() == 0;
         } catch (DAOException ex) {
             logger.error("Error checking table users is empty: ", ex);
@@ -147,8 +149,8 @@ public class Control {
     public boolean tableRolEmpty() {
         try {
             JDBCUserDAO userDAO = (JDBCUserDAO) DAOFactory.getInstance().getUserDAO();
-            //userDAO.init();
-//            System.out.println(userDAO.checkTableEmpty());
+            // userDAO.init();
+            // System.out.println(userDAO.checkTableEmpty());
             return userDAO.checkTableEmpty() == 0;
         } catch (DAOException ex) {
             logger.error("Error checking table users is empty: ", ex);
@@ -347,7 +349,8 @@ public class Control {
 
     public User getUser(String name) {
         try {
-            RemoteUserResultsInterface rUsers = ((JDBCUserDAO) DAOFactory.getInstance().getUserDAO()).retrieveUsers("username='" + name + "'", "");
+            RemoteUserResultsInterface rUsers = ((JDBCUserDAO) DAOFactory.getInstance().getUserDAO())
+                    .retrieveUsers("username='" + name + "'", "");
             List<User> items = rUsers.getItems(0, 1);
             return items.get(0);
         } catch (DAOException ex) {
@@ -735,15 +738,12 @@ public class Control {
         }
     }
 
-    public void updateInvoiceDiff(Invoice invoice, List<ProductoPed> oldProducts, Map<ProductoPed, Integer> diffProducts) {
-        try {
-            JDBCInvoiceDAO invoiceDAO = (JDBCInvoiceDAO) DAOFactory.getInstance().getInvoiceDAO();
-            invoiceDAO.updateInvoiceDiff(invoice, oldProducts, diffProducts);
-        } catch (DAOException ex) {
-            String msg = "Error updating invoice diff";
-            logger.error(msg, ex);
-            GUIManager.showErrorMessage(null, msg, "Error");
-        }
+    public void updateInvoiceDiff(Invoice invoice, List<ProductoPed> oldProducts,
+            Map<ProductoPed, Integer> diffProducts) throws DAOException {
+
+        JDBCInvoiceDAO invoiceDAO = (JDBCInvoiceDAO) DAOFactory.getInstance().getInvoiceDAO();
+        invoiceDAO.updateInvoiceDiff(invoice, oldProducts, diffProducts);
+
     }
 
     public void anulateInvoice(Invoice invoice) {
@@ -1206,16 +1206,18 @@ public class Control {
         }
     }
 
-//    public ArrayList<Item> getItemsBySql(String query) {
-//        try {
-//            JDBCItemDAO itemDAO = (JDBCItemDAO) JDBCDAOFactory.getInstance().getItemDAO();
-//            return itemDAO.getItemsBy(query);
-//        } catch (Exception e) {
-//            logger.error("Error getting items list by sql");
-//            GUIManager.showErrorMessage(null, "Error consultando lista de items", "Error");
-//            return null;
-//        }
-//    }
+    // public ArrayList<Item> getItemsBySql(String query) {
+    // try {
+    // JDBCItemDAO itemDAO = (JDBCItemDAO)
+    // JDBCDAOFactory.getInstance().getItemDAO();
+    // return itemDAO.getItemsBy(query);
+    // } catch (Exception e) {
+    // logger.error("Error getting items list by sql");
+    // GUIManager.showErrorMessage(null, "Error consultando lista de items",
+    // "Error");
+    // return null;
+    // }
+    // }
     public ArrayList<Location> getLocationList(String where, String order) {
         try {
             JDBCLocationDAO locationDAO = (JDBCLocationDAO) DAOFactory.getInstance().getLocationDAO();
@@ -1326,7 +1328,8 @@ public class Control {
                 int id = Integer.parseInt(data.get("id").toString());
                 double quantity = Double.parseDouble(data.get("quantity").toString());
                 app.getControl().addItemToInventory(id, quantity * pPed.getCantidad());
-                logger.warn("Update inventory: " + pPed.getProduct().getName() + ":: " + data.get("name") + "-> idItem:" + id + "[" + quantity + "]");
+                logger.warn("Update inventory: " + pPed.getProduct().getName() + ":: " + data.get("name") + "-> idItem:"
+                        + id + "[" + quantity + "]");
             }
 
         }
@@ -1351,7 +1354,8 @@ public class Control {
                 boolean isOnlyDel = Boolean.parseBoolean(data.get("onlyDelivery").toString());
                 double val = quantity * pPed.getCantidad() * (isLocal && isOnlyDel ? 0 : 1);
                 app.getControl().addItemToInventory(id, val);
-                logger.debug("Update inventory: " + pPed.getProduct().getName() + ":: " + data.get("name") + "-> idItem:" + id + "[" + val + "]");
+                logger.debug("Update inventory: " + pPed.getProduct().getName() + ":: " + data.get("name")
+                        + "-> idItem:" + id + "[" + val + "]");
             }
 
         }
@@ -1382,7 +1386,8 @@ public class Control {
             return utilDAO.getPresentationOutInventory(idPres, idItem, start, end);
         } catch (DAOException ex) {
             logger.error("Error getting presentation out list.", ex);
-            GUIManager.showErrorMessage(null, "Error consultando lista de salida de productos por presentacion", "Error");
+            GUIManager.showErrorMessage(null, "Error consultando lista de salida de productos por presentacion",
+                    "Error");
             return null;
         }
     }
@@ -1449,10 +1454,11 @@ public class Control {
                     + " GROUP BY i.code"
                     + " ORDER  BY i.sale_date DESC";
 
-//            query = query.replace("??1", (idProd <= 0 ? "" : "AND p.id=" + String.valueOf(idProd)));
+            // query = query.replace("??1", (idProd <= 0 ? "" : "AND p.id=" +
+            // String.valueOf(idProd)));
             query = query.replace("??2", querycomp.isEmpty() ? "" : "AND " + querycomp);
 
-//            System.out.println("query = " + query);
+            // System.out.println("query = " + query);
             JDBCInvoiceDAO invoiceDAO = (JDBCInvoiceDAO) DAOFactory.getInstance().getInvoiceDAO();
             ArrayList<Invoice> invoiceByQuery = invoiceDAO.getInvoiceByQuery(query);
 
@@ -1536,15 +1542,15 @@ public class Control {
         }
     }
 
-//    public void addExpenseIncome(HashMap data) {
-//        try {
-//            JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
-//            utilDAO.addExpenseIncome(data);
-//        } catch (DAOException ex) {
-//            logger.error("Error adding expense-income.", ex);
-//            GUIManager.showErrorMessage(null, "Error agregando expense-income", "Error");
-//        }
-//    }
+    // public void addExpenseIncome(HashMap data) {
+    // try {
+    // JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
+    // utilDAO.addExpenseIncome(data);
+    // } catch (DAOException ex) {
+    // logger.error("Error adding expense-income.", ex);
+    // GUIManager.showErrorMessage(null, "Error agregando expense-income", "Error");
+    // }
+    // }
     public void addExpenseIncome(CashMov data) {
         try {
             JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
@@ -1582,7 +1588,8 @@ public class Control {
 
     public HashMap<String, Double> getSnapshotData(Map map, Cycle lastCycle) {
         double outs = 0;
-        ArrayList<Object[]> presentationsByItem = app.getControl().getPresentationsByItem(Long.valueOf(map.get("item_id").toString()));
+        ArrayList<Object[]> presentationsByItem = app.getControl()
+                .getPresentationsByItem(Long.valueOf(map.get("item_id").toString()));
 
         Date end = new Date();
         if (!lastCycle.isOpened()) {
@@ -1594,28 +1601,36 @@ public class Control {
             long idPres = Long.parseLong(get[0].toString());
             long idProd = Long.parseLong(get[1].toString());
             long idItem = Long.valueOf(map.get("item_id").toString());
-            if (idPres == 0) { //producto sin presentacion
-                ArrayList<Object[]> productsOutInventory = app.getControl().getProductsOutInventoryList(idProd, idItem, lastCycle.getInit(), end);
+            if (idPres == 0) { // producto sin presentacion
+                ArrayList<Object[]> productsOutInventory = app.getControl().getProductsOutInventoryList(idProd, idItem,
+                        lastCycle.getInit(), end);
                 for (int j = 0; j < productsOutInventory.size(); j++) {
                     Object[] data = productsOutInventory.get(j);
                     double quantity = Double.parseDouble(data[2].toString());
                     int delType = Integer.parseInt(data[3].toString());
-                    outs += quantity * (onlyDelivery && delType == PanelPedido.TIPO_LOCAL ? 0 : 1.0); // excluir locales solo para llevar
+                    outs += quantity * (onlyDelivery && delType == PanelPedido.TIPO_LOCAL ? 0 : 1.0); // excluir locales
+                                                                                                      // solo para
+                                                                                                      // llevar
                 }
             } else {
-                ArrayList<Object[]> presentationsOutInventory = app.getControl().getPresentationsOutInventoryList(idPres, idItem, lastCycle.getInit(), end);
+                ArrayList<Object[]> presentationsOutInventory = app.getControl()
+                        .getPresentationsOutInventoryList(idPres, idItem, lastCycle.getInit(), end);
                 for (int j = 0; j < presentationsOutInventory.size(); j++) {
                     Object[] data = presentationsOutInventory.get(j);
                     double quantity = Double.parseDouble(data[3].toString());
                     int delType = Integer.parseInt(data[4].toString());
-                    outs += quantity * (onlyDelivery && delType == PanelPedido.TIPO_LOCAL ? 0 : 1.0); // excluir locales solo para llevar
+                    outs += quantity * (onlyDelivery && delType == PanelPedido.TIPO_LOCAL ? 0 : 1.0); // excluir locales
+                                                                                                      // solo para
+                                                                                                      // llevar
                 }
             }
         }
 
         Map countIn = app.getControl().countItemSnap(Long.valueOf(map.get("item_id").toString()), 1, lastCycle.getId());
-        Map countOut = app.getControl().countItemSnap(Long.valueOf(map.get("item_id").toString()), 2, lastCycle.getId());
-        Map countConc = app.getControl().countItemConciliations(Long.valueOf(map.get("item_id").toString()), lastCycle.getId());
+        Map countOut = app.getControl().countItemSnap(Long.valueOf(map.get("item_id").toString()), 2,
+                lastCycle.getId());
+        Map countConc = app.getControl().countItemConciliations(Long.valueOf(map.get("item_id").toString()),
+                lastCycle.getId());
 
         double quantity = Double.parseDouble(map.get("quantity").toString());
         double sIns = Double.parseDouble(countIn.get("sum").toString());

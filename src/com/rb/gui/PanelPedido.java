@@ -91,7 +91,8 @@ import org.ocpsoft.prettytime.PrettyTime;
  *
  * @author lrod
  */
-public class PanelPedido extends PanelCapturaMod implements ActionListener, ChangeListener, TableModelListener, PropertyChangeListener {
+public class PanelPedido extends PanelCapturaMod
+        implements ActionListener, ChangeListener, TableModelListener, PropertyChangeListener {
 
     private final Aplication app;
     private MyListModel model;
@@ -124,7 +125,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
     public static final String ENTREGA_DOMICILIO = "DOMICILIO";
     public static final String ENTREGA_PARA_LLEVAR = "PARA LLEVAR";
 
-    public static final String[] TIPO_PEDIDO = {ENTREGA_LOCAL, ENTREGA_DOMICILIO, ENTREGA_PARA_LLEVAR};
+    public static final String[] TIPO_PEDIDO = { ENTREGA_LOCAL, ENTREGA_DOMICILIO, ENTREGA_PARA_LLEVAR };
 
     private Invoice invoice;
 
@@ -162,7 +163,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         Font font2 = new Font("Serif", 1, 15);
 
         colorDelivery = Utiles.colorAleatorio(100, 200).darker();
-//        colorLocal = new Color(180,30,154);
+        // colorLocal = new Color(180,30,154);
         colorLocal = Utiles.colorAleatorio(100, 200).darker();
 
         DCFORM_P = (DecimalFormat) NumberFormat.getInstance();
@@ -202,10 +203,12 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         btDelete.addActionListener(this);
         btDelete.setFocusPainted(false);
 
-//        btDelete1.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "shopping-cart-remove.png", 18, 18)));
-//        btDelete1.setActionCommand(AC_CLEAR_PRODUCTS);
-//        btDelete1.addActionListener(this);
-//        btDelete1.setFocusPainted(false);
+        // btDelete1.setIcon(new
+        // ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() +
+        // "shopping-cart-remove.png", 18, 18)));
+        // btDelete1.setActionCommand(AC_CLEAR_PRODUCTS);
+        // btDelete1.addActionListener(this);
+        // btDelete1.setFocusPainted(false);
         regCelular.setLabelText("Celular:");
         regCelular.setFontCampo(font2);
         regCelular.setPopup(true);
@@ -221,7 +224,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         regTotal.setLabelText("Total");
         regTotal.setEditable(false);
 
-        tiempos = new String[]{"Pronto", "Especifica"};
+        tiempos = new String[] { "Pronto", "Especifica" };
 
         regService.setLabelText("Servicio %");
         regService.setFontCampo(font);
@@ -241,8 +244,8 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         tfService.setFont(font);
         tfService.setText("0");
 
-        entregasLoc = new String[]{"Local"};
-        entregasDom = new String[]{"Domicilio", "Para llevar"};
+        entregasLoc = new String[] { "Local" };
+        entregasDom = new String[] { "Domicilio", "Para llevar" };
 
         regDomicilio.setActionCommand(AC_CHANGE_DOMICILIO);
         regDomicilio.addActionListener(this);
@@ -307,7 +310,8 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         btConfirm.addActionListener(this);
         btConfirm.setText("CONFIRMAR");
 
-        ImageIcon iconPrint = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "Printer-orange.png", 18, 18));
+        ImageIcon iconPrint = new ImageIcon(
+                app.getImgManager().getImagen(app.getFolderIcons() + "Printer-orange.png", 18, 18));
 
         btPrint.setBackground(new Color(153, 253, 255));
         btPrint.setMargin(new Insets(1, 1, 1, 1));
@@ -341,7 +345,8 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         tfService.setEditable(!serv);
 
         icon = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "search.png", 16, 16));
-//        acSearch = new ProgAction("", icon, "Search client", 's', "AC_SEARCH_CLIENT");
+        // acSearch = new ProgAction("", icon, "Search client", 's',
+        // "AC_SEARCH_CLIENT");
         btSearch.setIcon(icon);
         btSearch.setActionCommand(AC_SEARCH_CLIENT);
         btSearch.addActionListener(this);
@@ -350,24 +355,28 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         btClear.setActionCommand(AC_CLEAR_CLIENT);
         btClear.addActionListener(this);
 
-//        btLastDelivery.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "cancel.png", 16, 16)));
+        // btLastDelivery.setIcon(new
+        // ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "cancel.png",
+        // 16, 16)));
         btLastDelivery.setActionCommand(AC_LAST_DELIVERY);
         btLastDelivery.addActionListener(this);
         btLastDelivery.setVisible(false);
         btLastDelivery.setFocusPainted(false);
 
         iconOk = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "package-accept.png", 18, 18));
-        iconWarning = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "package-warning.png", 18, 18));
+        iconWarning = new ImageIcon(
+                app.getImgManager().getImagen(app.getFolderIcons() + "package-warning.png", 18, 18));
         iconDefault = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "package-info.png", 18, 18));
 
-        iconTLGreen = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "trafficlight-green.png", 18, 18));
+        iconTLGreen = new ImageIcon(
+                app.getImgManager().getImagen(app.getFolderIcons() + "trafficlight-green.png", 18, 18));
         iconTLRed = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "trafficlight-red.png", 18, 18));
 
         btInventoryInfo.setIcon(iconDefault);
         btInventoryInfo.setActionCommand(AC_SHOW_INVENTORY);
         btInventoryInfo.addActionListener(this);
 
-        String[] cols = {"Cant", "Producto", "Unidad", "Valor"};
+        String[] cols = { "Cant", "Producto", "Unidad", "Valor" };
 
         modeloTb = new MyDefaultTableModel(cols, 1);
 
@@ -375,7 +384,8 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         tbListado.getTableHeader().setReorderingAllowed(false);
 
-        boolean showExclusions = Boolean.parseBoolean(app.getConfiguration().getProperty(Configuration.SHOW_EXCLUSIONS));
+        boolean showExclusions = Boolean
+                .parseBoolean(app.getConfiguration().getProperty(Configuration.SHOW_EXCLUSIONS));
 
         int height = 35; // + (showExclusions ? 15 : 0);
         tbListado.setRowHeight(height);
@@ -406,9 +416,11 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
                     ProductoPed productoPed = (ProductoPed) tbListado.getValueAt(rowAtPoint, 1);
                     StringBuilder stb = new StringBuilder();
                     stb.append("<html>");
-                    stb.append("<h1><font color=red>").append(productoPed.getProduct().getName().toUpperCase()).append("</font></h1>");
+                    stb.append("<h1><font color=red>").append(productoPed.getProduct().getName().toUpperCase())
+                            .append("</font></h1>");
                     if (productoPed.hasPresentation()) {
-                        stb.append("<h2").append("<font color=blue'>").append(productoPed.getPresentation().getName()).append("</font></h2>");
+                        stb.append("<h2").append("<font color=blue'>").append(productoPed.getPresentation().getName())
+                                .append("</font></h2>");
                     }
                     String[] stAdicionales3 = productoPed.getStAdicionales3();
                     for (int i = 0; i < stAdicionales3.length; i++) {
@@ -437,7 +449,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         formatRenderer.setForeground(color);
         ProductRenderer prodRenderer = new ProductRenderer(BoxLayout.Y_AXIS);
 
-        int[] colW = new int[]{40, 220, 70, 80};
+        int[] colW = new int[] { 40, 220, 70, 80 };
         for (int i = 0; i < colW.length; i++) {
             tbListado.getColumnModel().getColumn(i).setMinWidth(colW[i]);
             tbListado.getColumnModel().getColumn(i).setPreferredWidth(colW[i]);
@@ -480,17 +492,17 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         regMesa.setFontCampo(new Font("Sans", 1, 16));
         regMesa.setText(tables.toArray());
 
-//        regService.setEnabled(true);
+        // regService.setEnabled(true);
         config = app.getControl().getConfigLocal(Configuration.PRINT_PREV_DELIVERY);
         btPrint.setVisible(config != null ? (Boolean.valueOf(config.getValor())) : false);
-//        btPrint.setVisible(false);
+        // btPrint.setVisible(false);
         btPrint1.setVisible(false);
 
         showLabelDescuento();
 
         containerPanels.setLayout(new BorderLayout());
 
-//        showDelivery();
+        // showDelivery();
         showLocal();
 
         block = false;
@@ -516,10 +528,10 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         };
         sw.execute();
 
-//        containerPanels.setBorder(bordeError);
+        // containerPanels.setBorder(bordeError);
         lbFactura.addMouseListener(lbFacturaMouseListener);
 
-//        showAlertCycle();
+        // showAlertCycle();
     }
 
     private void loadWaiters() {
@@ -586,7 +598,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         } else if (AC_CHANGE_DOMICILIO.equals(e.getActionCommand())) {
             String dom = regDomicilio.getText();
-            if (entregasDom[0].equals(dom)) {  // DOMICILIO
+            if (entregasDom[0].equals(dom)) { // DOMICILIO
                 ConfigDB config = app.getControl().getConfigLocal(Configuration.DELIVERY_VALUE);
                 double valueDelivery = config != null ? (double) config.castValor() : 0;
                 if (spModelDel != null) {
@@ -595,7 +607,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
                 spNumDom.setVisible(true);
                 lbEntregas.setText(DCFORM_P.format(valueDelivery));
                 chRecogido.setSelected(false);
-            } else {  // PARA LLEVAR
+            } else { // PARA LLEVAR
                 spNumDom.setVisible(false);
                 if (spModelDel != null) {
                     spModelDel.setValue(0);
@@ -701,9 +713,10 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
                     lbCliente.setText("<html>" + client.getCellphone() + "<br><font size=-2>Guardado</font></html>");
                     lbCliente.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
                     lbCliente.addMouseListener(linkMouseListener);
-                    lbStatus.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "user-green.png", 18, 18)));
+                    lbStatus.setIcon(new ImageIcon(
+                            app.getImgManager().getImagen(app.getFolderIcons() + "user-green.png", 18, 18)));
 
-                    //buscar ultimo pedido
+                    // buscar ultimo pedido
                     this.lastClient = client;
 
                 } else {
@@ -711,7 +724,8 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
                     Client client = new Client(cellphone);
                     app.getGuiManager().showClientCard(client);
                     regDireccion.getComponent().requestFocus();
-                    lbStatus.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "user-red.png", 18, 18)));
+                    lbStatus.setIcon(new ImageIcon(
+                            app.getImgManager().getImagen(app.getFolderIcons() + "user-red.png", 18, 18)));
                     lbCliente.removeMouseListener(linkMouseListener);
 
                 }
@@ -770,13 +784,17 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
                 Invoice lastInvoice = app.getControl().getLastDelivery(lastClient.getCellphone());
 
-//                List<Duration> presDur = pt.calculatePreciseDuration(lastInvoice.getFecha());
-                htmlText.append("Cliente: ").append("<font color=blue size=+1>").append(lastClient.getCellphone()).append("</font>");
+                // List<Duration> presDur = pt.calculatePreciseDuration(lastInvoice.getFecha());
+                htmlText.append("Cliente: ").append("<font color=blue size=+1>").append(lastClient.getCellphone())
+                        .append("</font>");
                 if (lastInvoice != null) {
                     htmlText.append("<br>");
-                    htmlText.append("<p>Factura: <font color=blue>").append(lastInvoice.getFactura()).append("</font></p>");
-                    htmlText.append("<p>Direccion: <font color=blue>").append(lastClient.getAddresses().get(0)).append("</font></p>");
-                    htmlText.append("<p>Fecha: <font color=blue>").append(app.DF_FULL.format(lastInvoice.getFecha())).append("</font>       ");
+                    htmlText.append("<p>Factura: <font color=blue>").append(lastInvoice.getFactura())
+                            .append("</font></p>");
+                    htmlText.append("<p>Direccion: <font color=blue>").append(lastClient.getAddresses().get(0))
+                            .append("</font></p>");
+                    htmlText.append("<p>Fecha: <font color=blue>").append(app.DF_FULL.format(lastInvoice.getFecha()))
+                            .append("</font>       ");
                     htmlText.append("<font color=red>").append(pt.format(lastInvoice.getFecha())).append("</font></p>");
 
                     htmlText.append("<br><br>");
@@ -787,15 +805,19 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
                         htmlText.append("<tr>");
                         htmlText.append("<td>").append(product.getCantidad())
                                 .append("</td><td>").append(product.getProduct().getName().toUpperCase()).append("<br>")
-                                .append(product.hasPresentation() ? "<font color=cyan>" + StringUtils.capitalize(product.getPresentation().getName()) + "</font>" : "");
+                                .append(product.hasPresentation() ? "<font color=cyan>"
+                                        + StringUtils.capitalize(product.getPresentation().getName()) + "</font>" : "");
                         if (product.hasAdditionals()) {
                             for (String string : product.getStAdicionales3()) {
                                 htmlText.append("<font size=-1>" + string + "</font><br>");
                             }
                         }
 
-                        htmlText.append("</td><td align=\"right\">").append(app.DCFORM_P.format(product.getPrecio() + product.getValueAdicionales()))
-                                .append("</td><td align=\"right\">").append(app.DCFORM_P.format(product.getCantidad() * (product.getPrecio() + product.getValueAdicionales())))
+                        htmlText.append("</td><td align=\"right\">")
+                                .append(app.DCFORM_P.format(product.getPrecio() + product.getValueAdicionales()))
+                                .append("</td><td align=\"right\">")
+                                .append(app.DCFORM_P.format(
+                                        product.getCantidad() * (product.getPrecio() + product.getValueAdicionales())))
                                 .append("</td></tr>");
                     }
                     htmlText.append("</table>");
@@ -805,7 +827,8 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
                             .append("<td>Domicilios<br><font size=+1 color=blue>")
                             .append(lastInvoice.getNumDeliverys()).append("</font></td>")
                             .append("<td>Valor Dom.<br><font size=+1 color=blue>")
-                            .append(app.getCurrencyFormat().format(lastInvoice.getValorDelivery())).append("</font></td>")
+                            .append(app.getCurrencyFormat().format(lastInvoice.getValorDelivery()))
+                            .append("</font></td>")
                             .append("<td>Total<br><font size=+1 color=red>")
                             .append(app.getCurrencyFormat().format(lastInvoice.getValor())).append("</font></td>")
                             .append("</tr></table>");
@@ -832,13 +855,14 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
             inv.setStatus(Invoice.ST_MODIFICADA);
 
-//            List<ProductoPed> list = inv.getProducts();
-//            app.getControl().restoreInventory(list, inv.getTipoEntrega());
+            // List<ProductoPed> list = inv.getProducts();
+            // app.getControl().restoreInventory(list, inv.getTipoEntrega());
             enablePedido(true);
 
             block = false;
 
-            btConfirm.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "update.png", 10, 10)));
+            btConfirm
+                    .setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "update.png", 10, 10)));
             btConfirm.setBackground(new Color(153, 153, 255));
             btConfirm.setActionCommand(AC_UPDATE_PEDIDO);
             btConfirm.setText("GUARDAR");
@@ -850,14 +874,15 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         } else if (AC_UPDATE_PEDIDO.equals(e.getActionCommand())) {
 
-            Invoice invoice1 = getInvoice();
+            Invoice invoice1 = getInvoice(false);
             invoice1.setId(this.invoice.getId());
+            invoice1.setFactura(this.invoice.getFactura());
 
             Map<ProductoPed, Integer> diffProd = new HashMap<>();
 
-            Map<Integer, Integer> productMap = oldProducts.stream().collect(Collectors.toMap(ProductoPed::hashCode, productPed -> productPed.getCantidad()));
+            Map<Integer, Integer> productMap = oldProducts.stream()
+                    .collect(Collectors.toMap(ProductoPed::hashCode, ProductoPed::getCantidad));
 
-//            Map<Integer, ProductoPed> productMap = oldProducts.stream().collect(Collectors.toMap(ProductPed::hashCode, productPed -> productPed));
             for (ProductoPed product : invoice1.getProducts()) {
                 if (oldProducts.contains(product)) {
                     int q1 = product.getCantidad();
@@ -868,17 +893,40 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
                 }
             }
 
-            app.getControl().updateInvoiceDiff(invoice1, oldProducts, diffProd);
+            if (validateInvoiceData()) {
+                try {
+                    app.getControl().updateInvoiceDiff(invoice1, oldProducts, diffProd);
+                } catch (Exception ex) {
+                    String msg = "Error updating invoice full";
+                    logger.error(msg, ex);
+                    GUIManager.showErrorMessage(null, msg, "Error");
+                } finally {
+                    enablePedido(false);
+                    block = true;
 
-            System.out.println("Result");
-            for (Map.Entry<ProductoPed, Integer> entry : diffProd.entrySet()) {
-                ProductoPed key = entry.getKey();
-                Integer val = entry.getValue();
-                System.out.println(key.getProduct().getName() + ": " + val);
+                    btPrint.setVisible(true);
+                    btPrint1.setVisible(true);
+
+                    regMesera.setEditable(false);
+                    regMesa.setEditable(false);
+                    regCelular.setEditable(false);
+                    regDireccion.setEditable(false);
+                    regDomicilio.setEditable(false);
+                    chServ.setEnabled(false);
+                    regDescuento.setEnabled(false);
+
+                    btTogle1.setEnabled(false);
+                    btTogle2.setEnabled(false);
+
+                    modeloTb.setColumnEditable(0, false);
+                    btDelete.setIcon(
+                            new ImageIcon(
+                                    app.getImgManager().getImagen(app.getFolderIcons() + "new-file.png", 18, 18)));
+
+                }
 
             }
-            //app.getControl().updateInvoiceFull(invoice1, oldProducts);
-            block = true;
+
         } else if (AC_CHANGE_SELECTED.equals(e.getActionCommand())) {
             Waiter waitres = (Waiter) regMesera.getSelectedItem();
             Color color = Color.BLACK;
@@ -892,6 +940,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         }
     }
+
     private static final String AC_PRINT_GUIDE = "AC_PRINT_GUIDE";
 
     @Override
@@ -928,10 +977,10 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         double valueDelivery = config != null ? (double) config.castValor() : 0;
         int num = 0;
         if (tipo == TIPO_DOMICILIO) {
-//            try {
+            // try {
             num = (Integer) spModelDel.getValue();
-//            } catch (Exception e) {
-//            }
+            // } catch (Exception e) {
+            // }
         }
         double delivery = num * valueDelivery;
         lbEntregas.setText(DCFORM_P.format(delivery));
@@ -947,7 +996,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
                     ProductoPed prd = products.get(e.getLastRow());
                     prd.setCantidad(cant);
 
-                    //update map inventory
+                    // update map inventory
                     SwingWorker sw = new SwingWorker() {
                         @Override
                         protected Object doInBackground() throws Exception {
@@ -964,7 +1013,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
                         }
                     };
                     sw.execute();
-//                    checkInventory();
+                    // checkInventory();
                 }
                 break;
             case TableModelEvent.INSERT:
@@ -1011,13 +1060,13 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
             OtherProduct oProd = (OtherProduct) evt.getOldValue();
             int cant = (int) evt.getNewValue();
 
-//            Product prod = new Product();
-//            prod.setName(oProd.getName());
-//            prod.setPrice(oProd.getPrice());
-//
-//            ProductoPed pPed = new ProductoPed(prod);
-//
-//            addProductPed(pPed, cant, prod.getPrice(), true);
+            // Product prod = new Product();
+            // prod.setName(oProd.getName());
+            // prod.setPrice(oProd.getPrice());
+            //
+            // ProductoPed pPed = new ProductoPed(prod);
+            //
+            // addProductPed(pPed, cant, prod.getPrice(), true);
             addOtherProductPed(oProd, cant, oProd.getPrice());
         } else if (PanelClientCard.AC_SAVE_CLIENT.equals(evt.getPropertyName())) {
             Client client = (Client) evt.getNewValue();
@@ -1025,7 +1074,8 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
                 lbCliente.setText("<html>" + client.getCellphone() + "<br><font size=-2>Guardado</font></html>");
                 lbCliente.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
                 lbCliente.addMouseListener(linkMouseListener);
-                lbStatus.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "user-green.png", 18, 18)));
+                lbStatus.setIcon(
+                        new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "user-green.png", 18, 18)));
             }
 
         } else if (PanelListPedidos.AC_SHOW_INVOICE.equals(evt.getPropertyName())) {
@@ -1048,11 +1098,11 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
                         int cant = Integer.parseInt(data[1].toString());
                         Product prd = (Product) data[0];
 
-                        modeloTb.addRow(new Object[]{
-                            cant,
-                            prd.getName(),
-                            prd.getPrice(),
-                            prd.getPrice() * cant
+                        modeloTb.addRow(new Object[] {
+                                cant,
+                                prd.getName(),
+                                prd.getPrice(),
+                                prd.getPrice() * cant
                         });
 
                         modeloTb.setRowEditable(modeloTb.getRowCount() - 1, false);
@@ -1071,7 +1121,8 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         double calcularServicio = calcularServicio();
         double max = app.getConfiguration().getProperty(Configuration.MAX_SERVICE_PORC, 10);
         if (calcularServicio > max) {
-            GUIManager.showErrorMessage(null, "El maximo porcentaje valido para el servicio voluntario es: " + max + " %", "Advertencia");
+            GUIManager.showErrorMessage(null,
+                    "El maximo porcentaje valido para el servicio voluntario es: " + max + " %", "Advertencia");
             regService.setText(String.valueOf(10));
             return false;
         }
@@ -1099,7 +1150,8 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
     public void addProductPed(ProductoPed productPed, int cantidad, double price, boolean isOther) {
         if (block) {
-            GUIManager.showErrorMessage(null, "El pedido esta cerrado no se puede agregar más productos", "Pedido cerrado");
+            GUIManager.showErrorMessage(null, "El pedido esta cerrado no se puede agregar más productos",
+                    "Pedido cerrado");
             return;
         }
 
@@ -1107,7 +1159,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         if (productPed.hasPresentation()) {
             HashMap<Integer, HashMap> mapData = app.getControl().checkInventory(productPed.getPresentation().getId());
-            //System.out.println(Arrays.toString(mapData.entrySet().toArray()));
+            // System.out.println(Arrays.toString(mapData.entrySet().toArray()));
             productPed.setData(mapData);
             if (mapData != null && !mapData.isEmpty()) {
                 Set<Integer> keys = mapData.keySet();
@@ -1121,7 +1173,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
             checkInventory();
         } else {
             HashMap<Integer, HashMap> mapData = app.getControl().checkInventoryProduct(productPed.getProduct().getId());
-            //System.out.println(Arrays.toString(mapData.entrySet().toArray()));
+            // System.out.println(Arrays.toString(mapData.entrySet().toArray()));
             productPed.setData(mapData);
             if (mapData != null && !mapData.isEmpty()) {
                 Set<Integer> keys = mapData.keySet();
@@ -1137,15 +1189,17 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         if (productPed.hasAdditionals()) {
             for (AdditionalPed additional : productPed.getAdicionales()) {
-                //System.out.println("Additional:" + additional.getAdditional().getName());
-                HashMap<Integer, HashMap> mapData = app.getControl().checkInventoryAdditional(additional.getAdditional().getId());
-                //System.out.println(Arrays.toString(mapData.entrySet().toArray()));
+                // System.out.println("Additional:" + additional.getAdditional().getName());
+                HashMap<Integer, HashMap> mapData = app.getControl()
+                        .checkInventoryAdditional(additional.getAdditional().getId());
+                // System.out.println(Arrays.toString(mapData.entrySet().toArray()));
                 productPed.addData(mapData);
                 if (mapData != null && !mapData.isEmpty()) {
                     Set<Integer> keys = mapData.keySet();
                     for (Integer key : keys) {
                         HashMap data = mapData.get(key);
-                        double res = Double.valueOf(data.get("quantity").toString()) * cantidad * additional.getCantidad();
+                        double res = Double.valueOf(data.get("quantity").toString()) * cantidad
+                                * additional.getCantidad();
                         MultiKey mKey = new MultiKey(data.get("id"), productPed.hashCode());
                         mapInventory.put(mKey, res);
                     }
@@ -1169,21 +1223,23 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
             try {
                 productPed.setCantidad(cantidad);
                 products.add(productPed);
-                double totalProd = (producto.isVariablePrice() || productPed.hasPresentation() ? price : producto.getPrice()) + productPed.getValueAdicionales();
-                modeloTb.addRow(new Object[]{
-                    cantidad,
-                    productPed,
-                    totalProd,
-                    totalProd * cantidad
+                double totalProd = (producto.isVariablePrice() || productPed.hasPresentation() ? price
+                        : producto.getPrice()) + productPed.getValueAdicionales();
+                modeloTb.addRow(new Object[] {
+                        cantidad,
+                        productPed,
+                        totalProd,
+                        totalProd * cantidad
                 });
                 if (productPed.hasAdditionals()) {
                     int size = 11 * (int) Math.ceil(productPed.getAdicionales().size() / 2.0);
                     tbListado.setRowHeight(modeloTb.getRowCount() - 1, 35 + size);
                 }
 
-//                if (productPed.hasPresentation()) {
-//                    checkProductInventory(productPed.getPresentation().getId(), productPed.getCantidad());
-//                }
+                // if (productPed.hasPresentation()) {
+                // checkProductInventory(productPed.getPresentation().getId(),
+                // productPed.getCantidad());
+                // }
                 modeloTb.setRowEditable(modeloTb.getRowCount() - 1, false);
                 modeloTb.setCellEditable(modeloTb.getRowCount() - 1, 0, true);
             } catch (Exception ex) {
@@ -1191,7 +1247,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
             }
         }
 
-//        checkAllInventory();
+        // checkAllInventory();
     }
 
     private HashMap<Integer, Double> checkInventory() {
@@ -1233,9 +1289,11 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         for (Integer next : keys) {
             Item item = app.getControl().getItemWhere("id=" + next);
             Double cant = (item.isOnlyDelivery() && tipo == TIPO_LOCAL) ? 0 : simpInv.get(next);
-            String color = (item.isOnlyDelivery() && tipo == TIPO_LOCAL) ? "#ff30a5" : (item.getQuantity() >= cant) ? "#00ff32" : "#ff4400";
+            String color = (item.isOnlyDelivery() && tipo == TIPO_LOCAL) ? "#ff30a5"
+                    : (item.getQuantity() >= cant) ? "#00ff32" : "#ff4400";
             stb.append("<tr>")
-                    .append("<td><font size=+1 color=").append(color).append(">").append(item.getName().toUpperCase()).append("</font></td>")
+                    .append("<td><font size=+1 color=").append(color).append(">").append(item.getName().toUpperCase())
+                    .append("</font></td>")
                     .append("<td><font size=+1> ").append(item.getQuantity()).append("</font></td>")
                     .append("<td><font size=+1 color=blue>").append(cant).append("</font></td>")
                     .append("</tr>");
@@ -1269,7 +1327,8 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
     public void addOtherProductPed(OtherProduct otherProduct, int cantidad, double price) {
 
         if (block) {
-            GUIManager.showErrorMessage(null, "El pedido esta cerrado no se puede agregar más productos", "Pedido cerrado");
+            GUIManager.showErrorMessage(null, "El pedido esta cerrado no se puede agregar más productos",
+                    "Pedido cerrado");
             return;
         }
 
@@ -1295,11 +1354,11 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
                 pPed.setCantidad(cantidad);
                 otherProducts.add(otherProduct);
                 double totalProd = otherProduct.getPrice();
-                modeloTb.addRow(new Object[]{
-                    cantidad,
-                    pPed,
-                    totalProd,
-                    totalProd * cantidad
+                modeloTb.addRow(new Object[] {
+                        cantidad,
+                        pPed,
+                        totalProd,
+                        totalProd * cantidad
                 });
                 modeloTb.setRowEditable(modeloTb.getRowCount() - 1, false);
                 modeloTb.setCellEditable(modeloTb.getRowCount() - 1, 0, true);
@@ -1391,7 +1450,8 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         lbFactura.removeMouseListener(lbFacturaMouseListener);
 
         PrettyTime pt = new PrettyTime(new Locale("es"));
-        String text = "<html><font size=-1 color=blue>" + app.DF_FULL3.format(invoice1.getFecha()) + "</font><p><font color=red size=-2>" + pt.format(invoice1.getFecha()) + "</font><html>";
+        String text = "<html><font size=-1 color=blue>" + app.DF_FULL3.format(invoice1.getFecha())
+                + "</font><p><font color=red size=-2>" + pt.format(invoice1.getFecha()) + "</font><html>";
 
         if (delivery == TIPO_LOCAL) {
             showLocal();
@@ -1445,18 +1505,9 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         this.invoice = invoice1;
     }
 
-    private boolean verificarDatosFactura() throws ParseException {
-        String mesa = "";
-        String mesero = "";
-        String celular = "";
-        String direccion = "";
-
-        try {
-            tbListado.getCellEditor().stopCellEditing();
-        } catch (Exception e) {
-        }
-
-        //checkCiclo
+    private boolean validateInvoiceData() {
+        boolean validate = true;
+        // checkCiclo
         Cycle lastCycle = app.getControl().getLastCycle();
         if (lastCycle == null) {
             GUIManager.showErrorMessage(null, "No existe ciclo de facturacion", "Ciclo cerrado");
@@ -1482,7 +1533,8 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
             String property = config != null ? config.getValor() : "false";
             boolean permit = Boolean.valueOf(property);
             GUIManager.showErrorMessage(null, "Los productos exceden las existencias en inventario.\n"
-                    + "Esta " + (permit ? "habilitado" : "deshabilitado") + " facturar sin existencias", "Producto agotado");
+                    + "Esta " + (permit ? "habilitado" : "deshabilitado") + " facturar sin existencias",
+                    "Producto agotado");
             if (!permit) {
                 return false;
             }
@@ -1490,7 +1542,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         Waiter waitres = (Waiter) regMesera.getSelectedItem();
         Table table = (Table) regMesa.getSelectedItem();
-        boolean validate = true;
+
         if (TIPO_LOCAL == tipo) {
             if (waitres == null || regMesera.getSelected() < 1) {
                 regMesera.setBorderToError();
@@ -1512,7 +1564,22 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
             }
         }
 
-        if (!validate) {
+        return validate;
+
+    }
+
+    private boolean verificarDatosFactura() throws ParseException {
+        String mesa = "";
+        String mesero = "";
+        String celular = "";
+        String direccion = "";
+
+        try {
+            tbListado.getCellEditor().stopCellEditing();
+        } catch (Exception e) {
+        }
+
+        if (!validateInvoiceData()) {
             return false;
         }
 
@@ -1530,6 +1597,9 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         invoice.setFecha(new Date());
 
         invoice.setDescuento(Double.parseDouble(regDescuento.getText()));
+
+        Waiter waitres = (Waiter) regMesera.getSelectedItem();
+        Table table = (Table) regMesa.getSelectedItem();
 
         if (waitres != null) {
             invoice.setIdWaitress(waitres.getId());
@@ -1595,16 +1665,17 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
 
         invoice.setValor(totalFact);
 
-        //check factura number
-//        int existClave = 0;
-//        do {
-//            existClave = app.getControl().existClave("invoices", "code", "'" + invoice.getFactura() + "'");
-//            System.out.println("existClave = " + existClave);
-//            if (existClave > 0) {
-//                invoice.setFactura(calculateProximoRegistro());
-//                System.out.println("FAC:"+invoice.getFactura());
-//            }
-//        } while (existClave <= 0);
+        // check factura number
+        // int existClave = 0;
+        // do {
+        // existClave = app.getControl().existClave("invoices", "code", "'" +
+        // invoice.getFactura() + "'");
+        // System.out.println("existClave = " + existClave);
+        // if (existClave > 0) {
+        // invoice.setFactura(calculateProximoRegistro());
+        // System.out.println("FAC:"+invoice.getFactura());
+        // }
+        // } while (existClave <= 0);
         this.invoice = invoice;
 
         if (app.getControl().addInvoice(invoice)) {
@@ -1626,9 +1697,10 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
             btTogle2.setEnabled(false);
 
             modeloTb.setColumnEditable(0, false);
-            btDelete.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "new-file.png", 18, 18)));
+            btDelete.setIcon(
+                    new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "new-file.png", 18, 18)));
         }
-//        app.getGuiManager().reviewFacture(invoice);
+        // app.getGuiManager().reviewFacture(invoice);
 
         return true;
 
@@ -1648,6 +1720,10 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
     }
 
     public Invoice getInvoice() {
+        return getInvoice(true);
+    }
+
+    public Invoice getInvoice(boolean calcRegister) {
         String mesa = "";
         String mesero = "";
         String celular = "";
@@ -1677,17 +1753,18 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         }
 
         if (!validate) {
-//            return false;
+            // return false;
         }
 
         celular = regCelular.getText();
         direccion = regDireccion.getText();
 
-        verifyQuantitys();
+        // verifyQuantitys();
 
         Invoice invoice = new Invoice();
-        invoice.setFactura(calculateProximoRegistro());
-
+        if (calcRegister) {
+            invoice.setFactura(calculateProximoRegistro());
+        }
         Cycle cycle = app.getControl().getLastCycle();
 
         invoice.setCiclo(cycle != null ? cycle.getId() : 0);
@@ -1779,39 +1856,49 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         }
     }
 
-    /*    private String calculateProximoRegistro() {
-        ConfigDB config = app.getControl().getConfigLocal(Configuration.PREFIX_INVOICES);
-        String prefijo = config != null ? config.getValor() : "";
-
-        //get el numero de ceros a la izquierda para formatear el numero
-        int ceros = 0;
-        try {
-            ceros = Integer.parseInt(app.getConfiguration().getProperty("cf.zeros", "0"));
-        } catch (NumberFormatException e) {
-        }
-//        int rows = app.getControl().contarRows("select id from invoices");
-        long maxValue = app.getControl().getMaxIDTabla("invoices");
-
-        Object code = app.getControl().getCodeFromInvoice(maxValue);
-
-        Integer value = 0;
-        try {
-            value = Integer.valueOf(StringUtils.getDigits(code.toString()));
-        } catch (NumberFormatException e) {
-        }
-
-        String codigo = prefijo + com.rb.Utiles.getNumeroFormateado(value + ajusteRegistros + 1, ceros);
-        int existClave = app.getControl().existClave("invoices", "code", "'" + codigo + "'");
-
-        while (existClave >= 1) {
-            //Comprobar si se esta creando una clave repetida por eliminacion de registros
-            //Si esta repetida ajustar el valor y guardar el ajuste para la proxima insercion
-            ajusteRegistros++;
-            codigo = prefijo + com.rb.Utiles.getNumeroFormateado(value + ajusteRegistros + 1, ceros);
-            existClave = app.getControl().existClave("invoices", "code", "'" + codigo + "'");
-        }
-        return codigo;
-    }*/
+    /*
+     * private String calculateProximoRegistro() {
+     * ConfigDB config =
+     * app.getControl().getConfigLocal(Configuration.PREFIX_INVOICES);
+     * String prefijo = config != null ? config.getValor() : "";
+     * 
+     * //get el numero de ceros a la izquierda para formatear el numero
+     * int ceros = 0;
+     * try {
+     * ceros = Integer.parseInt(app.getConfiguration().getProperty("cf.zeros",
+     * "0"));
+     * } catch (NumberFormatException e) {
+     * }
+     * // int rows = app.getControl().contarRows("select id from invoices");
+     * long maxValue = app.getControl().getMaxIDTabla("invoices");
+     * 
+     * Object code = app.getControl().getCodeFromInvoice(maxValue);
+     * 
+     * Integer value = 0;
+     * try {
+     * value = Integer.valueOf(StringUtils.getDigits(code.toString()));
+     * } catch (NumberFormatException e) {
+     * }
+     * 
+     * String codigo = prefijo + com.rb.Utiles.getNumeroFormateado(value +
+     * ajusteRegistros + 1, ceros);
+     * int existClave = app.getControl().existClave("invoices", "code", "'" + codigo
+     * + "'");
+     * 
+     * while (existClave >= 1) {
+     * //Comprobar si se esta creando una clave repetida por eliminacion de
+     * registros
+     * //Si esta repetida ajustar el valor y guardar el ajuste para la proxima
+     * insercion
+     * ajusteRegistros++;
+     * codigo = prefijo + com.rb.Utiles.getNumeroFormateado(value + ajusteRegistros
+     * + 1, ceros);
+     * existClave = app.getControl().existClave("invoices", "code", "'" + codigo +
+     * "'");
+     * }
+     * return codigo;
+     * }
+     */
     private String calculateProximoRegistro() {
         Configuration configuration = app.getConfiguration();
         Control control = app.getControl();
@@ -1924,7 +2011,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         btTogle2.setSelected(true);
 
         lbTitle.setForeground(colorDelivery.darker());
-        //this.setBackground(colorDelivery.brighter());
+        // this.setBackground(colorDelivery.brighter());
         regCelular.setTint(colorDelivery);
         regCelular.setBordeNormal(regCelular.getBorder());
         regDireccion.setTint(colorDelivery);
@@ -1942,7 +2029,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         lbStatus.setVisible(true);
         btSearch.setVisible(true);
         btClear.setVisible(true);
-//        btLastDelivery.setVisible(true);
+        // btLastDelivery.setVisible(true);
         regMesera.setVisible(false);
         lbIndicator.setVisible(false);
         regMesa.setVisible(false);
@@ -1980,7 +2067,7 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         btTogle1.setSelected(true);
 
         lbTitle.setForeground(colorLocal.darker());
-//        this.setBackground(colorLocal.brighter());
+        // this.setBackground(colorLocal.brighter());
         regMesera.setTint(colorLocal);
         lbIndicator.setVisible(regMesera.getSelected() > 0);
         regMesa.setTint(colorLocal);
@@ -2033,34 +2120,35 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         pnContDelivery = new javax.swing.JPanel();
         lbEntregas = new javax.swing.JLabel();
         spNumDom = new javax.swing.JSpinner();
-        regDomicilio = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "Entrega",new String[1],60);
+        regDomicilio = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "Entrega", new String[1], 60);
         pnContService = new javax.swing.JPanel();
-        regService = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "Servicio","",70);
+        regService = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "Servicio", "", 70);
         tfService = new javax.swing.JTextField();
         chServ = new javax.swing.JCheckBox();
         lbTitle = new javax.swing.JLabel();
-        regCelular = new com.rb.gui.util.Registro(BoxLayout.X_AXIS,"","", 70);
-        regDireccion = new com.rb.gui.util.Registro(BoxLayout.X_AXIS,"","",70);
+        regCelular = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "", "", 70);
+        regDireccion = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "", "", 70);
         btConfirm = new javax.swing.JButton();
         btDelete = new javax.swing.JButton();
-        regDescuento = new com.rb.gui.util.Registro(BoxLayout.X_AXIS,"","");
-        regTotal = new com.rb.gui.util.Registro(BoxLayout.X_AXIS,"","",60);
-        regSubtotal = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "","",60);
+        regDescuento = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "", "");
+        regTotal = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "", "", 60);
+        regSubtotal = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "", "", 60);
         lbDescuento1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tbListado = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         btTogle2 = new javax.swing.JToggleButton();
         btTogle1 = new javax.swing.JToggleButton();
-        regMesera = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "Mesero",new String[1], 70);
-        regMesa = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "Mesa",new String[1],70);
+        regMesera = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "Mesero", new String[1], 70);
+        regMesa = new com.rb.gui.util.Registro(BoxLayout.X_AXIS, "Mesa", new String[1], 70);
         btSearch = new javax.swing.JButton();
         lbCliente = new javax.swing.JLabel();
         lbStatus = new javax.swing.JLabel();
@@ -2081,27 +2169,34 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         javax.swing.GroupLayout pnContDeliveryLayout = new javax.swing.GroupLayout(pnContDelivery);
         pnContDelivery.setLayout(pnContDeliveryLayout);
         pnContDeliveryLayout.setHorizontalGroup(
-            pnContDeliveryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnContDeliveryLayout.createSequentialGroup()
-                .addComponent(regDomicilio, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spNumDom, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addComponent(lbEntregas, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(2, 2, 2))
-        );
+                pnContDeliveryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnContDeliveryLayout.createSequentialGroup()
+                                .addComponent(regDomicilio, javax.swing.GroupLayout.PREFERRED_SIZE, 165,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(spNumDom, javax.swing.GroupLayout.PREFERRED_SIZE, 42,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(6, 6, 6)
+                                .addComponent(lbEntregas, javax.swing.GroupLayout.PREFERRED_SIZE, 80,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(2, 2, 2)));
         pnContDeliveryLayout.setVerticalGroup(
-            pnContDeliveryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnContDeliveryLayout.createSequentialGroup()
-                .addGap(1, 1, 1)
-                .addGroup(pnContDeliveryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(regDomicilio, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbEntregas, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(spNumDom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(1, 1, 1))
-        );
+                pnContDeliveryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnContDeliveryLayout.createSequentialGroup()
+                                .addGap(1, 1, 1)
+                                .addGroup(pnContDeliveryLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                                        .addComponent(regDomicilio, javax.swing.GroupLayout.PREFERRED_SIZE, 30,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lbEntregas, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(spNumDom, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(1, 1, 1)));
 
-        pnContDeliveryLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {lbEntregas, regDomicilio, spNumDom});
+        pnContDeliveryLayout.linkSize(javax.swing.SwingConstants.VERTICAL,
+                new java.awt.Component[] { lbEntregas, regDomicilio, spNumDom });
 
         chServ.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         chServ.setOpaque(true);
@@ -2109,32 +2204,41 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         javax.swing.GroupLayout pnContServiceLayout = new javax.swing.GroupLayout(pnContService);
         pnContService.setLayout(pnContServiceLayout);
         pnContServiceLayout.setHorizontalGroup(
-            pnContServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnContServiceLayout.createSequentialGroup()
-                .addGap(2, 2, 2)
-                .addComponent(chServ, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(regService, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tfService, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(2, 2, 2))
-        );
+                pnContServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnContServiceLayout.createSequentialGroup()
+                                .addGap(2, 2, 2)
+                                .addComponent(chServ, javax.swing.GroupLayout.PREFERRED_SIZE, 21,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(regService, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(tfService, javax.swing.GroupLayout.PREFERRED_SIZE, 165,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(2, 2, 2)));
         pnContServiceLayout.setVerticalGroup(
-            pnContServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnContServiceLayout.createSequentialGroup()
-                .addGap(1, 1, 1)
-                .addGroup(pnContServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(tfService, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(regService, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chServ, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(1, 1, 1))
-        );
+                pnContServiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnContServiceLayout.createSequentialGroup()
+                                .addGap(1, 1, 1)
+                                .addGroup(pnContServiceLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                                        .addComponent(tfService, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(regService, javax.swing.GroupLayout.PREFERRED_SIZE, 30,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(chServ, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(1, 1, 1)));
 
-        pnContServiceLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {chServ, regService, tfService});
+        pnContServiceLayout.linkSize(javax.swing.SwingConstants.VERTICAL,
+                new java.awt.Component[] { chServ, regService, tfService });
 
         lbTitle.setFont(new java.awt.Font("Ubuntu", 1, 14)); // NOI18N
         lbTitle.setText("jLabel1");
-        lbTitle.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(), javax.swing.BorderFactory.createEmptyBorder(1, 5, 1, 5)));
+        lbTitle.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(),
+                javax.swing.BorderFactory.createEmptyBorder(1, 5, 1, 5)));
 
         regTotal.setMinimumSize(new java.awt.Dimension(160, 31));
         regTotal.setPreferredSize(new java.awt.Dimension(160, 31));
@@ -2143,13 +2247,12 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         regSubtotal.setPreferredSize(new java.awt.Dimension(160, 31));
 
         tbListado.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][] {
 
-            },
-            new String [] {
+                },
+                new String[] {
 
-            }
-        ));
+                }));
         jScrollPane2.setViewportView(tbListado);
 
         buttonGroup1.add(btTogle2);
@@ -2159,158 +2262,227 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btTogle1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btTogle2, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(btTogle1, javax.swing.GroupLayout.PREFERRED_SIZE, 90,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btTogle2, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                                .addContainerGap()));
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btTogle1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btTogle2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-        );
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, 0)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(btTogle1, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btTogle2, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))));
 
         lbCliente.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.lightGray));
 
         lbFactura.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
         lbFactura.setForeground(new java.awt.Color(1, 41, 103));
         lbFactura.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lbFactura.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(), javax.swing.BorderFactory.createEmptyBorder(1, 5, 1, 5)));
+        lbFactura.setBorder(
+                javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(),
+                        javax.swing.BorderFactory.createEmptyBorder(1, 5, 1, 5)));
 
         chRecogido.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
 
         javax.swing.GroupLayout containerPanelsLayout = new javax.swing.GroupLayout(containerPanels);
         containerPanels.setLayout(containerPanelsLayout);
         containerPanelsLayout.setHorizontalGroup(
-            containerPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
+                containerPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 0, Short.MAX_VALUE));
         containerPanelsLayout.setVerticalGroup(
-            containerPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 33, Short.MAX_VALUE)
-        );
+                containerPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 33, Short.MAX_VALUE));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbIndicator, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(regDireccion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(chRecogido, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(lbTitle)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btInventoryInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(regCelular, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btClear, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6)
-                        .addComponent(lbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(1, 1, 1)
-                        .addComponent(btLastDelivery, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(regMesera, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(6, 6, 6)
-                        .addComponent(regMesa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(26, 26, 26))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btPrint1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(containerPanels, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(regDescuento, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(6, 6, 6)
-                                .addComponent(lbDescuento1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(regTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(regSubtotal, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(lbIndicator, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(regDireccion, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(chRecogido, javax.swing.GroupLayout.PREFERRED_SIZE, 83,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout
+                                                .createSequentialGroup()
+                                                .addComponent(lbTitle)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(lbFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 81,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btInventoryInfo, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(regCelular, javax.swing.GroupLayout.PREFERRED_SIZE, 200,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btClear, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(6, 6, 6)
+                                                .addComponent(lbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 25,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(lbCliente, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addGap(1, 1, 1)
+                                                .addComponent(btLastDelivery, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                        31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(regMesera, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addGap(6, 6, 6)
+                                                .addComponent(regMesa, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addGap(26, 26, 26))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING,
+                                                                false)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(btConfirm,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 90,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(btPrint,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 82,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(btPrint1,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 82,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addComponent(containerPanels,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout
+                                                                .createSequentialGroup()
+                                                                .addComponent(regDescuento,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 60,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(6, 6, 6)
+                                                                .addComponent(lbDescuento1,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        Short.MAX_VALUE))
+                                                        .addComponent(regTotal, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(regSubtotal,
+                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                Short.MAX_VALUE))))));
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btDelete, btInventoryInfo});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] { btDelete, btInventoryInfo });
 
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lbTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lbFactura, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btInventoryInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(lbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btLastDelivery, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btClear, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(regCelular, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
-                    .addComponent(btSearch, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
-                .addGap(7, 7, 7)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(regMesera, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(regMesa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(regDireccion, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
-                    .addComponent(chRecogido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(2, 2, 2)
-                .addComponent(lbIndicator, javax.swing.GroupLayout.PREFERRED_SIZE, 5, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(4, 4, 4)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(regSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(containerPanels, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(btPrint1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(regTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 30, Short.MAX_VALUE)
-                    .addComponent(btPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(3, 3, 3)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(regDescuento, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
-                    .addComponent(lbDescuento1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(btDelete, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(lbTitle, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(lbFactura, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btInventoryInfo, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                                                        .addComponent(lbStatus, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(lbCliente, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(btLastDelivery,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 31,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(btClear, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(regCelular, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
+                                        .addComponent(btSearch, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
+                                .addGap(7, 7, 7)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(regMesera, javax.swing.GroupLayout.PREFERRED_SIZE, 30,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(regMesa, javax.swing.GroupLayout.PREFERRED_SIZE, 30,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(regDireccion, javax.swing.GroupLayout.DEFAULT_SIZE, 27,
+                                                Short.MAX_VALUE)
+                                        .addComponent(chRecogido, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(2, 2, 2)
+                                .addComponent(lbIndicator, javax.swing.GroupLayout.PREFERRED_SIZE, 5,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(4, 4, 4)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(regSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, 30,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(containerPanels, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                                        .addComponent(btPrint1, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(regTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 30,
+                                                Short.MAX_VALUE)
+                                        .addComponent(btPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 33,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(3, 3, 3)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                                        .addComponent(regDescuento, javax.swing.GroupLayout.Alignment.LEADING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+                                        .addComponent(lbDescuento1, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))));
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btSearch, regCelular, regDireccion});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL,
+                new java.awt.Component[] { btSearch, regCelular, regDireccion });
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btConfirm, btPrint, btPrint1, containerPanels, lbDescuento1, regDescuento, regSubtotal, regTotal});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] { btConfirm, btPrint, btPrint1,
+                containerPanels, lbDescuento1, regDescuento, regSubtotal, regTotal });
 
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btClear;
@@ -2387,7 +2559,8 @@ public class PanelPedido extends PanelCapturaMod implements ActionListener, Chan
         }
 
         @Override
-        public Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index,
+                boolean isSelected, boolean cellHasFocus) {
             if (value != null && value instanceof Waiter) {
                 Waiter waiter = (Waiter) value;
 
