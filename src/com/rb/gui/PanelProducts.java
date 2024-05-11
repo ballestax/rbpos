@@ -925,10 +925,18 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             Product product = parseProduct();
             if (product != null && app.getControl().addProduct(product)) {
                 populateTable("");
+                currentProduct = product;
                 tbProducts.setEnabled(true);
-                resetPanelNewProduct();
+                //resetPanelNewProduct();
+                editCampos(false);
                 btSave.setVisible(false);
                 btCancel.setVisible(false);
+                lbTitlePress.setVisible(true);
+                jScrollPane2.setVisible(true);
+                btAddPress.setVisible(false);
+                panelContainPress.removeAll();
+                lbID.setBackground(new Color(120, 144, 240));
+                lbID1.setBackground(new Color(120, 144, 240));
             }
         } else if (AC_ENABLE_PRODUCT.equals(e.getActionCommand())) {
             int r = tbProducts.getSelectedRow();

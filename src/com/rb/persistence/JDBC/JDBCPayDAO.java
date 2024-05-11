@@ -42,6 +42,7 @@ public class JDBCPayDAO implements PayDAO {
     protected static final String UPDATE_PAY_KEY = "UPDATE_PAY";
     protected static final String GET_PAY_KEY = "GET_PAYS";
     protected static final String DELETE_PAY_KEY = "DELETE_PAY";
+    protected static final String GET_PAY_BY_INVOICE_KEY = "GET_PAY_BY_INVOICE";
 
     public JDBCPayDAO(BasicDataSource dataSource, SQLLoader sqlStatements) throws DAOException {
         this.dataSource = dataSource;
@@ -127,6 +128,48 @@ public class JDBCPayDAO implements PayDAO {
     @Override
     public Pay getPay(int id) throws DAOException {
         return getPayBy("id=" + id);
+    }
+    
+    public Pay getPayByInvoice(String factura) throws DAOException {
+        Pay pay = null;
+        Connection conn = null;
+        PreparedStatement retrieve = null;
+        ResultSet rs = null;
+        Object[] parameters = {factura};
+        try {
+            conn = dataSource.getConnection();
+            retrieve = sqlStatements.buildSQLStatement(conn, GET_PAY_BY_INVOICE_KEY, parameters);
+
+            rs = retrieve.executeQuery();
+            while (rs.next()) {
+                pay = new Pay();
+                pay.setId(rs.getInt("id"));
+                pay.setCodigo("P" + rs.getInt("id"));
+                pay.setCycle(rs.getLong("cycle"));
+                pay.setFecha(rs.getDate("createdTime"));
+                pay.setIdInvoice(rs.getInt("id_invoice"));
+                pay.setEfecty(rs.getBigDecimal("efecty"));
+                pay.setTransfer(rs.getBigDecimal("transfer"));
+                pay.setCard(rs.getBigDecimal("card"));
+                pay.setCambio(rs.getBigDecimal("cambio"));
+                pay.setCredit(rs.getBigDecimal("credit"));
+                pay.setEfecty(rs.getBigDecimal("efecty"));
+                pay.setCardType(rs.getInt("card_type"));
+                pay.setType(rs.getInt("pay_type"));
+                pay.setBankTransfer(rs.getString("bank_transfer"));
+                pay.setUpdateTime(rs.getDate("lastUpdateTime"));
+                pay.setUser(rs.getString("user"));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Could not properly retrieve the pay: " + e);
+        } catch (IOException e) {
+            throw new DAOException("Could not properly retrieve the pay: " + e);
+        } finally {
+            DBManager.closeResultSet(rs);
+            DBManager.closeStatement(retrieve);
+            DBManager.closeConnection(conn);
+        }
+        return pay;
     }
 
     @Override

@@ -1270,6 +1270,17 @@ public class Control {
             return null;
         }
     }
+    
+    public Pay getPay(String code) {
+        try {
+            JDBCPayDAO payDAO = (JDBCPayDAO) DAOFactory.getInstance().getPayDAO();
+            return payDAO.getPayByInvoice(code);
+        } catch (DAOException ex) {
+            logger.error("Error getting pay", ex);
+            GUIManager.showErrorMessage(null, "Error getting pay", "Error");
+            return null;
+        }
+    }
 
     public Map facturaIsPaga(String code) {
         try {

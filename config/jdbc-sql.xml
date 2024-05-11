@@ -72,6 +72,7 @@
                     |GET_SUM_REGISTRO
                     |CREATE_PAYS_TABLE|ADD_PAY|GET_PAYS|UPDATE_PAY
                     |INVOICE_IS_PAYED|ADD_WAITER|UPDATE_WAITER|ADD_TABLE|UPDATE_TABLE
+                    |GET_PAY_BY_INVOICE
                     ) #REQUIRED
                     
 	>
@@ -2001,6 +2002,17 @@
             <SQLFragment excludeIfNamedParamEmpty="TRUE">
                 ORDER BY {orderby}
             </SQLFragment>
+        </SQLStatement>
+        
+        <SQLStatement method="GET_PAY_BY_INVOICE">
+            <SQLFragment>
+                SELECT pays.*
+                FROM pays
+                INNER JOIN invoices
+                ON pays.id_invoice = invoices.id
+                WHERE invoices.code = ?
+            </SQLFragment>            
+            
         </SQLStatement>
         
         

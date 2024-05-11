@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
@@ -520,6 +519,7 @@ public class PanelPayInvoice extends PanelCapturaMod implements ActionListener, 
         } else if (AC_PAY.equals(ae.getActionCommand())) {
             Pay pay = checkPay();
             if (pay != null) {
+                this.pay = pay;
                 app.getControl().addPay(pay);
                 lbInfo.setVisible(true);
                 btPagar.setText("Salir");
@@ -539,7 +539,6 @@ public class PanelPayInvoice extends PanelCapturaMod implements ActionListener, 
 
     public void chechInvoiceIsPayed() {
         Map map = app.getControl().facturaIsPaga(invoice.getFactura());
-        System.out.println(Arrays.toString(map.values().toArray()));
         if (map != null && !map.isEmpty()) {
             pay = app.getControl().getPay(Integer.parseInt(map.get("id").toString()));
 //            System.out.println("pay = " + pay);
