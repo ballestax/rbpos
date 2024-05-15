@@ -81,6 +81,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -191,6 +193,7 @@ public class GUIManager {
     private JStatusbar statusbar;
     private JPanel container;
     private JPanel panelPresentation;
+    private PanelBasic panelBasicOrdersList;
 
     public void configurar() {
 
@@ -253,6 +256,24 @@ public class GUIManager {
 
     public WindowAdapter getwHandler() {
         return wHandler;
+    }
+
+    public void setToFullScreen() {
+        GraphicsEnvironment lGrapEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = lGrapEnv.getDefaultScreenDevice();
+        if (device.isFullScreenSupported()) {
+            try {
+                // getFrame().setUndecorated(true);
+                // getFrame().setResizable(false);
+                device.setFullScreenWindow(getFrame().getOwner());
+            } catch (Exception e) {
+                GUIManager.showErrorMessage(getFrame(), "Error al cambiar a modo fullscreen: " + e, "Error");
+            } finally {
+                device.setFullScreenWindow(null);
+            }
+        } else {
+            GUIManager.showErrorMessage(getFrame(), "FullScreen mode no soportado", "Advertencia");
+        }
     }
 
     private PanelModAdmin getPanelModAdmin() {
@@ -345,6 +366,13 @@ public class GUIManager {
         return panelBasicSales;
     }
 
+    private PanelOrderList getPanelOrderslList() {
+        if (panelOrderList == null) {
+            panelOrderList = new PanelOrderList(app);
+        }
+        return panelOrderList;
+    }
+
     public PanelBasic getPanelBasicCash() {
         if (panelBasicCash == null) {
             ImageIcon icon = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "cash.png", 30, 30));
@@ -384,13 +412,6 @@ public class GUIManager {
         return panelPresentation;
     }
 
-    private PanelOrderList getPanelOrderslList() {
-        if (panelOrderList == null) {
-            panelOrderList = new PanelOrderList(app);
-
-        }
-        return panelOrderList;
-    }
 
     public PanelAdminBackup getPanelAdminBackup() {
         if (pnAdminBackup == null) {
@@ -412,6 +433,15 @@ public class GUIManager {
         }
         return pnAdminUsers;
     }
+
+    public PanelBasic getPanelBasicOrdersList() {
+        if (panelBasicOrdersList == null) {
+            ImageIcon icon = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "ordering.png", 30, 30));
+            panelBasicOrdersList = new PanelBasic(app, "Lista Pedidos", icon, getPanelOrderslList());
+        }
+        return panelBasicOrdersList;
+    }
+
 
     public PanelAdminWaiters getPanelAdminWaiters() {
         if (pnAdminWaiters == null) {
@@ -625,6 +655,8 @@ public class GUIManager {
                             showingInfo = true;
                             showPanelInfo();
                         }
+                    } else if (e.getKeyCode() == KeyEvent.VK_F6) {
+                        setToFullScreen();
                     }
                     return false;
                 }

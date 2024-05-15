@@ -1,10 +1,7 @@
 package com.rb.gui;
 
-import com.rb.Aplication;
-import com.rb.domain.AdditionalPed;
-import com.rb.domain.Invoice;
-import com.rb.domain.ProductoPed;
-import com.rb.domain.Waiter;
+import static com.rb.gui.PanelPedido.AC_EDITAR_PEDIDO;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -14,14 +11,15 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -39,11 +37,25 @@ import javax.swing.SwingWorker;
 import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import static javax.swing.BorderFactory.createLineBorder;
+import javax.swing.UIManager;
+
+import java.util.EventObject;
+import javax.swing.AbstractCellEditor;
+
 import org.dz.MyDefaultTableModel;
 import org.dz.PanelCapturaMod;
 import org.dz.Resources;
 import org.ocpsoft.prettytime.PrettyTime;
+
+import com.rb.Aplication;
+import com.rb.domain.AdditionalPed;
+import com.rb.domain.Cycle;
+import com.rb.domain.Invoice;
+import com.rb.domain.ProductoPed;
+import com.rb.domain.Waiter;
 
 /**
  *
@@ -52,13 +64,14 @@ import org.ocpsoft.prettytime.PrettyTime;
 public class PanelOrderList extends PanelCapturaMod implements ActionListener, ListSelectionListener {
 
     private final Aplication app;
+    private List<Invoice> orderslList;
     private MyDefaultTableModel model;
     private JLabel labelInfo;
     private PrettyTime pt;
-    private JButton btFactura;    
+    private JButton btFactura;
+    // private final InvoiceController invoiceController;
     private Invoice invoice;
     private JButton btGenInvoice;
-    private ArrayList<Invoice> invoiceList;
 
     /**
      * Creates new form PanelOrdersList
@@ -67,6 +80,7 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
      */
     public PanelOrderList(Aplication app) {
         this.app = app;
+        // invoiceController = new InvoiceController(app);
         initComponents();
         createComponents();
     }
@@ -85,15 +99,19 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
 
         pt = new PrettyTime(new Locale("es"));
 
-        String[] colNames = {"1", "2", "3", "4", "5", "6"};
+        String[] colNames = { "1", "2", "3", "4", "5", "6", "7" };
         model = new MyDefaultTableModel(colNames, 0);
         tbOrders.setModel(model);
         tbOrders.setRowHeight(35);
 
-        ImageIcon iconPrint = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "Printer-orange.png", 20, 20));
-        ImageIcon iconTickets = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "tickets.png", 20, 20));
-        ImageIcon iconCancel = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "cancel.png", 20, 20));
-        ImageIcon iconFacturar = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "autoship.png", 20, 20));
+        ImageIcon iconPrint = new ImageIcon(
+                app.getImgManager().getImagen(app.getFolderIcons() + "Printer-orange.png", 20, 20));
+        ImageIcon iconTickets = new ImageIcon(
+                app.getImgManager().getImagen(app.getFolderIcons() + "tickets.png", 20, 20));
+        ImageIcon iconCancel = new ImageIcon(
+                app.getImgManager().getImagen(app.getFolderIcons() + "cancel.png", 20, 20));
+        ImageIcon iconFacturar = new ImageIcon(
+                app.getImgManager().getImagen(app.getFolderIcons() + "autoship.png", 20, 20));
 
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         selectionModel.addListSelectionListener(this);
@@ -102,19 +120,21 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         tbOrders.setSelectionModel(selectionModel);
         tbOrders.getTableHeader().setReorderingAllowed(false);
 
-//        TimeCellRenderer timeRenderer = new TimeCellRenderer();
-        int[] colW = new int[]{50, 150, 80, 100, 50, 40};
+        // TimeCellRenderer timeRenderer = new TimeCellRenderer();
+        int[] colW = new int[] { 50, 150, 80, 100, 50, 30, 30 };
         for (int i = 0; i < colW.length; i++) {
             tbOrders.getColumnModel().getColumn(i).setMinWidth(colW[i]);
             tbOrders.getColumnModel().getColumn(i).setPreferredWidth(colW[i]);
             tbOrders.getColumnModel().getColumn(i).setCellRenderer(new OrderCellRenderer());
-            model.setRowEditable(i, false);
-            model.setCellEditable(model.getRowCount() - 1, model.getColumnCount() - 1, true);
         }
 
-//        tbOrders.getColumnModel().getColumn(3).setCellRenderer(timeRenderer);
+        tbOrders.getColumnModel().getColumn(model.getColumnCount() - 1)
+                .setCellEditor(new BotonEditor(tbOrders, this, AC_EDITAR_PEDIDO));
+        tbOrders.getColumnModel().getColumn(model.getColumnCount() - 2)
+                .setCellEditor(new BotonEditor(tbOrders, this, "AC_MOD_USER"));
+
+        // tbOrders.getColumnModel().getColumn(3).setCellRenderer(timeRenderer);
         labelInfo = new JLabel();
-        labelInfo.setVerticalAlignment(JLabel.TOP);
 
         panelDetail.setLayout(new BorderLayout());
 
@@ -148,8 +168,12 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         boxButtons.add(Box.createHorizontalStrut(5));
         boxButtons.add(btFactura);
 
+        boxButtons.setVisible(false);
+
         JScrollPane scroll = new JScrollPane();
         scroll.setViewportView(labelInfo);
+
+        labelInfo.setVerticalAlignment(SwingConstants.TOP);
 
         panelInfo.add(scroll, BorderLayout.CENTER);
         panelInfo.add(boxButtons, BorderLayout.SOUTH);
@@ -162,27 +186,33 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         populateList();
 
     }
+
     public static final String AC_FACTURAR = "AC_FACTURAR";
 
     public void populateList() {
-
-        invoiceList = app.getControl().getInvoicesLitelList("", "sale_date DESC");
+        Cycle lastCycle = app.getControl().getLastCycle();
+        long idCycyle = lastCycle != null ? lastCycle.getId() : 0;
+        orderslList = app.getControl().getInvoiceslList("ciclo=" + idCycyle, "sale_date DESC");
         model.setRowCount(0);
         PrettyTime pt = new PrettyTime(new Locale("es"));
         app.getGuiManager().setWaitCursor();
         SwingWorker sw = new SwingWorker() {
             @Override
             protected Object doInBackground() throws Exception {
-                for (Invoice invoice : invoiceList) {
-                    model.addRow(new Object[]{
-                        invoice.getId(),
-                        invoice,
-                        invoice.getValor(),
-                        invoice.getFecha(),
-                        pt.formatDuration(pt.calculatePreciseDuration(invoice.getFecha())),
-                        invoice.getStatus(),
-                        true
+                for (Invoice order : orderslList) {
+                    model.addRow(new Object[] {
+                            order.getId(),
+                            order,
+                            order.getValor(),
+                            order.getFecha(),
+                            pt.formatDuration(pt.calculatePreciseDuration(order.getFecha())),
+                            order.getStatus(),
+                            true,
+                            true
                     });
+                    model.setRowEditable(model.getRowCount() - 1, false);
+                    model.setCellEditable(model.getRowCount() - 1, model.getColumnCount() - 1, true);
+                    model.setCellEditable(model.getRowCount() - 1, model.getColumnCount() - 2, true);
                 }
                 app.getGuiManager().setDefaultCursor();
                 return true;
@@ -192,48 +222,45 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         sw.execute();
     }
 
-    public void showTable(Invoice invoice) {
-        if (invoice != null) {
+    public void showTable(Invoice order) {
+        if (order != null) {
 
-            String color1 = "#34cdaa";
-            String color2 = "#34cd22";
-            Waiter waiter = app.getControl().getWaitressByID(invoice.getIdWaitress());
-
-           
+            String color = "#34cdaa";
+            Waiter waiter = app.getControl().getWaitressByID(order.getIdWaitress());
 
             StringBuilder str = new StringBuilder();
             str.append("<html><table width=\"600\" cellspacing=\"0\" border=\"1\">");
             str.append("<tr>");
-            str.append("<td bgcolor=").append(color1).append(">").append("ID").append("</td>");
-            str.append("<td>").append(invoice.getId()).append("</td></tr>");
-            str.append("<td bgcolor=").append(color1).append(">").append("Consecutivo").append("</td>");
-            str.append("<td>").append(invoice.getFactura()).append("</td></tr>");
-            if (invoice.getTipoEntrega()== PanelPedido.TIPO_LOCAL) {
-                str.append("<tr><td bgcolor=").append(color1).append(">").append("Mesa").append("</td>");
-                str.append("<td>").append(invoice.getTable()).append("</td></tr>");
-                str.append("<tr><td bgcolor=").append(color1).append(">").append("Mesero").append("</td>");
+            str.append("<td bgcolor=").append(color).append(">").append("ID").append("</td>");
+            str.append("<td>").append(order.getId()).append("</td></tr>");
+            // str.append("<td
+            // bgcolor=").append(color).append(">").append("Consecutivo").append("</td>");
+            // str.append("<td>").append(order.getConsecutive()).append("</td></tr>");
+            if (order.getTipoEntrega() == PanelPedido.TIPO_LOCAL) {
+                str.append("<tr><td bgcolor=").append(color).append(">").append("Mesa").append("</td>");
+                str.append("<td>").append(order.getTable()).append("</td></tr>");
+                str.append("<tr><td bgcolor=").append(color).append(">").append("Mesero").append("</td>");
                 str.append("<td>").append(waiter.getName().toUpperCase()).append("</td></tr>");
             } else {
-                str.append("<tr><td bgcolor=").append(color1).append(">").append("Cliente").append("</td>");
-                str.append("<td>").append(invoice.getIdCliente()).append("</td></tr>");
+                str.append("<tr><td bgcolor=").append(color).append(">").append("Cliente").append("</td>");
+                str.append("<td>").append(order.getIdCliente()).append("</td></tr>");
             }
-            str.append("<tr><td bgcolor=").append(color1).append(">").append("Fecha").append("</td>");
-            str.append("<td>").append(app.DF_FULL3.format(invoice.getFecha())).append("</td></tr>");
-            str.append("<tr><td bgcolor=").append(color1).append(">").append("Transcurrido").append("</td>");
-            str.append("<td>").append(pt.formatDuration(pt.calculatePreciseDuration(invoice.getFecha()))).append("</td></tr>");
+            str.append("<tr><td bgcolor=").append(color).append(">").append("Fecha").append("</td>");
+            str.append("<td>").append(app.DF_FULL3.format(order.getFecha())).append("</td></tr>");
+            str.append("<tr><td bgcolor=").append(color).append(">").append("Transcurrido").append("</td>");
+            str.append("<td>").append(pt.formatDuration(pt.calculatePreciseDuration(order.getFecha())))
+                    .append("</td></tr>");
             str.append("</table>");
 
-            str.append("<br><br>");
+            str.append("<br><br><br>");
 
-            List<ProductoPed> productos = invoice.getProducts();
-
-           
-//            StringBuilder str = new StringBuilder();
+            List<ProductoPed> productos = order.getProducts();
+            // StringBuilder str = new StringBuilder();
             str.append("<table width=\"600\" cellspacing=\"0\" border=\"1\">");
             str.append("<html><table width=\"600\" cellspacing=\"0\" border=\"1\">");
             str.append("<tr bgcolor=\"#A4C1FF\">");
             str.append("<td>").append("Producto").append("</td>");
-//            str.append("<td>").append("Codigo").append("</td>");
+            // str.append("<td>").append("Codigo").append("</td>");
             str.append("<td>").append("Cant.").append("</td>");
             str.append("<td>").append("V. Uni").append("</td>");
             str.append("<td>").append("V. total").append("</td></tr>");
@@ -246,17 +273,23 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
                 double price = product.getValueAdicionales() + product.getPrecio();
                 total += cantidad * price;
                 str.append("<tr><td bgcolor=\"#F6FFDB\">").append((product.getPresentation() != null
-                        ? (product.getProduct().getName() + " (" + product.getPresentation().getName() + ")") : product.getProduct().getName()).toUpperCase());
+                        ? (product.getProduct().getName() + " (" + product.getPresentation().getName() + ")")
+                        : product.getProduct().getName()).toUpperCase());
                 for (AdditionalPed adicional : product.getAdicionales()) {
                     str.append("<br><font color=blue size=2> +").append(adicional.getAdditional().getName())
                             .append("(x").append(adicional.getCantidad()).append(")").append("</font>");
                 }
 
-                str.append("<br>").append(product.hasExcluisones() ? "Sin: " : "").append("<font color=red size=2>").append(product.getStExclusiones()).append("</font></td>");
-//                str.append("<td bgcolor=\"#FFFFFF\">").append(product.getProduct().getCode()).append("</td>");
-                str.append("<td bgcolor=\"#FFFFFF\" align=\"right\">").append(app.DCFORM_P.format(cantidad)).append("</td>");
-                str.append("<td bgcolor=\"#FFFFFF\" align=\"right\">").append(app.DCFORM_P.format(price)).append("</td>");
-                str.append("<td bgcolor=\"#FFFFFF\" align=\"right\">").append(app.DCFORM_P.format(cantidad * price)).append("</td>");
+                str.append("<br>").append(product.hasExcluisones() ? "Sin: " : "").append("<font color=red size=2>")
+                        .append(product.getStExclusiones()).append("</font></td>");
+                // str.append("<td
+                // bgcolor=\"#FFFFFF\">").append(product.getProduct().getCode()).append("</td>");
+                str.append("<td bgcolor=\"#FFFFFF\" align=\"right\">").append(app.DCFORM_P.format(cantidad))
+                        .append("</td>");
+                str.append("<td bgcolor=\"#FFFFFF\" align=\"right\">").append(app.DCFORM_P.format(price))
+                        .append("</td>");
+                str.append("<td bgcolor=\"#FFFFFF\" align=\"right\">").append(app.DCFORM_P.format(cantidad * price))
+                        .append("</td>");
                 str.append("</tr>");
             }
             str.append("</table></html>");
@@ -269,8 +302,17 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
     public void actionPerformed(ActionEvent e) {
         if (AC_FACTURAR.equals(e.getActionCommand())) {
             if (invoice != null) {
-//                invoiceController.orderInvoice(order);
-                //app.getGuiManager().showPanelInvoicedOrder(this, invoice);
+                // invoiceController.orderInvoice(order);
+                // app.getGuiManager().showPanelInvoicedOrder(this, invoice);
+            }
+        } else if (AC_EDITAR_PEDIDO.equals(e.getActionCommand())) {
+            final int c = tbOrders.getEditingColumn();
+            final int f = tbOrders.getEditingRow();
+            if (f != -1) {
+                int row = tbOrders.convertRowIndexToModel(f);
+                Invoice invoice = (Invoice) model.getValueAt(row, 1);
+                // Invoice invoice = app.getControl().getInvoiceByCode(code);
+                app.getGuiManager().reviewFacture(invoice);
             }
         }
 
@@ -296,7 +338,8 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         panelDetail = new javax.swing.JPanel();
@@ -309,25 +352,22 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         javax.swing.GroupLayout panelDetailLayout = new javax.swing.GroupLayout(panelDetail);
         panelDetail.setLayout(panelDetailLayout);
         panelDetailLayout.setHorizontalGroup(
-            panelDetailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
+                panelDetailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 100, Short.MAX_VALUE));
         panelDetailLayout.setVerticalGroup(
-            panelDetailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
+                panelDetailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 100, Short.MAX_VALUE));
 
         tbOrders.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
+                new Object[][] {
+                        { null, null, null, null },
+                        { null, null, null, null },
+                        { null, null, null, null },
+                        { null, null, null, null }
+                },
+                new String[] {
+                        "Title 1", "Title 2", "Title 3", "Title 4"
+                }));
         scTableOrders.setViewportView(tbOrders);
 
         panelTop.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -335,13 +375,11 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         javax.swing.GroupLayout panelTopLayout = new javax.swing.GroupLayout(panelTop);
         panelTop.setLayout(panelTopLayout);
         panelTopLayout.setHorizontalGroup(
-            panelTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
+                panelTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 0, Short.MAX_VALUE));
         panelTopLayout.setVerticalGroup(
-            panelTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 40, Short.MAX_VALUE)
-        );
+                panelTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 40, Short.MAX_VALUE));
 
         lbStatus.setText("jLabel1");
         lbStatus.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -349,22 +387,24 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE)
-            .addComponent(panelTop, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(lbStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE)
+                        .addComponent(panelTop, javax.swing.GroupLayout.Alignment.TRAILING,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                Short.MAX_VALUE)
+                        .addComponent(lbStatus, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(panelTop, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(panelTop, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 28,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)));
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lbStatus;
@@ -391,13 +431,13 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
             Border borde = BorderFactory.createLineBorder(Color.red);
 
             lbDate = new JLabel();
-//            lbDate.setBorder(borde);
+            // lbDate.setBorder(borde);
             lbDate.setOpaque(true);
             lbDate.setPreferredSize(new Dimension(80, 30));
 
             lbTime = new JLabel();
             lbTime.setOpaque(true);
-//            lbTime.setBorder(borde);
+            // lbTime.setBorder(borde);
             lbTime.setPreferredSize(new Dimension(80, 30));
 
             box.add(lbDate);
@@ -414,7 +454,8 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
 
             if (value != null && value instanceof Date) {
                 Date date = (Date) value;
@@ -422,10 +463,10 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
                 PrettyTime pt = new PrettyTime(new Locale("es"));
                 lbTime.setText(pt.formatDuration(pt.calculatePreciseDuration(date)));
 
-//                Duration get = pt.calculatePreciseDuration(date).get(0);
-//                long quantity = get.getQuantity();
-//                TimeUnit unit = get.getUnit();                        
-//                lbTime.setText(quantity+" "+unit.toString());
+                // Duration get = pt.calculatePreciseDuration(date).get(0);
+                // long quantity = get.getQuantity();
+                // TimeUnit unit = get.getUnit();
+                // lbTime.setText(quantity+" "+unit.toString());
             }
 
             if (isSelected) {
@@ -444,6 +485,7 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         JLabel label;
 
         JButton btn;
+        JButton btn2;
 
         public OrderCellRenderer() {
             label = new JLabel();
@@ -452,14 +494,25 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
             btn = new JButton();
             btn.setPreferredSize(new Dimension(28, 28));
             btn.setMaximumSize(new Dimension(28, 28));
-            btn.setIcon(new ImageIcon(Resources.getImagen("gui/img/icons/navigate-down.png", Aplication.class, 20, 20)));
+            btn.setIcon(
+                    new ImageIcon(Resources.getImagen("gui/img/icons/navigate-down.png", Aplication.class, 20, 20)));
             btn.setActionCommand(AC_DISPLAY_OPTIONS);
 
+            btn2 = new JButton();
+            btn2.addActionListener(PanelOrderList.this);
+            btn2.setPreferredSize(new Dimension(28, 28));
+            btn2.setMaximumSize(new Dimension(28, 28));
+            btn2.setIcon(
+                    new ImageIcon(Resources.getImagen("gui/img/icons/edit.png", Aplication.class, 20, 20)));
+            btn2.setActionCommand(AC_EDITAR_PEDIDO);
+
         }
+
         public static final String AC_DISPLAY_OPTIONS = "AC_DISPLAY_OPTIONS";
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
 
             if (value != null) {
                 switch (column) {
@@ -488,7 +541,7 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
                     case 3:
                         String fecha = "0";
                         if (value instanceof Date) {
-                            fecha = app.DF_FULL3.format(value);
+                            fecha = Aplication.DF_FULL4.format(value);
                         }
                         label.setText(fecha);
                         break;
@@ -509,18 +562,100 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
                 label.setBackground(Color.white);
             }
 
-            if (column == 5) {
-                return btn;
-            }
             return label;
+        }
+    }
+
+    public class BotonEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
+
+        Boolean currentValue;
+        JButton button;
+        protected static final String EDIT = "edit";
+        private JTable tabla;
+        private ActionListener acList;
+        private String acCommand;
+
+        public BotonEditor(JTable tabla, ActionListener listener, String acCommand) {
+            button = new JButton();
+            button.setBorderPainted(false);
+            this.tabla = tabla;
+            this.acList = listener;
+            this.acCommand = acCommand;
+            button.setActionCommand(acCommand);
+            button.addActionListener(BotonEditor.this);
+
+        }
+
+        @Override
+        public boolean isCellEditable(EventObject e) {
+            if (e instanceof MouseEvent) {
+                return ((MouseEvent) e).getClickCount() >= 1;
+            }
+            return true;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return currentValue;
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
+                int column) {
+            currentValue = (Boolean) value;
+            return button;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            final int c = tabla.getEditingColumn();
+            final int f = tabla.getEditingRow();
+            if (f != -1 && c != -1) {
+                int row = tabla.convertRowIndexToModel(f);
+                String code = model.getValueAt(row,1).toString();
+                Invoice invoice = (Invoice) model.getValueAt(row,1);
+                app.getGuiManager().reviewFacture(invoice);
+
+            }
+            try {
+                fireEditingStopped();
+            } catch (Exception ex) {
+                System.err.println(ex.getMessage());
+            }
+        }
+    }
+
+    public class ButtonCellRenderer extends JButton implements TableCellRenderer {
+
+        public ButtonCellRenderer(String text) {
+            setText(text);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
+
+            if (isSelected) {
+                setForeground(Color.black);
+                setBackground(table.getSelectionBackground());
+                if (hasFocus) {
+                    setBorder(BorderFactory.createLineBorder(Color.darkGray));
+                } else {
+                    setBorder(createLineBorder(Color.lightGray));
+                }
+            } else {
+                setBackground(table.getBackground());
+                setForeground(Color.black);
+                setBorder(UIManager.getBorder("Table.cellBorder"));
+            }
+            return this;
         }
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        System.out.println(evt.getPropertyName());
-        
-
+        throw new UnsupportedOperationException("Not supported yet."); // To change body of generated methods, choose
+                                                                       // Tools | Templates.
     }
 
 }

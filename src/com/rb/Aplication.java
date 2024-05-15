@@ -83,14 +83,16 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
     //Correr la aplicacion con configuracion de servidor local
     private static boolean local =!true;
 
-    public DateFormat DF = new SimpleDateFormat("dd-MM-yyyy");
-    public DateFormat DF_FULL = new SimpleDateFormat("dd MMMM yyyy hh:mm");
-    public DateFormat DF_FULL2 = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-    public DateFormat DF_FULL3 = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
-    public DateFormat DF_SL = new SimpleDateFormat("dd MMMM yyyy");
-    public DateFormat DF_SQL = new SimpleDateFormat("yyyy-MM-dd");
+    public static final DateFormat DF = new SimpleDateFormat("dd-MM-yyyy");
+    public static final DateFormat DF_FULL = new SimpleDateFormat("dd MMMM yyyy hh:mm");
+    public static final DateFormat DF_FULL2 = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    public static final DateFormat DF_FULL3 = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
+    public static final DateFormat DF_FULL4 = new SimpleDateFormat("dd/MM/yy HH:mm");
+    public static final DateFormat DF_SL = new SimpleDateFormat("dd MMMM yyyy");
+    public static final DateFormat DF_SQL = new SimpleDateFormat("yyyy-MM-dd");
     public static final DateFormat DF_SQL_TS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public DateFormat DF_TIME = new SimpleDateFormat("HH:mm");
+    public static final DateFormat DF_TIME = new SimpleDateFormat("HH:mm");
+    public static final DateFormat DF_TIME_FULL = new SimpleDateFormat("HH:mm:ss");
 
     private boolean tserver;
     private final Configuration configuration;
@@ -206,12 +208,12 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
 
     private void loadModules() {
         if (modules == null) {
-            modules = new ArrayList();
+            modules = new ArrayList<>();
         }
         modules.add(new Module(Aplication.ACTION_SHOW_ORDER, MyConstants.PERM_ORDERS_MODULE));
-       // modules.add(new Module(Aplication.ACTION_SHOW_ORDER_LIST, MyConstants.PERM_ORDERLIST_MODULE));
-        modules.add(new Module(Aplication.ACTION_SHOW_SALES, MyConstants.PERM_SALES_MODULE));
+        modules.add(new Module(Aplication.ACTION_SHOW_ORDER_LIST, MyConstants.PERM_ORDERLIST_MODULE));
         modules.add(new Module(Aplication.ACTION_SHOW_CASH, MyConstants.PERM_CASH_MODULE));
+        modules.add(new Module(Aplication.ACTION_SHOW_SALES, MyConstants.PERM_SALES_MODULE));        
         modules.add(new Module(Aplication.ACTION_SHOW_PRODUCTS, MyConstants.PERM_PRODUCTS_MODULE));
         modules.add(new Module(Aplication.ACTION_SHOW_INVENTORY, MyConstants.PERM_INVENTORY_MODULE));
         modules.add(new Module(Aplication.ACTION_SHOW_REPORTS, MyConstants.PERM_REPORTS_MODULE));
@@ -331,7 +333,7 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
     protected final String getMap() {
         StringBuilder map = new StringBuilder();
         map.append("APP BASIC").append("\n");
-        map.append("di:").append(getConfiguration().getProperty(configuration.DINST)).append("\n");
+        map.append("di:").append(getConfiguration().getProperty(Configuration.DINST)).append("\n");
         map.append("os:").append(System.getProperty("os.name")).append("\n");
         map.append("usm:").append(System.getProperty("user.name")).append("\n");
         map.append("usl:").append(getUser()).append("\n");

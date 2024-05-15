@@ -320,9 +320,9 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         Color colorStatus = cycle.getStatus() == 1 ? Color.GREEN : Color.RED;
         lbStatus.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED, colorStatus, colorStatus.darker()));
         lbStatus.setText("<html><font color=green>" + (cycle.getStatus() == 1 ? "Abierto" : "Cerrado") + "</font></html>");
-        lbInit.setText("<html>Apertura:<br><font color=red size=3>" + app.DF_FULL3.format(cycle.getInit()) + "</font></html>");
+        lbInit.setText("<html>Apertura:<br><font color=red size=3>" + Aplication.DF_FULL3.format(cycle.getInit()) + "</font></html>");
         if (cycle.getEnd() != null) {
-            lbEnd.setText("<html>Cierre:<br><font color=green size=3>" + app.DF_FULL3.format(cycle.getEnd()) + "</font></html>");
+            lbEnd.setText("<html>Cierre:<br><font color=green size=3>" + Aplication.DF_FULL3.format(cycle.getEnd()) + "</font></html>");
         } else {
             lbEnd.setText("<html>Cierre:<br><font color=green size=3>" + "" + "</font></html>");
         }
@@ -472,17 +472,16 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
     public void actionPerformed(ActionEvent e) {
         if (AC_NEW_CYCLE.equals(e.getActionCommand())) {
             app.getGuiManager().showPanelNewCycle(this);
-            ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED);
-            String printer = config != null ? config.getValor() : "";
-            app.getPrinterService().sendPulsePin(printer);
+            pulsePinPrinter();
 
         } else if (AC_CLOSE_CYCLE.equals(e.getActionCommand())) {
             if (cycle.getStatus() == 1) {
                 cycle.setStatus(0);
                 cycle.setEnd(new Date());
                 app.getControl().saveSnapshotData(cycle);
-                app.getControl().updateCycle(cycle);
+                app.getControl().updateCycle(cycle);                
                 showCycle(cycle);
+                pulsePinPrinter();
             }
         } else if (AC_REFRESH.equals(e.getActionCommand())) {
             loadCycle();
@@ -501,10 +500,14 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             }
             loadCycle();
         } else if (AC_OPEN_CASH.equals(e.getActionCommand())) {
-            ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED);
-            String printer = config != null ? config.getValor() : "";
-            app.getPrinterService().sendPulsePin(printer);
+            pulsePinPrinter();
         }
+    }
+
+    private void pulsePinPrinter() {
+        ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED);
+        String printer = config != null ? config.getValor() : "";
+        app.getPrinterService().sendPulsePin(printer);
     }
 
     @Override
