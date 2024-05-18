@@ -161,6 +161,11 @@ public class PrinterService {
             String column4Format = "%9.9s";   // fixed size 6 characters, right aligned
             String formatInfo = column1Format + " " + column2Format + " " + column3Format + " " + column4Format;
 
+            if (invoice.getStatus() == Invoice.ST_ANULADA) {
+                escpos.writeLF(new Style().setFontSize(Style.FontSize._2, Style.FontSize._2).setJustification(EscPosConst.Justification.Center),
+                        "* * * ANULADA * * *");
+            }
+
             escpos.writeLF(font2, "===============================================");
             List<ProductoPed> products = invoice.getProducts();
             for (int i = 0; i < products.size(); i++) {
@@ -209,6 +214,10 @@ public class PrinterService {
             escpos.writeLF(String.format(formatInfo, "", "", "Total:", app.DCFORM_P.format(total)));
 
             escpos.writeLF(font2, "================================================");
+            if (invoice.getStatus() == Invoice.ST_ANULADA) {
+                escpos.writeLF(new Style().setFontSize(Style.FontSize._2, Style.FontSize._2).setJustification(EscPosConst.Justification.Center),
+                        "* * * ANULADA * * *");
+            }
             escpos.feed(1);
 
             if (pay != null) {
@@ -308,6 +317,11 @@ public class PrinterService {
             String column4Format = "%12.12s";   // fixed size 6 characters, right aligned
             String formatInfo = column1Format + " " + column2Format + " " + column3Format + " " + column4Format;
 
+            if (invoice.getStatus() == Invoice.ST_ANULADA || invoice.getStatus() == Invoice.ST_MODIFICADA) {
+                escpos.writeLF(new Style().setFontSize(Style.FontSize._2, Style.FontSize._2).setJustification(EscPosConst.Justification.Center),
+                        "* * * " + Invoice.STATUSES[invoice.getStatus()] + " * * *");
+            }
+
             escpos.writeLF(font2, "===============================================");
             List<ProductoPed> products = invoice.getProducts();
             for (int i = 0; i < products.size(); i++) {
@@ -352,10 +366,14 @@ public class PrinterService {
 
             escpos.writeLF(font2, "================================================");
 
+            if (invoice.getStatus() == Invoice.ST_ANULADA || invoice.getStatus() == Invoice.ST_MODIFICADA) {
+                escpos.writeLF(new Style().setFontSize(Style.FontSize._2, Style.FontSize._2).setJustification(EscPosConst.Justification.Center),
+                        "* * * " + Invoice.STATUSES[invoice.getStatus()] + " * * *");
+            }
+
             escpos.feed(1);
 
-            escpos.writeLF(font2, "****  COCINA ****");
-
+            //escpos.writeLF(font2, "* * * *  COCINA * * * *");
             escpos.feed(5);
 
             escpos.cut(EscPos.CutMode.FULL);

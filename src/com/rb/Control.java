@@ -727,6 +727,17 @@ public class Control {
         }
     }
 
+    public void updateInvoiceStatus(String code, int status) {
+        try {
+            JDBCInvoiceDAO invoiceDAO = (JDBCInvoiceDAO) DAOFactory.getInstance().getInvoiceDAO();
+            invoiceDAO.updateInvoiceStatus(code, status);
+        } catch (DAOException ex) {
+            String msg = "Error updating invoice status";
+            logger.error(msg, ex);
+            GUIManager.showErrorMessage(null, msg, "Error");
+        }
+    }
+
     public void updateInvoiceFull(Invoice invoice, List<ProductoPed> oldProducts) {
         try {
             JDBCInvoiceDAO invoiceDAO = (JDBCInvoiceDAO) DAOFactory.getInstance().getInvoiceDAO();
@@ -881,7 +892,7 @@ public class Control {
     public Cycle getLastCycle() {
         try {
             JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
-            return utilDAO.getLastCycle("", "");
+            return utilDAO.getLastCycle("", "id DESC, init DESC");
         } catch (DAOException ex) {
             String msg = "Error getting cycle";
             logger.error(msg, ex);
@@ -1250,14 +1261,15 @@ public class Control {
         }
     }
 
-    public void addPay(Pay pay) {
+    public long addPay(Pay pay) {
         try {
             JDBCPayDAO payDAO = (JDBCPayDAO) DAOFactory.getInstance().getPayDAO();
-            payDAO.addPay(pay);
+            return payDAO.addPay(pay);
         } catch (DAOException ex) {
             logger.error("Error adding pay", ex);
             GUIManager.showErrorMessage(null, "Error adding pay", "Error");
         }
+        return 0;
     }
 
     public Pay getPay(int id) {
@@ -1270,7 +1282,7 @@ public class Control {
             return null;
         }
     }
-    
+
     public Pay getPay(String code) {
         try {
             JDBCPayDAO payDAO = (JDBCPayDAO) DAOFactory.getInstance().getPayDAO();
@@ -1620,8 +1632,8 @@ public class Control {
                     double quantity = Double.parseDouble(data[2].toString());
                     int delType = Integer.parseInt(data[3].toString());
                     outs += quantity * (onlyDelivery && delType == PanelPedido.TIPO_LOCAL ? 0 : 1.0); // excluir locales
-                                                                                                      // solo para
-                                                                                                      // llevar
+                    // solo para
+                    // llevar
                 }
             } else {
                 ArrayList<Object[]> presentationsOutInventory = app.getControl()
@@ -1631,8 +1643,8 @@ public class Control {
                     double quantity = Double.parseDouble(data[3].toString());
                     int delType = Integer.parseInt(data[4].toString());
                     outs += quantity * (onlyDelivery && delType == PanelPedido.TIPO_LOCAL ? 0 : 1.0); // excluir locales
-                                                                                                      // solo para
-                                                                                                      // llevar
+                    // solo para
+                    // llevar
                 }
             }
         }

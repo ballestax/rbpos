@@ -18,7 +18,7 @@ public interface PayDAO {
 
     public ArrayList<Pay> getPayList() throws DAOException;
 
-    public void addPay(Pay pay) throws DAOException;
+    public long addPay(Pay pay) throws DAOException;
 
     public void deletePay(int id) throws DAOException;
 

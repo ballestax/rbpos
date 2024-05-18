@@ -520,13 +520,18 @@ public class PanelPayInvoice extends PanelCapturaMod implements ActionListener, 
             Pay pay = checkPay();
             if (pay != null) {
                 this.pay = pay;
-                app.getControl().addPay(pay);
+                long idPay = app.getControl().addPay(pay);
+                if (idPay > 0) {
+                    app.getControl().updateInvoiceStatus(invoice.getFactura(), Invoice.ST_PAGADA);
+                } else {
+                    GUIManager.showErrorMessage(null, "Error registrando el pagp", "Error");
+                }
                 lbInfo.setVisible(true);
                 btPagar.setText("Salir");
                 btPagar.setActionCommand(AC_CLOSE_PANEL);
                 lbInfo.setText("<html><font size=+1 color=blue>Factura paga</font></html>");
                 btPrint.setVisible(true);
-                
+
                 pcs.firePropertyChange(AC_PAY, null, null);
             }
         } else if (AC_PRINT_INVOICE.equals(ae.getActionCommand())) {
