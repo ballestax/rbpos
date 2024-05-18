@@ -18,6 +18,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -129,7 +130,7 @@ public class JDBCPayDAO implements PayDAO {
     public Pay getPay(int id) throws DAOException {
         return getPayBy("id=" + id);
     }
-    
+
     public Pay getPayByInvoice(String factura) throws DAOException {
         Pay pay = null;
         Connection conn = null;
@@ -234,10 +235,11 @@ public class JDBCPayDAO implements PayDAO {
     }
 
     @Override
-    public void addPay(Pay pay) throws DAOException {
+    public long addPay(Pay pay) throws DAOException {
         if (pay == null) {
             throw new IllegalArgumentException("Null pay");
         }
+        long idPay = 0;
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -256,8 +258,14 @@ public class JDBCPayDAO implements PayDAO {
                 pay.getCredit(),
                 pay.getUser()
             };
-            ps = sqlStatements.buildSQLStatement(conn, INSERT_PAY_KEY, parameters);
-            ps.executeUpdate();
+            ps = sqlStatements.buildSQLStatement(conn, INSERT_PAY_KEY, parameters, Statement.RETURN_GENERATED_KEYS);
+            int rows = ps.executeUpdate();
+            if (rows > 0) {
+                ResultSet genK = ps.getGeneratedKeys();
+                if (genK.next()) {
+                    idPay = genK.getInt(1);
+                }
+            }
             conn.commit();
         } catch (SQLException e) {
             DBManager.rollbackConn(conn);
@@ -269,6 +277,7 @@ public class JDBCPayDAO implements PayDAO {
             DBManager.closeStatement(ps);
             DBManager.closeConnection(conn);
         }
+        return idPay;
     }
 
     @Override

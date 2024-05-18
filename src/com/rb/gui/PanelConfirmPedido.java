@@ -126,7 +126,7 @@ public class PanelConfirmPedido extends PanelCapturaMod implements ActionListene
 
 //            System.out.println(client);
             lbTitle.setText("<html>PEDIDO: <font size=+1 color=" + (invoice.getStatus() == 0 ? "blue" : "red") + ">" + invoice.getFactura() + "</font></html>");
-            lbStatus.setText("<html><font size=+1 color=" + (invoice.getStatus() == 0 ? "blue" : "red") + ">" + Invoice.STATUSES[invoice.getStatus()] + "</font></html>");
+            lbStatus.setText("<html><font size=+1 color=" + (invoice.getStatus() == Invoice.ST_PAGADA ? "green" : (invoice.getStatus() == Invoice.ST_ANULADA) ? "red" : "blue") + ">" + Invoice.STATUSES[invoice.getStatus()] + "</font></html>");
 
             StringBuilder textInfo = new StringBuilder("<html>");
             textInfo.append("<table  width=\"100%\" cellspacing=\"10\" border=\"1\">");
@@ -190,6 +190,7 @@ public class PanelConfirmPedido extends PanelCapturaMod implements ActionListene
 
             lbTotal.setText("<html>Total<br><font size=+1 color=red>" + app.getCurrencyFormat().format(total) + "</html>");
 
+            enableActions();
             updateUI();
         }
     }
@@ -199,8 +200,14 @@ public class PanelConfirmPedido extends PanelCapturaMod implements ActionListene
         if (inv != null) {
             this.invoice = inv;
             setupInvoice();
-            btAnulate.setEnabled(invoice.getStatus() != Invoice.ST_ANULADA);
+            enableActions();
         }
+    }
+
+    public void enableActions() {
+        btAnulate.setEnabled(invoice.getStatus() != Invoice.ST_ANULADA);
+        btLoad.setEnabled(invoice.getStatus() != Invoice.ST_ANULADA);
+        btPrint2.setEnabled(invoice.getStatus() != Invoice.ST_ANULADA);
     }
 
     @Override
@@ -232,6 +239,7 @@ public class PanelConfirmPedido extends PanelCapturaMod implements ActionListene
                 cargarFactura();
             } else {
                 GUIManager.showErrorMessage(this, "No tiene permisos para realizar esta accion", "Error de privilegios");
+               
             }
 
         } else if (AC_PRINT_GUIDE.equals(e.getActionCommand())) {

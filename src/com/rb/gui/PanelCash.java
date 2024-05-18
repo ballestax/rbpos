@@ -289,7 +289,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
     private static final String AC_REVIEW_INVOICE = "AC_REVIEW_INVOICE";
     private static final String AC_FILTER = "AC_FILTER";
 
-    private void showPayInvoice(Invoice inv) throws HeadlessException {
+    private void showPayInvoice(Invoice inv) {
 //        StringBuilder msg = new StringBuilder();
 //        msg.append("<html>");
 //        msg.append("</html>");

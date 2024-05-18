@@ -30,6 +30,7 @@
                     |CREATE_PRODUCT_INGREDIENT_TABLE|GET_INGREDIENTS_BY_PRODUCT
                     |CREATE_ADDITIONALS_TABLE|ADD_ADDITIONAL|GET_ADDITIONAL|DELETE_ADDITIONAL|UPDATE_ADDITIONAL
                     |CREATE_INVOICES_TABLE|ADD_INVOICE|GET_INVOICE|DELETE_INVOICE|UPDATE_INVOICE|UPDATE_INVOICE_BY_ID
+                    |UPDATE_INVOICE_STATUS
                     |CREATE_WAITERS_TABLE|CREATE_TABLES_TABLE|CREATE_INVOICE_PRODUCT_TABLE
                     |GET_WAITERS|GET_TABLES
                     |ADD_INVOICE_PRODUCT|GET_INVOICE_PRODUCT|DELETE_INVOICE_PRODUCT
@@ -893,7 +894,7 @@
                 notes VARCHAR(500),
                 isservice TINYINT(1) NOT NULL DEFAULT '0',
                 service_porc DECIMAL(3,1) NOT NULL DEFAULT '0',
-                status TINYINT(1) NOT NULL DEFAULT '0',
+                status INT(2) NOT NULL DEFAULT '0',
                 lastUpdatedTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 PRIMARY KEY (id)
                 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -944,6 +945,14 @@
                 ciclo=?,
                 isservice=?,
                 service_porc=?,
+                status=?
+                WHERE code = ?
+            </SQLFragment>
+        </SQLStatement> 
+        
+         <SQLStatement method="UPDATE_INVOICE_STATUS">
+            <SQLFragment>
+                UPDATE invoices SET                 
                 status=?
                 WHERE code = ?
             </SQLFragment>
