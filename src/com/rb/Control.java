@@ -176,6 +176,15 @@ public class Control {
             logger.error("Error adding config.", e);
         }
     }
+    
+    public void addConfigOrUpdate(ConfigDB config) {
+        try {
+            JDBCConfigDAO configDAO = (JDBCConfigDAO) DAOFactory.getInstance().getConfigDAO();
+            configDAO.addConfigDBOrUpdate(config);
+        } catch (Exception e) {
+            logger.error("Error adding config.", e);
+        }
+    }
 
     public ConfigDB getConfigLocal(String clave) {
         try {
@@ -183,6 +192,16 @@ public class Control {
             String userDevice = Aplication.getUserDevice();
             JDBCConfigDAO configDAO = (JDBCConfigDAO) DAOFactory.getInstance().getConfigDAO();
             return configDAO.getConfigDB(clave, userName, userDevice);
+        } catch (Exception e) {
+            logger.error("Error getting config.", e);
+            return new ConfigDB();
+        }
+    }
+
+    public ConfigDB getConfigGlobal(String clave) {
+        try {
+            JDBCConfigDAO configDAO = (JDBCConfigDAO) DAOFactory.getInstance().getConfigDAO();
+            return configDAO.getConfigDBGlobal(clave, true);
         } catch (Exception e) {
             logger.error("Error getting config.", e);
             return new ConfigDB();

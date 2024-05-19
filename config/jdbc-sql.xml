@@ -23,6 +23,7 @@
                     |CREATE_PERSONS_TABLE
                     |GET_PERSON|GET_PERSON_LIMIT|INSERT_PERSON|UPDATE_PERSON|GET_ID_PERSON|DELETE_PERSON|DELETE_PERSON_WHERE
                     |CREATE_CONFIG_TABLE|GET_CONFIG|DELETE_CONFIG|UPDATE_CONFIG|EXIST_CONFIG
+                    |UPDATE_CONFIG_GLOBAL|EXIST_CONFIG_GLOBAL
                     |ADD_CONFIG|GET_VALUE_FROM_TABLE
                     |EXIST_CLAVE|GET_MAX_ID|COUNT_TABLE2|EXIST_CLAVE_MULT
                     |CREATE_PRODUCTS_TABLE|ADD_PRODUCT|GET_PRODUCT|DELETE_PRODUCT|UPDATE_PRODUCT|GET_PRODUCT_BY_PRESS_ID
@@ -604,6 +605,7 @@
                 type VARCHAR(255),
                 user VARCHAR(100) NOT NULL,
                 device VARCHAR(100) NOT NULL,
+                global TINYINT(1),
                 PRIMARY KEY (id),
                 UNIQUE KEY unique_id(code,user,device));
             </SQLFragment>
@@ -624,7 +626,7 @@
         
         <SQLStatement method="ADD_CONFIG">
             <SQLFragment>
-                INSERT INTO config (code,value, type, user, device) VALUES (?,?,?,?,?)
+                INSERT INTO config (code,value, type, user, device, global) VALUES (?,?,?,?,?,?)
             </SQLFragment>
             <SQLFragment>
                 ON DUPLICATE KEY UPDATE value= VALUES(value), type=VALUES(type)
@@ -641,14 +643,33 @@
             <SQLFragment>
                 UPDATE config SET 
                 value=?,
-                type=? 
+                type=?,
+                global=?  
                 WHERE code = ? AND user = ? AND device = ?
+            </SQLFragment>
+        </SQLStatement> 
+        
+           <SQLStatement method="UPDATE_CONFIG_GLOBAL">
+            <SQLFragment>
+                UPDATE config SET 
+                value=?,
+                type=?,
+                global=?,
+                user=?,
+                device=? 
+                WHERE code = ?
             </SQLFragment>
         </SQLStatement>    
         
         <SQLStatement method="EXIST_CONFIG">
             <SQLFragment>
                 SELECT count(code) FROM config WHERE code=? AND user=? AND device=?;
+            </SQLFragment>
+        </SQLStatement>   
+        
+         <SQLStatement method="EXIST_CONFIG_GLOBAL">
+            <SQLFragment>
+                SELECT count(code) FROM config WHERE code=? AND global=?;
             </SQLFragment>
         </SQLStatement>    
         

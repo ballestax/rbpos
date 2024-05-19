@@ -18,6 +18,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 
@@ -64,11 +65,13 @@ public class PanelConfigTicket extends javax.swing.JPanel implements ActionListe
 
         jPanel2.setLayout(new BoxLayout(jPanel2, BoxLayout.Y_AXIS));
 
+        jScrollPane2.getVerticalScrollBar().setUnitIncrement(22);
+
         lbTitle.setText("Configurar Factura");
 
         Color color1 = new Color(225, 176, 206);
-        
-        Font font = new Font("Sans",1,16);
+
+        Font font = new Font("Sans", 1, 16);
 
         Style font1 = new Style().setFontSize(Style.FontSize._1, Style.FontSize._1).setJustification(EscPosConst.Justification.Center);
         Style font2 = new Style().setFontSize(Style.FontSize._2, Style.FontSize._2).setJustification(EscPosConst.Justification.Center);
@@ -232,35 +235,34 @@ public class PanelConfigTicket extends javax.swing.JPanel implements ActionListe
         jPanel2.add(Box.createVerticalGlue());
         jPanel2.add(Box.createVerticalStrut(space));
 
-        ConfigDB config = app.getControl().getConfigLocal(com.rb.Configuration.BS_NAME);
+        ConfigDB config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_NAME);
         regName.setText(config != null ? config.getValor() : "NOMBRE");
-        config = app.getControl().getConfigLocal(com.rb.Configuration.BS_ID);
+        config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_ID);
         regID.setText(config != null ? config.getValor() : "000000000-0");
-        config = app.getControl().getConfigLocal(com.rb.Configuration.BS_PHONE);
+        config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_PHONE);
         regPhone.setText(config != null ? config.getValor() : "300 0000000");
-        config = app.getControl().getConfigLocal(com.rb.Configuration.BS_ADDRESS);
+        config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_ADDRESS);
         regAddress.setText(config != null ? config.getValor() : "Direcion");
-        config = app.getControl().getConfigLocal(com.rb.Configuration.BS_CUSTOM_TOP);
+        config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_CUSTOM_TOP);
         regCustom1.setText(config != null ? config.getValor() : "Personalizado 1");
-        config = app.getControl().getConfigLocal(com.rb.Configuration.BS_CUSTOM_BOTTON);
+        config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_CUSTOM_BOTTON);
         regCustom2.setText(config != null ? config.getValor() : "Personalizado 2");
-                        
-        config = app.getControl().getConfigLocal(com.rb.Configuration.BS_CUSTOM_QUALITY_MSG);
-        regQualityMsg.setText(config != null ? config.getValor() : "");
-        config = app.getControl().getConfigLocal(com.rb.Configuration.BS_CUSTOM_QUALITY_SCALE);
-        regQualityScl.setText(config != null ? config.getValor() : "");
-        
 
-        config = app.getControl().getConfigLocal(CF_FACTURA_INICIAL);
+        config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_CUSTOM_QUALITY_MSG);
+        regQualityMsg.setText(config != null ? config.getValor() : "");
+        config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_CUSTOM_QUALITY_SCALE);
+        regQualityScl.setText(config != null ? config.getValor() : "");
+
+        config = app.getControl().getConfigGlobal(CF_FACTURA_INICIAL);
         regInvoiceInit.setText(config != null ? config.getValor() : "1");
-        config = app.getControl().getConfigLocal(CF_FACTURA_FINAL);
+        config = app.getControl().getConfigGlobal(CF_FACTURA_FINAL);
         regInvoiceEnd.setText(config != null ? config.getValor() : "1");
-        config = app.getControl().getConfigLocal(CF_FACTURA_ACTUAL);
+        config = app.getControl().getConfigGlobal(CF_FACTURA_ACTUAL);
         regInvoice.setText(config != null ? config.getValor() : "1");
 
-        config = app.getControl().getConfigLocal(com.rb.Configuration.BS_CUSTOM_QUALITY_ENABLED);
-        boolean selected = Boolean.valueOf(config != null ? config.getValor() : "false");
-        cContQuality.setSelected(selected);        
+        config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_CUSTOM_QUALITY_ENABLED);
+        boolean selected = Boolean.parseBoolean(config != null ? config.getValor() : "false");
+        cContQuality.setSelected(selected);
         regQualityMsg.setEnabled(selected);
         regQualityScl.setEnabled(selected);
 
@@ -283,6 +285,7 @@ public class PanelConfigTicket extends javax.swing.JPanel implements ActionListe
         btApply = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
+        lbInfo = new javax.swing.JLabel();
 
         lbTitle.setBackground(java.awt.Color.lightGray);
         lbTitle.setOpaque(true);
@@ -309,7 +312,8 @@ public class PanelConfigTicket extends javax.swing.JPanel implements ActionListe
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 578, Short.MAX_VALUE)
+                        .addComponent(lbInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btApply, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2))
                 .addContainerGap())
@@ -322,9 +326,14 @@ public class PanelConfigTicket extends javax.swing.JPanel implements ActionListe
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btApply, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btApply, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbInfo))
                 .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btApply, lbInfo});
+
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -333,6 +342,7 @@ public class PanelConfigTicket extends javax.swing.JPanel implements ActionListe
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lbInfo;
     private javax.swing.JLabel lbTitle;
     // End of variables declaration//GEN-END:variables
 
@@ -341,52 +351,73 @@ public class PanelConfigTicket extends javax.swing.JPanel implements ActionListe
         if (ACTION_APPLY.equals(e.getActionCommand())) {
             String userName = app.getUser().getUsername();
             String userDevice = Aplication.getUserDevice();
-            
+
             String value = regName.getText();
-            app.getControl().addConfig(new ConfigDB(Configuration.BS_NAME, ConfigDB.STRING, value, userName, userDevice));
+            ConfigDB config = new ConfigDB(Configuration.BS_NAME, ConfigDB.STRING, value, userName, userDevice);
+            config.setGlobal(true);
+            app.getControl().addConfigOrUpdate(config);
 
             value = regID.getText();
-//            app.getConfiguration().setProperty(com.rb.Configuration.BS_ID, value);
-            app.getControl().addConfig(new ConfigDB(Configuration.BS_ID, ConfigDB.STRING, value, userName, userDevice));
+            config = new ConfigDB(Configuration.BS_ID, ConfigDB.STRING, value, userName, userDevice);
+            config.setGlobal(true);
+            app.getControl().addConfigOrUpdate(config);
 
             value = regAddress.getText();
-//            app.getConfiguration().setProperty(com.rb.Configuration.BS_ADDRESS, value);
-            app.getControl().addConfig(new ConfigDB(Configuration.BS_ADDRESS, ConfigDB.STRING, value, userName, userDevice));
+            config = new ConfigDB(Configuration.BS_ADDRESS, ConfigDB.STRING, value, userName, userDevice);
+            config.setGlobal(true);
+            app.getControl().addConfigOrUpdate(config);
 
             value = regPhone.getText();
-            app.getControl().addConfig(new ConfigDB(Configuration.BS_PHONE, ConfigDB.STRING, value, userName, userDevice));
-//            app.getConfiguration().setProperty(com.rb.Configuration.BS_PHONE, value);
+            config = new ConfigDB(Configuration.BS_PHONE, ConfigDB.STRING, value, userName, userDevice);
+            config.setGlobal(true);
+            app.getControl().addConfigOrUpdate(config);
 
             value = regCustom1.getText();
-            app.getControl().addConfig(new ConfigDB(Configuration.BS_CUSTOM_TOP, ConfigDB.STRING, value, userName, userDevice));
-//            app.getConfiguration().setProperty(com.rb.Configuration.BS_CUSTOM_TOP, value);
+            config = new ConfigDB(Configuration.BS_CUSTOM_TOP, ConfigDB.STRING, value, userName, userDevice);
+            config.setGlobal(true);
+            app.getControl().addConfigOrUpdate(config);
 
             value = regCustom2.getText();
-            app.getControl().addConfig(new ConfigDB(Configuration.BS_CUSTOM_BOTTON, ConfigDB.STRING, value, userName, userDevice));
-//            app.getConfiguration().setProperty(com.rb.Configuration.BS_CUSTOM_BOTTON, value);
+            config = new ConfigDB(Configuration.BS_CUSTOM_BOTTON, ConfigDB.STRING, value, userName, userDevice);
+            config.setGlobal(true);
+            app.getControl().addConfigOrUpdate(config);
 
             value = regInvoiceInit.getText();
-            app.getControl().addConfig(new ConfigDB(CF_FACTURA_INICIAL, ConfigDB.INTEGER, value, userName, userDevice));
+            config = new ConfigDB(CF_FACTURA_INICIAL, ConfigDB.INTEGER, value, userName, userDevice);
+            config.setGlobal(true);
+            app.getControl().addConfigOrUpdate(config);
 
             value = regInvoiceEnd.getText();
-            app.getControl().addConfig(new ConfigDB(CF_FACTURA_FINAL, ConfigDB.INTEGER, value, userName, userDevice));
+            config = new ConfigDB(CF_FACTURA_FINAL, ConfigDB.INTEGER, value, userName, userDevice);
+            config.setGlobal(true);
+            app.getControl().addConfigOrUpdate(config);
 
             value = regInvoice.getText();
-            app.getControl().addConfig(new ConfigDB(CF_FACTURA_ACTUAL, ConfigDB.INTEGER, value, userName, userDevice));
+            config = new ConfigDB(CF_FACTURA_ACTUAL, ConfigDB.INTEGER, value, userName, userDevice, true);
+            app.getControl().addConfigOrUpdate(config);
 
             value = regQualityMsg.getText();
-            app.getControl().addConfig(new ConfigDB(Configuration.BS_CUSTOM_QUALITY_MSG, ConfigDB.STRING, value, userName, userDevice));
+            config = new ConfigDB(Configuration.BS_CUSTOM_QUALITY_MSG, ConfigDB.STRING, value, userName, userDevice);
+            config.setGlobal(true);
+            app.getControl().addConfigOrUpdate(config);
 //            app.getConfiguration().setProperty(com.rb.Configuration.BS_CUSTOM_QUALITY_MSG, value);
 
             value = regQualityScl.getText();
-            app.getControl().addConfig(new ConfigDB(Configuration.BS_CUSTOM_QUALITY_SCALE, ConfigDB.STRING, value, userName, userDevice));
+            config = new ConfigDB(Configuration.BS_CUSTOM_QUALITY_SCALE, ConfigDB.STRING, value, userName, userDevice);
+            config.setGlobal(true);
+            app.getControl().addConfigOrUpdate(config);
 //            app.getConfiguration().setProperty(com.rb.Configuration.BS_CUSTOM_QUALITY_SCALE, value);
 
             boolean selected = cContQuality.isSelected();
-            app.getControl().addConfig(new ConfigDB(Configuration.BS_CUSTOM_QUALITY_ENABLED, ConfigDB.BOOLEAN, String.valueOf(selected), userName, userDevice));
-            app.getConfiguration().setProperty(com.rb.Configuration.BS_CUSTOM_QUALITY_ENABLED, Boolean.toString(selected));
+            config = new ConfigDB(Configuration.BS_CUSTOM_QUALITY_ENABLED, ConfigDB.BOOLEAN, String.valueOf(selected), userName, userDevice);
+            config.setGlobal(true);
+            app.getControl().addConfigOrUpdate(config);
 
-            app.getConfiguration().save();
+            String time = app.DF_SQL_TS.format(new Date());
+            lbInfo.setText("<html><font color=blue>Ultima configuracion guardada: " + time + "</font></html>");
+
+            //app.getConfiguration().setProperty(com.rb.Configuration.BS_CUSTOM_QUALITY_ENABLED, Boolean.toString(selected));
+            //app.getConfiguration().save();
         }
     }
 

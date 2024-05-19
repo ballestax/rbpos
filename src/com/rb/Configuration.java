@@ -59,6 +59,7 @@ public class Configuration {
     public static final String NUM_COLUMNS_VIEW1 = "cf.numcolumnsv1";
     public static final String NUM_COLUMNS_VIEW2 = "cf.numcolumnsv2";
     public static final String SHOW_DISABLE_ITEMS = "cf.showdisableditems";
+    public static final String AUTO_SEND_ORDER_TO_STATIONS ="cf.autosendorder";
     
 
     public static final String BS_ID = "cf.tck.id";

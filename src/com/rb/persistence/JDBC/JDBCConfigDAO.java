@@ -38,7 +38,9 @@ public class JDBCConfigDAO implements ConfigDAO {
     public static final String GET_CONFIG_KEY = "GET_CONFIG";
     public static final String DELETE_CONFIG_KEY = "DELETE_CONFIG";
     public static final String UPDATE_CONFIG_KEY = "UPDATE_CONFIG";
+    public static final String UPDATE_CONFIG_GLOBAL_KEY = "UPDATE_CONFIG_GLOBAL";
     public static final String EXIST_CONFIG_KEY = "EXIST_CONFIG";
+    public static final String EXIST_CONFIG_GLOBAL_KEY = "EXIST_CONFIG_GLOBAL";
     public static final String ADD_CONFIG_KEY = "ADD_CONFIG";
 
     public JDBCConfigDAO(DataSource dataSource, SQLLoader sqlStatements) {
@@ -86,7 +88,8 @@ public class JDBCConfigDAO implements ConfigDAO {
                 config.getValor(),
                 config.getTipo(),
                 config.getUser(),
-                config.getDevice()
+                config.getDevice(),
+                config.isGlobal()
             };
             ps = sqlStatements.buildSQLStatement(conn, ADD_CONFIG_KEY, parameters);
             ps.executeUpdate();
@@ -95,6 +98,53 @@ public class JDBCConfigDAO implements ConfigDAO {
             DBManager.rollbackConn(conn);
             throw new DAOException("Cannot add config", e);
         } catch (IOException e) {
+            DBManager.rollbackConn(conn);
+            throw new DAOException("Cannot add config", e);
+        } finally {
+            DBManager.closeStatement(ps);
+            DBManager.closeConnection(conn);
+        }
+    }
+
+    public void addConfigDBOrUpdate(ConfigDB config) throws DAOException {
+        if (config == null) {
+            throw new IllegalArgumentException("Null config");
+        }
+
+        Object[] parameters;
+        String KEY;
+        if (config.isGlobal() && existConfigGlobal(config.getClave()) > 0) {
+            parameters = new Object[]{
+                config.getValor(),
+                config.getTipo(),
+                config.isGlobal(),                
+                config.getUser(),
+                config.getDevice(),
+                config.getClave()
+                
+            };
+            KEY = UPDATE_CONFIG_GLOBAL_KEY;
+        } else {
+            parameters = new Object[]{
+                config.getClave(),
+                config.getValor(),
+                config.getTipo(),
+                config.getUser(),
+                config.getDevice(),
+                config.isGlobal()
+            };
+            KEY = ADD_CONFIG_KEY;
+        }
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+            ps = sqlStatements.buildSQLStatement(conn, KEY, parameters);
+            ps.executeUpdate();
+            conn.commit();
+        } catch (SQLException | IOException e) {
             DBManager.rollbackConn(conn);
             throw new DAOException("Cannot add config", e);
         } finally {
@@ -136,6 +186,53 @@ public class JDBCConfigDAO implements ConfigDAO {
                 configDB.setTipo(rs.getString("type"));
                 configDB.setUser(rs.getString("user"));
                 configDB.setDevice(rs.getString("device"));
+                configDB.setGlobal(rs.getBoolean("global"));
+            }
+        } catch (SQLException e) {
+            throw new DAOException("Could not properly retrieve the ConfigDB: " + e);
+        } finally {
+            DBManager.closeResultSet(rs);
+            DBManager.closeStatement(retrieve);
+            DBManager.closeConnection(conn);
+        }
+        return configDB;
+    }
+
+    public ConfigDB getConfigDBGlobal(String clave, boolean global) throws DAOException {
+        String retrieveImporter;
+        if (clave == null) {
+            throw new IllegalArgumentException("Null clave");
+        }
+        try {
+            SQLExtractor sqlExtractorWhere
+                    = new SQLExtractor("code='" + clave + "'AND global=" + (global ? "1" : "0"),
+                            SQLExtractor.Type.WHERE);
+            Map<String, String> namedParams = new HashMap<String, String>();
+            namedParams.put(NAMED_PARAM_WHERE, sqlExtractorWhere.extractWhere());
+            retrieveImporter = sqlStatements.getSQLString(GET_CONFIG_KEY, namedParams);
+
+        } catch (SQLException e) {
+            throw new DAOException("Could not properly retrieve the ConfigDB", e);
+        } catch (IOException e) {
+            throw new DAOException("Could not properly retrieve the ConfigDB", e);
+        }
+        Connection conn = null;
+        PreparedStatement retrieve = null;
+        ResultSet rs = null;
+        ConfigDB configDB = null;
+        try {
+            conn = dataSource.getConnection();
+            retrieve = conn.prepareStatement(retrieveImporter);
+            rs = retrieve.executeQuery();
+            while (rs.next()) {
+                configDB = new ConfigDB();
+                configDB.setId(rs.getInt("id"));
+                configDB.setClave(rs.getString("code"));
+                configDB.setValor(rs.getString("value"));
+                configDB.setTipo(rs.getString("type"));
+                configDB.setUser(rs.getString("user"));
+                configDB.setDevice(rs.getString("device"));
+                configDB.setGlobal(rs.getBoolean("global"));
             }
         } catch (SQLException e) {
             throw new DAOException("Could not properly retrieve the ConfigDB: " + e);
@@ -181,6 +278,7 @@ public class JDBCConfigDAO implements ConfigDAO {
                 configDB.setTipo(rs.getString("type"));
                 configDB.setUser(rs.getString("user"));
                 configDB.setDevice(rs.getString("device"));
+                configDB.setGlobal(rs.getBoolean("global"));
             }
         } catch (SQLException e) {
             throw new DAOException("Could not properly retrieve the ConfigDB: " + e);
@@ -226,7 +324,9 @@ public class JDBCConfigDAO implements ConfigDAO {
                 configDB.getTipo(),
                 configDB.getClave(),
                 configDB.getUser(),
-                configDB.getDevice(),};
+                configDB.getDevice(),
+                configDB.isGlobal()
+            };
             update = sqlStatements.buildSQLStatement(conn, UPDATE_CONFIG_KEY, parameters);
             update.executeUpdate();
             conn.commit();
@@ -273,23 +373,18 @@ public class JDBCConfigDAO implements ConfigDAO {
         }
         return count;
     }
-    
-    public int existConfig(String code) throws DAOException {
-        String retrieve;
-        try {
-            retrieve = sqlStatements.getSQLString(EXIST_CONFIG_KEY);
-        } catch (IOException e) {
-            throw new DAOException("Could not properly retrieve the outdated count", e);
-        }
+
+    public int existConfigGlobal(String code) throws DAOException {
+        String retrieve;       
         Connection conn = null;
         PreparedStatement pSt = null;
         ResultSet rs = null;
         int count = 0;
         try {
             conn = dataSource.getConnection();
-            Object[] parameters = {code};
+            Object[] parameters = {code, 1};
 //            pSt = conn.prepareStatement(retrieve);
-            pSt = sqlStatements.buildSQLStatement(conn, EXIST_CONFIG_KEY, parameters);
+            pSt = sqlStatements.buildSQLStatement(conn, EXIST_CONFIG_GLOBAL_KEY, parameters);
             rs = pSt.executeQuery();
             while (rs.next()) {
                 count = rs.getInt(1);

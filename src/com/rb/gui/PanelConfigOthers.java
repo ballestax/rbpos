@@ -13,6 +13,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import org.dz.TextFormatter;
@@ -39,6 +40,8 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
     private Registro regNumColumnsV2;
     private Registro regNumCategories;
     private Registro regRowCategories;
+    private Registro regAutoSendOrder;
+    private Registro regDefServ;
 
     /**
      * Creates new form PanelConfigMotor
@@ -53,8 +56,8 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
     }
 
     private void createComponents() {
-        
-        jScrollPane1.getVerticalScrollBar().setUnitIncrement(20);
+
+        jScrollPane1.getVerticalScrollBar().setUnitIncrement(22);
 
         Color color1 = new Color(205, 176, 225);
         Font font = new Font("Sans", 1, 16);
@@ -72,7 +75,7 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         jPanel1.add(cCont);
         jPanel1.add(Box.createVerticalStrut(5));
 
-        regDocName = new Registro(BoxLayout.X_AXIS, "Domicilio", "", 100);
+        regDocName = new Registro(BoxLayout.X_AXIS, "Documento", "", 100);
         regDocName.setBackground(color1);
         regDocName.setFontCampo(font);
         cCont = new ConfigCont(app);
@@ -93,6 +96,17 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         jPanel1.add(cCont);
         jPanel1.add(Box.createVerticalStrut(5));
 
+        regDefServ = new Registro(BoxLayout.X_AXIS, "% servicio", "", 100);
+        regDefServ.setBackground(color1);
+        regDefServ.setFontCampo(font);
+        regDefServ.setDocument(TextFormatter.getDoubleLimiter());
+        cCont = new ConfigCont(app);
+        cCont.setBackgroundTitle(new Color(200, 210, 220));
+        cCont.setTitle("Porcentaje servicio voluntario");
+        cCont.addCampo(regDefServ);
+        jPanel1.add(cCont);
+        jPanel1.add(Box.createVerticalStrut(5));
+
         regPrefix = new Registro(BoxLayout.X_AXIS, "Prefijo", "", 100);
         regPrefix.setBackground(color1);
         regPrefix.setFontCampo(font);
@@ -100,6 +114,16 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         cCont.setBackgroundTitle(new Color(200, 210, 220));
         cCont.setTitle("Prefijo del consecutivo");
         cCont.addCampo(regPrefix);
+        jPanel1.add(cCont);
+        jPanel1.add(Box.createVerticalStrut(5));
+
+        regAutoSendOrder = new Registro(BoxLayout.X_AXIS, "Permitir", false, 100);
+        regAutoSendOrder.setBackground(color1);
+        regAutoSendOrder.setFontCampo(font);
+        cCont = new ConfigCont(app);
+        cCont.setBackgroundTitle(new Color(200, 210, 220));
+        cCont.setTitle("Envio automatico de comandas");
+        cCont.addCampo(regAutoSendOrder);
         jPanel1.add(cCont);
         jPanel1.add(Box.createVerticalStrut(5));
 
@@ -185,31 +209,31 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
     }
 
     private void loadData() {
-        ConfigDB config = app.getControl().getConfigLocal(Configuration.DELIVERY_VALUE);
+        ConfigDB config = app.getControl().getConfigGlobal(Configuration.DELIVERY_VALUE);
         double deliveryValue = config != null ? (double) config.castValor() : 0;
         regDelivery.setText(app.getDCFORM_W().format(deliveryValue));
 
-        config = app.getControl().getConfigLocal(Configuration.DOCUMENT_NAME);
+        config = app.getControl().getConfigGlobal(Configuration.DOCUMENT_NAME);
         String docName = config != null ? config.getValor() : "";
         regDocName.setText(docName);
 
-        config = app.getControl().getConfigLocal(Configuration.ZEROS_INVOICES);
+        config = app.getControl().getConfigGlobal(Configuration.ZEROS_INVOICES);
         int zeros = config != null ? (int) config.castValor() : 0;
         regNumZeros.setText(app.getDCFORM_W().format(zeros));
 
-        config = app.getControl().getConfigLocal(Configuration.PREFIX_INVOICES);
+        config = app.getControl().getConfigGlobal(Configuration.PREFIX_INVOICES);
         String prefix = config != null ? config.getValor() : "";
         regPrefix.setText(prefix);
 
-        config = app.getControl().getConfigLocal(Configuration.PRINT_PREV_DELIVERY);
+        config = app.getControl().getConfigGlobal(Configuration.PRINT_PREV_DELIVERY);
         boolean showPrev = config != null ? (boolean) config.castValor() : false;
         regAllowPreview.setSelected(showPrev);
 
-        config = app.getControl().getConfigLocal(Configuration.SHOW_EXCLUSIONS);
+        config = app.getControl().getConfigGlobal(Configuration.SHOW_EXCLUSIONS);
         boolean showExclusions = config != null ? (boolean) config.castValor() : false;
         regShowExclusions.setSelected(showExclusions);
 
-        config = app.getControl().getConfigLocal(Configuration.INVOICE_OUT_STOCK);
+        config = app.getControl().getConfigGlobal(Configuration.INVOICE_OUT_STOCK);
         boolean showOutStock = config != null ? (boolean) config.castValor() : false;
         regAllowFact.setSelected(showOutStock);
 
@@ -229,6 +253,14 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         int rowCategories = config != null ? (int) config.castValor() : 1;
         regRowCategories.setText(app.getDCFORM_W().format(rowCategories));
 
+        config = app.getControl().getConfigLocal(Configuration.AUTO_SEND_ORDER_TO_STATIONS);
+        boolean autoSendOrder = config != null ? (boolean) config.castValor() : false;
+        regAutoSendOrder.setSelected(autoSendOrder);
+
+        config = app.getControl().getConfigGlobal(Configuration.DEF_SERVICE_PORC);
+        double defServValue = config != null ? (double) config.castValor() : 0;
+        regDefServ.setText(app.getDCFORM_W().format(defServValue));
+
     }
 
     /**
@@ -244,6 +276,7 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         btApply = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
+        lbInfo = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -266,7 +299,8 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 337, Short.MAX_VALUE)
+                        .addComponent(lbInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btApply, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1))
                 .addContainerGap())
@@ -277,9 +311,14 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btApply, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btApply, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbInfo))
                 .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btApply, lbInfo});
+
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -288,6 +327,7 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lbInfo;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -298,42 +338,59 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
             String userName = app.getUser().getUsername();
             String userDevice = Aplication.getUserDevice();
 
-            app.getControl().addConfig(new ConfigDB(com.rb.Configuration.DELIVERY_VALUE, ConfigDB.DOUBLE, value, userName, userDevice));
+            app.getControl().addConfigOrUpdate(
+                    new ConfigDB(com.rb.Configuration.DELIVERY_VALUE, ConfigDB.DOUBLE, value, userName, userDevice, true));
 
             boolean selected = regAllowPreview.isSelected();
-//            app.getConfiguration().setProperty(com.rb.Configuration.PRINT_PREV_DELIVERY, String.valueOf(selected));
-            app.getControl().addConfig(new ConfigDB(com.rb.Configuration.PRINT_PREV_DELIVERY, ConfigDB.BOOLEAN, String.valueOf(selected), userName, userDevice));
+            app.getControl().addConfigOrUpdate(
+                    new ConfigDB(com.rb.Configuration.PRINT_PREV_DELIVERY, ConfigDB.BOOLEAN, String.valueOf(selected), userName, userDevice, true));
 
             boolean selected2 = regShowExclusions.isSelected();
-//            app.getConfiguration().setProperty(com.rb.Configuration.SHOW_EXCLUSIONS, String.valueOf(selected2));
-            app.getControl().addConfig(new ConfigDB(com.rb.Configuration.SHOW_EXCLUSIONS, ConfigDB.BOOLEAN, String.valueOf(selected2), userName, userDevice));
+            app.getControl().addConfigOrUpdate(
+                    new ConfigDB(com.rb.Configuration.SHOW_EXCLUSIONS, ConfigDB.BOOLEAN, String.valueOf(selected2), userName, userDevice, true));
 
             boolean selected3 = regAllowFact.isSelected();
-//            app.getConfiguration().setProperty(com.rb.Configuration.INVOICE_OUT_STOCK, String.valueOf(selected3));
-            app.getControl().addConfig(new ConfigDB(com.rb.Configuration.INVOICE_OUT_STOCK, ConfigDB.BOOLEAN, String.valueOf(selected3), userName, userDevice));
+            app.getControl().addConfigOrUpdate(
+                    new ConfigDB(com.rb.Configuration.INVOICE_OUT_STOCK, ConfigDB.BOOLEAN, String.valueOf(selected3), userName, userDevice, true));
 
             String prefix = regPrefix.getText();
-            app.getControl().addConfig(new ConfigDB(com.rb.Configuration.PREFIX_INVOICES, ConfigDB.STRING, prefix, userName, userDevice));
+            app.getControl().addConfigOrUpdate(
+                    new ConfigDB(com.rb.Configuration.PREFIX_INVOICES, ConfigDB.STRING, prefix, userName, userDevice, true));
 
             String ceros = regNumZeros.getText();
-            app.getControl().addConfig(new ConfigDB(com.rb.Configuration.ZEROS_INVOICES, ConfigDB.INTEGER, ceros, userName, userDevice));
+            app.getControl().addConfigOrUpdate(
+                    new ConfigDB(com.rb.Configuration.ZEROS_INVOICES, ConfigDB.INTEGER, ceros, userName, userDevice, true));
 
             String docName = regDocName.getText();
-            app.getControl().addConfig(new ConfigDB(com.rb.Configuration.DOCUMENT_NAME, ConfigDB.STRING, docName, userName, userDevice));
+            app.getControl().addConfigOrUpdate(
+                    new ConfigDB(com.rb.Configuration.DOCUMENT_NAME, ConfigDB.STRING, docName, userName, userDevice, true));
 
             String columnsV1 = regNumColumnsV1.getText();
-            app.getControl().addConfig(new ConfigDB(Configuration.NUM_COLUMNS_VIEW1, ConfigDB.INTEGER, columnsV1, userName, userDevice));
+            app.getControl().addConfig(
+                    new ConfigDB(Configuration.NUM_COLUMNS_VIEW1, ConfigDB.INTEGER, columnsV1, userName, userDevice));
 
             String columnsV2 = regNumColumnsV2.getText();
-            app.getControl().addConfig(new ConfigDB(Configuration.NUM_COLUMNS_VIEW2, ConfigDB.INTEGER, columnsV2, userName, userDevice));
+            app.getControl().addConfig(
+                    new ConfigDB(Configuration.NUM_COLUMNS_VIEW2, ConfigDB.INTEGER, columnsV2, userName, userDevice));
 
             String categories = regNumCategories.getText();
-            app.getControl().addConfig(new ConfigDB(Configuration.MAX_CATEGORIES_LIST, ConfigDB.INTEGER, categories, userName, userDevice));
+            app.getControl().addConfig(
+                    new ConfigDB(Configuration.MAX_CATEGORIES_LIST, ConfigDB.INTEGER, categories, userName, userDevice));
 
             String rowCategories = regRowCategories.getText();
-            app.getControl().addConfig(new ConfigDB(Configuration.CATEGORY_ROWS, ConfigDB.INTEGER, rowCategories, userName, userDevice));
+            app.getControl().addConfig(
+                    new ConfigDB(Configuration.CATEGORY_ROWS, ConfigDB.INTEGER, rowCategories, userName, userDevice));
 
-            app.getConfiguration().save();
+            boolean selected4 = regAutoSendOrder.isSelected();
+            app.getControl().addConfig(
+                    new ConfigDB(Configuration.AUTO_SEND_ORDER_TO_STATIONS, ConfigDB.BOOLEAN, String.valueOf(selected4), userName, userDevice));
+
+            String serv = regDefServ.getText();
+            app.getControl().addConfigOrUpdate(
+                    new ConfigDB(com.rb.Configuration.DEF_SERVICE_PORC, ConfigDB.DOUBLE, serv, userName, userDevice, true));
+
+            String time = Aplication.DF_SQL_TS.format(new Date());
+            lbInfo.setText("<html><font color=blue>Ultima configuracion guardada: " + time + "</font></html>");
         }
     }
 }

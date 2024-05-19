@@ -93,7 +93,7 @@ import org.ocpsoft.prettytime.PrettyTime;
  */
 public class PanelPedido extends PanelCapturaMod
         implements ActionListener, ChangeListener, TableModelListener, PropertyChangeListener {
-    
+
     private final Aplication app;
     private MyListModel model;
     private MyDefaultTableModel modeloTb;
@@ -108,7 +108,7 @@ public class PanelPedido extends PanelCapturaMod
     private List<ProductoPed> oldProducts;
     private HashMap<Long, Object[]> checkInventory;
     private MultiValueMap mapInventory;
-    
+
     public static final Logger logger = Logger.getLogger(PanelPedido.class.getCanonicalName());
     private JPopupMenu popupTabla;
     private MyPopupListener popupListenerTabla;
@@ -120,15 +120,15 @@ public class PanelPedido extends PanelCapturaMod
     public static final int TIPO_DOMICILIO = 2;
     public static final int TIPO_PARA_LLEVAR = 3;
     private int ajusteRegistros;
-    
+
     public static final String ENTREGA_LOCAL = "LOCAL";
     public static final String ENTREGA_DOMICILIO = "DOMICILIO";
     public static final String ENTREGA_PARA_LLEVAR = "PARA LLEVAR";
-    
+
     public static final String[] TIPO_PEDIDO = {ENTREGA_LOCAL, ENTREGA_DOMICILIO, ENTREGA_PARA_LLEVAR};
-    
+
     private Invoice invoice;
-    
+
     private boolean block;
     private JMenuItem itemDelete;
     private LinkMouseListener linkMouseListener;
@@ -155,40 +155,40 @@ public class PanelPedido extends PanelCapturaMod
         initComponents();
         createComponents();
     }
-    
+
     private void createComponents() {
-        
+
         Color color = new Color(184, 25, 2);
         Font font = new Font("Arial", 1, 18);
         Font font2 = new Font("Serif", 1, 15);
-        
+
         colorDelivery = Utiles.colorAleatorio(100, 200).darker();
         // colorLocal = new Color(180,30,154);
         colorLocal = Utiles.colorAleatorio(100, 200).darker();
-        
+
         DCFORM_P = (DecimalFormat) NumberFormat.getInstance();
         DCFORM_P.applyPattern("$ ###,###,###");
-        
+
         linkMouseListener = new LinkMouseListener();
         lbFacturaMouseListener = new LabelFacturaMouseListener();
-        
+
         showDescuento = false;
-        
-        ConfigDB config = app.getControl().getConfigLocal(Configuration.DOCUMENT_NAME);
+
+        ConfigDB config = app.getControl().getConfigGlobal(Configuration.DOCUMENT_NAME);
         String docName = config != null && !config.getValor().isEmpty() ? config.getValor() : "Ticket";
         lbTitle.setText(docName);
         lbTitle.setToolTipText(getInfoCiclo(app.getControl().getLastCycle()));
-        
+
         Font font1 = new Font("sans", 1, 11);
-        
+
         btTogle1.setText("Local");
         btTogle1.setActionCommand(AC_SELECT_LOCAL);
         btTogle1.addActionListener(this);
-        
+
         btTogle1.setForeground(colorLocal);
         btTogle1.setMargin(new Insets(1, 1, 1, 1));
         btTogle1.setFont(font1);
-        
+
         btTogle2.setText("Domicilio");
         btTogle2.setActionCommand(AC_SELECT_DELIVERY);
         btTogle2.addActionListener(this);
@@ -197,7 +197,7 @@ public class PanelPedido extends PanelCapturaMod
         btTogle2.setMargin(new Insets(1, 1, 1, 1));
         btTogle2.setMargin(null);
         btTogle2.setFont(font1);
-        
+
         btDelete.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "trash.png", 18, 18)));
         btDelete.setActionCommand(AC_DELETE_PEDIDO);
         btDelete.addActionListener(this);
@@ -212,20 +212,20 @@ public class PanelPedido extends PanelCapturaMod
         regCelular.setLabelText("Celular:");
         regCelular.setFontCampo(font2);
         regCelular.setPopup(true);
-        
+
         regDireccion.setLabelText("Direccion");
         regDireccion.setFontCampo(font2);
         regDireccion.setPopup(true);
-        
+
         regDescuento.setLabelText("Des");
         regDescuento.setLabelFontSize(11);
         regSubtotal.setLabelText("Subtotal");
         regSubtotal.setEditable(false);
         regTotal.setLabelText("Total");
         regTotal.setEditable(false);
-        
+
         tiempos = new String[]{"Pronto", "Especifica"};
-        
+
         regService.setLabelText("Servicio %");
         regService.setFontCampo(font);
         regService.setTextAligment(SwingConstants.RIGHT);
@@ -237,71 +237,71 @@ public class PanelPedido extends PanelCapturaMod
                 calcularValores();
             }
         });
-        
+
         spNumDom.setFont(font);
-        
+
         tfService.setHorizontalAlignment(SwingConstants.RIGHT);
         tfService.setFont(font);
         tfService.setText("0");
-        
+
         entregasLoc = new String[]{"Local"};
         entregasDom = new String[]{"Domicilio", "Para llevar"};
-        
+
         regDomicilio.setActionCommand(AC_CHANGE_DOMICILIO);
         regDomicilio.addActionListener(this);
         regDomicilio.setSelected(0);
-        
+
         lbEntregas.setHorizontalAlignment(SwingConstants.RIGHT);
         lbEntregas.setFont(font);
-        
-        config = app.getControl().getConfigLocal(Configuration.DELIVERY_VALUE);
+
+        config = app.getControl().getConfigGlobal(Configuration.DELIVERY_VALUE);
         double valueDelivery = config != null ? (double) config.castValor() : 0;
         lbEntregas.setText(DCFORM_P.format(valueDelivery));
         lbDescuento1.setHorizontalAlignment(SwingConstants.RIGHT);
         lbDescuento1.setFont(font);
         lbDescuento1.setText("$0");
-        
+
         regDescuento.setDocument(TextFormatter.getDoubleLimiter());
         regDescuento.setTextAligment(SwingConstants.CENTER);
         regDescuento.setText("0");
-        
+
         regDescuento.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
             }
-            
+
             @Override
             public void focusLost(FocusEvent e) {
                 calcularValores();
             }
         });
-        
+
         regSubtotal.setTextAligment(SwingConstants.RIGHT);
         regSubtotal.setForeground(color);
         regSubtotal.setFontCampo(font);
         regSubtotal.setText(DCFORM_P.format(0));
-        
+
         regTotal.setTextAligment(SwingConstants.RIGHT);
         regTotal.setForeground(color);
         regTotal.setFontCampo(font);
         regTotal.setText(DCFORM_P.format(0));
-        
+
         regService.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
             }
-            
+
             @Override
             public void focusLost(FocusEvent e) {
                 checkValuePorcService();
                 calcularValores();
             }
         });
-        
+
         tfService.setBorder(BorderFactory.createLineBorder(Color.darkGray, 1, true));
         lbDescuento1.setBorder(BorderFactory.createLineBorder(Color.darkGray, 1, true));
         lbEntregas.setBorder(BorderFactory.createLineBorder(Color.darkGray, 1, true));
-        
+
         btConfirm.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "success.png", 10, 10)));
         btConfirm.setBackground(new Color(153, 255, 153));
         btConfirm.setMargin(new Insets(1, 1, 1, 1));
@@ -309,13 +309,13 @@ public class PanelPedido extends PanelCapturaMod
         btConfirm.setActionCommand(AC_CONFIRMAR_PEDIDO);
         btConfirm.addActionListener(this);
         btConfirm.setText("CONFIRMAR");
-        
+
         ImageIcon iconPrint = new ImageIcon(
                 app.getImgManager().getImagen(app.getFolderIcons() + "Printer-orange.png", 18, 18));
-        
+
         ImageIcon iconCancel = new ImageIcon(
                 app.getImgManager().getImagen(app.getFolderIcons() + "cancel.png", 10, 10));
-        
+
         btCancel.setBackground(new Color(153, 253, 255));
         btCancel.setMargin(new Insets(1, 1, 1, 1));
         btCancel.setFont(new Font("Arial", 1, 10));
@@ -324,7 +324,7 @@ public class PanelPedido extends PanelCapturaMod
         btCancel.setIcon(iconCancel);
         btCancel.setText("Cancelar");
         btCancel.setVisible(false);
-        
+
         btPrint.setBackground(new Color(153, 253, 255));
         btPrint.setMargin(new Insets(1, 1, 1, 1));
         btPrint.setFont(new Font("Arial", 1, 10));
@@ -332,7 +332,7 @@ public class PanelPedido extends PanelCapturaMod
         btPrint.addActionListener(this);
         btPrint.setIcon(iconPrint);
         btPrint.setText("Pedido");
-        
+
         btPrint1.setBackground(new Color(153, 153, 255));
         btPrint1.setMargin(new Insets(1, 1, 1, 1));
         btPrint1.setFont(new Font("Arial", 1, 10));
@@ -340,29 +340,29 @@ public class PanelPedido extends PanelCapturaMod
         btPrint1.addActionListener(this);
         btPrint1.setIcon(iconPrint);
         btPrint1.setText("Factura");
-        
+
         chServ.setActionCommand(AC_CHECK_SERVICE);
         chServ.addActionListener(this);
         chServ.setSelected(false);
-        
+
         chRecogido.setFont(new Font("sans", 1, 10));
         chRecogido.setText("Recogido");
         chRecogido.setActionCommand(AC_CHECK_RECOGIDO);
         chRecogido.addActionListener(this);
         chRecogido.setSelected(false);
-        
+
         String isServ = app.getConfiguration().getProperty(Configuration.IS_SERVICE_DEF, "true");
         Boolean serv = Boolean.valueOf(isServ);
         regService.setEditable(!serv);
         tfService.setEditable(!serv);
-        
+
         icon = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "search.png", 16, 16));
         // acSearch = new ProgAction("", icon, "Search client", 's',
         // "AC_SEARCH_CLIENT");
         btSearch.setIcon(icon);
         btSearch.setActionCommand(AC_SEARCH_CLIENT);
         btSearch.addActionListener(this);
-        
+
         btClear.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "cancel.png", 16, 16)));
         btClear.setActionCommand(AC_CLEAR_CLIENT);
         btClear.addActionListener(this);
@@ -374,36 +374,36 @@ public class PanelPedido extends PanelCapturaMod
         btLastDelivery.addActionListener(this);
         btLastDelivery.setVisible(false);
         btLastDelivery.setFocusPainted(false);
-        
+
         iconOk = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "package-accept.png", 18, 18));
         iconWarning = new ImageIcon(
                 app.getImgManager().getImagen(app.getFolderIcons() + "package-warning.png", 18, 18));
         iconDefault = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "package-info.png", 18, 18));
-        
+
         iconTLGreen = new ImageIcon(
                 app.getImgManager().getImagen(app.getFolderIcons() + "trafficlight-green.png", 18, 18));
         iconTLRed = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "trafficlight-red.png", 18, 18));
-        
+
         btInventoryInfo.setIcon(iconDefault);
         btInventoryInfo.setActionCommand(AC_SHOW_INVENTORY);
         btInventoryInfo.addActionListener(this);
-        
+
         String[] cols = {"Cant", "Producto", "Unidad", "Valor"};
-        
+
         modeloTb = new MyDefaultTableModel(cols, 1);
-        
+
         tbListado.setModel(modeloTb);
-        
+
         tbListado.getTableHeader().setReorderingAllowed(false);
-        
+
         boolean showExclusions = Boolean
                 .parseBoolean(app.getConfiguration().getProperty(Configuration.SHOW_EXCLUSIONS));
-        
+
         int height = 35; // + (showExclusions ? 15 : 0);
         tbListado.setRowHeight(height);
         tbListado.setFont(new Font("Tahoma", 0, 14));
         modeloTb.addTableModelListener(this);
-        
+
         popupTabla = new JPopupMenu();
         popupListenerTabla = new MyPopupListener(popupTabla, true);
         itemDelete = new JMenuItem("Eliminar...");
@@ -417,9 +417,9 @@ public class PanelPedido extends PanelCapturaMod
             }
         });
         popupTabla.add(itemDelete);
-        
+
         tbListado.addMouseListener(popupListenerTabla);
-        
+
         tbListado.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -446,90 +446,90 @@ public class PanelPedido extends PanelCapturaMod
                             .append("</font> x <font color=orange>")
                             .append(app.DCFORM_P.format(productoPed.getPrecio() + productoPed.getValueAdicionales()))
                             .append("</font></h2>");
-                    
+
                     JOptionPane.showMessageDialog(tbListado, stb.toString(),
                             StringUtils.capitalize(productoPed.getProduct().getName()),
                             JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
-        
+
         Font fontTabla = new Font("Sans", 1, 16);
-        
+
         FormatRenderer formatRenderer = new FormatRenderer(DCFORM_P);
         formatRenderer.setFont(fontTabla);
         formatRenderer.setForeground(color);
         ProductRenderer prodRenderer = new ProductRenderer(BoxLayout.Y_AXIS);
-        
+
         int[] colW = new int[]{40, 220, 70, 80};
         for (int i = 0; i < colW.length; i++) {
             tbListado.getColumnModel().getColumn(i).setMinWidth(colW[i]);
             tbListado.getColumnModel().getColumn(i).setPreferredWidth(colW[i]);
         }
-        
+
         spModel = new SpinnerNumberModel(1, 1, 100, 1);
-        
+
         spModelDel = new SpinnerNumberModel(1, 1, 100, 1);
-        
+
         spNumDom.setModel(spModelDel);
         spNumDom.addChangeListener(this);
-        
+
         tbListado.getColumnModel().getColumn(0).setCellEditor(new SpinnerEditor(spModel));
         tbListado.getColumnModel().getColumn(0).setCellRenderer(new SpinnerRenderer(fontTabla));
-        
+
         tbListado.getColumnModel().getColumn(1).setCellRenderer(prodRenderer);
         tbListado.getColumnModel().getColumn(2).setCellRenderer(formatRenderer);
         tbListado.getColumnModel().getColumn(3).setCellRenderer(formatRenderer);
-        
+
         ArrayList<Object[]> data = new ArrayList<>();
         populateTabla(data);
-        
+
         ArrayList<Table> tables = app.getControl().getTableslList("", "");
-        
+
         loadWaiters();
-        
+
         regMesera.setFontCampo(new Font("Sans", 1, 16));
         ((JComboBox) regMesera.getComponent()).setRenderer(new WaiterListCellRender());
         regMesera.setActionCommand(AC_CHANGE_SELECTED);
         regMesera.addActionListener(this);
-        
+
         lbIndicator.setBorder(BorderFactory.createEtchedBorder());
         lbIndicator.setOpaque(true);
         lbIndicator.setVisible(false);
-        
+
         regCelular.setDocument(TextFormatter.getIntegerLimiter());
         regCelular.setActionCommand(AC_SEARCH_CLIENT);
         regCelular.addActionListener(this);
-        
+
         regMesa.setFontCampo(new Font("Sans", 1, 16));
         regMesa.setText(tables.toArray());
 
         // regService.setEnabled(true);
-        config = app.getControl().getConfigLocal(Configuration.PRINT_PREV_DELIVERY);
+        config = app.getControl().getConfigGlobal(Configuration.PRINT_PREV_DELIVERY);
         btPrint.setVisible(config != null ? (Boolean.valueOf(config.getValor())) : false);
         // btPrint.setVisible(false);
         btPrint1.setVisible(false);
-        
+
         lbInfo.setVisible(false);
-        
+
         showLabelDescuento();
-        
+
         containerPanels.setLayout(new BorderLayout());
 
         // showDelivery();
         showLocal();
-        
+
         block = false;
-        
+
         calcularValores();
-        
+
         SwingWorker sw = new SwingWorker() {
             @Override
             protected Object doInBackground() throws Exception {
                 publish(calculateProximoRegistro());
                 return true;
             }
-            
+
             @Override
             protected void process(List chunks) {
                 String registro = "0";
@@ -538,7 +538,7 @@ public class PanelPedido extends PanelCapturaMod
                 }
                 lbFactura.setText("<html><font>" + registro + "</font></html>");
             }
-            
+
         };
         sw.execute();
 
@@ -547,16 +547,16 @@ public class PanelPedido extends PanelCapturaMod
 
         // showAlertCycle();
     }
-    
+
     private void loadWaiters() {
         ArrayList<Waiter> waiters = app.getControl().getWaitresslList("status=1", "name");
         waiters.add(0, new Waiter("-----", 0));
         regMesera.setText(waiters.toArray());
     }
-    
+
     private static final String AC_CHANGE_SELECTED = "AC_CHANGE_SELECTED";
     public static final String AC_CHECK_RECOGIDO = "AC_CHECK_RECOGIDO";
-    
+
     public static final String AC_PRINT_ORDER = "AC_PRINT_ORDER";
     public static final String AC_PRINT_BILL = "AC_PRINT_BILL";
     public static final String AC_SEARCH_CLIENT = "AC_SEARCH_CLIENT";
@@ -574,12 +574,12 @@ public class PanelPedido extends PanelCapturaMod
     public static final String AC_SHOW_INVENTORY = "AC_SHOW_INVENTORY";
     public static final String AC_UPDATE_PEDIDO = "AC_UPDATE_PEDIDO";
     public static final String AC_CANCEL_MOD = "AC_CANCEL_MOD";
-    
+
     private void showLabelDescuento() {
         regDescuento.setVisible(showDescuento);
         lbDescuento1.setVisible(showDescuento);
     }
-    
+
     public void showAlertCycle() {
         Cycle lastCycle = app.getControl().getLastCycle();
         PrettyTime pt = new PrettyTime(new Locale("es"));
@@ -587,10 +587,10 @@ public class PanelPedido extends PanelCapturaMod
             Date init = lastCycle.getInit();
             List<Duration> presDur = pt.calculatePreciseDuration(init);
             String formatDuration = pt.formatDuration(presDur);
-            
+
         }
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (AC_CONFIRMAR_PEDIDO.equals(e.getActionCommand())) {
@@ -605,16 +605,26 @@ public class PanelPedido extends PanelCapturaMod
                     btSearch.setEnabled(false);
                     spNumDom.setEnabled(false);
                     chRecogido.setEnabled(false);
+
+                    ConfigDB config = app.getControl().getConfigLocal(Configuration.AUTO_SEND_ORDER_TO_STATIONS);
+                    String property = config != null ? config.getValor() : "false";
+                    boolean permit = Boolean.valueOf(property);
+                    if(permit){
+                        printOrder();                    
+                    }else{
+                        
+                    }
+
                     pcs.firePropertyChange(AC_CONFIRMAR_PEDIDO, null, null);
                 }
             } catch (Exception ex) {
                 System.err.println(ex);
             }
-            
+
         } else if (AC_CHANGE_DOMICILIO.equals(e.getActionCommand())) {
             String dom = regDomicilio.getText();
             if (entregasDom[0].equals(dom)) { // DOMICILIO
-                ConfigDB config = app.getControl().getConfigLocal(Configuration.DELIVERY_VALUE);
+                ConfigDB config = app.getControl().getConfigGlobal(Configuration.DELIVERY_VALUE);
                 double valueDelivery = config != null ? (double) config.castValor() : 0;
                 if (spModelDel != null) {
                     spModelDel.setValue(1);
@@ -655,59 +665,32 @@ public class PanelPedido extends PanelCapturaMod
             invoice = null;
             lastClient = null;
             btLastDelivery.setVisible(false);
-            
+
             lbFactura.setText("<html><font>" + calculateProximoRegistro() + "</font></html>");
             lbFactura.addMouseListener(lbFacturaMouseListener);
-            
-            ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINT_PREV_DELIVERY);
+
+            ConfigDB config = app.getControl().getConfigGlobal(Configuration.PRINT_PREV_DELIVERY);
             if (config != null ? Boolean.valueOf(config.getValor()) : false) {
                 btPrint.setVisible(true);
             }
-            config = app.getControl().getConfigLocal(Configuration.DOCUMENT_NAME);
+            config = app.getControl().getConfigGlobal(Configuration.DOCUMENT_NAME);
             String docName = config != null && !config.getValor().isEmpty() ? config.getValor() : "Ticket";
             lbTitle.setText(docName);
-            
+
             lbTitle.setToolTipText(getInfoCiclo(app.getControl().getLastCycle()));
-            
+
             block = false;
         } else if (AC_SELECT_DELIVERY.equals(e.getActionCommand())) {
             showDelivery();
         } else if (AC_SELECT_LOCAL.equals(e.getActionCommand())) {
             showLocal();
         } else if (AC_PRINT_BILL.equals(e.getActionCommand())) {
-            if (invoice != null) {
-                Pay pay = app.getControl().getPay(invoice.getFactura());
-                ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED);
-                String propPrinter = config != null ? config.getValor() : "";
-                app.getPrinterService().imprimirFactura(invoice, pay, propPrinter);
-            }
+            printBill();
         } else if (AC_PRINT_ORDER.equals(e.getActionCommand())) {
-            ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED_2);
-            String propPrinter = config != null ? config.getValor() : "";
-            if (invoice != null) {
-                app.getPrinterService().imprimirPedido(invoice, propPrinter);
-            } else {
-                if (products.isEmpty()) {
-                    GUIManager.showErrorMessage(null, "No hay productos en el pedido", "Advertencia");
-                } else {
-                    Invoice invoicePrev = getInvoice();
-                    app.getPrinterService().imprimirPedido(invoicePrev, propPrinter);
-                }
-            }
-            
+            printOrder();
+
         } else if (AC_PRINT_GUIDE.equals(e.getActionCommand())) {
-            ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED);
-            String propPrinter = config != null ? config.getValor() : "";
-            if (invoice != null) {
-                app.getPrinterService().imprimirGuide(invoice, propPrinter);
-            } else {
-                if (products.isEmpty()) {
-                    GUIManager.showErrorMessage(null, "No hay productos en el pedido", "Advertencia");
-                } else {
-                    Invoice invoicePrev = getInvoice();
-                    app.getPrinterService().imprimirGuide(invoicePrev, propPrinter);
-                }
-            }
+            printGuide();
         } else if (AC_SEARCH_CLIENT.equals(e.getActionCommand())) {
             String cellphone = regCelular.getText();
             if (!cellphone.isEmpty()) {
@@ -725,7 +708,7 @@ public class PanelPedido extends PanelCapturaMod
                         }
                         btLastDelivery.setVisible(true);
                     }
-                    
+
                     lbCliente.setText("<html>" + client.getCellphone() + "<br><font size=-2>Guardado</font></html>");
                     lbCliente.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
                     lbCliente.addMouseListener(linkMouseListener);
@@ -734,7 +717,7 @@ public class PanelPedido extends PanelCapturaMod
 
                     // buscar ultimo pedido
                     this.lastClient = client;
-                    
+
                 } else {
                     lbCliente.setText("");
                     Client client = new Client(cellphone);
@@ -743,34 +726,34 @@ public class PanelPedido extends PanelCapturaMod
                     lbStatus.setIcon(new ImageIcon(
                             app.getImgManager().getImagen(app.getFolderIcons() + "user-red.png", 18, 18)));
                     lbCliente.removeMouseListener(linkMouseListener);
-                    
+
                 }
             }
-            
+
         } else if (AC_CHECK_SERVICE.equals(e.getActionCommand())) {
-            
+
             int defServ = app.getConfiguration().getProperty(Configuration.DEF_SERVICE_PORC, 8);
-            
+
             if (chServ.isSelected()) {
                 regService.setText(String.valueOf(defServ));
             } else {
                 regService.setText(String.valueOf(0));
             }
-            
+
             calcularValores();
-            
+
         } else if (AC_CHECK_RECOGIDO.equals(e.getActionCommand())) {
             if (chRecogido.isSelected()) {
                 regDireccion.setText("RECOGIDO");
                 spNumDom.setVisible(false);
                 regDomicilio.setSelected(1);
-                
+
             } else {
                 regDireccion.setText("");
                 regDomicilio.setSelected(0);
                 spNumDom.setVisible(true);
             }
-            
+
         } else if (AC_CLEAR_CLIENT.equals(e.getActionCommand())) {
             regCelular.setText("");
             regDireccion.setText("");
@@ -791,13 +774,13 @@ public class PanelPedido extends PanelCapturaMod
                 dialog.setVisible(true);
             }
         } else if (AC_LAST_DELIVERY.equals(e.getActionCommand())) {
-            
+
             StringBuilder htmlText = new StringBuilder("<html>");
-            
+
             if (lastClient != null) {
-                
+
                 PrettyTime pt = new PrettyTime(new Locale("es"));
-                
+
                 Invoice lastInvoice = app.getControl().getLastDelivery(lastClient.getCellphone());
 
                 // List<Duration> presDur = pt.calculatePreciseDuration(lastInvoice.getFecha());
@@ -812,7 +795,7 @@ public class PanelPedido extends PanelCapturaMod
                     htmlText.append("<p>Fecha: <font color=blue>").append(app.DF_FULL.format(lastInvoice.getFecha()))
                             .append("</font>       ");
                     htmlText.append("<font color=red>").append(pt.format(lastInvoice.getFecha())).append("</font></p>");
-                    
+
                     htmlText.append("<br><br>");
                     htmlText.append("<table  width=\"100%\" cellspacing=\"0\" border=\"1\">");
                     htmlText.append("<tr bgcolor=\"#A4C1FF\">");
@@ -828,7 +811,7 @@ public class PanelPedido extends PanelCapturaMod
                                 htmlText.append("<font size=-1>" + string + "</font><br>");
                             }
                         }
-                        
+
                         htmlText.append("</td><td align=\"right\">")
                                 .append(app.DCFORM_P.format(product.getPrecio() + product.getValueAdicionales()))
                                 .append("</td><td align=\"right\">")
@@ -837,7 +820,7 @@ public class PanelPedido extends PanelCapturaMod
                                 .append("</td></tr>");
                     }
                     htmlText.append("</table>");
-                    
+
                     htmlText.append("<br><br>");
                     htmlText.append("<table width=\"100%\" border=\"1\"><tr>")
                             .append("<td>Domicilios<br><font size=+1 color=blue>")
@@ -851,73 +834,73 @@ public class PanelPedido extends PanelCapturaMod
                     htmlText.append("</html>");
                 }
             }
-            
+
             MyDialogEsc dial = new MyDialogEsc(app.getGuiManager().getFrame());
-            
+
             dial.add(new JLabel(htmlText.toString()));
             dial.pack();
             dial.setLocationRelativeTo(null);
             dial.setVisible(true);
         } else if (AC_EDITAR_PEDIDO.equals(e.getActionCommand())) {
-            
+
             SimpleDateFormat formFecha = new SimpleDateFormat("dd MMMM yyyy");
-            
+
             Invoice inv = invoice;
-            
+
             Cycle cycle = app.getControl().getLastCycle();
-            
+
             Permission perm = app.getControl().getPermissionByName(MyConstants.PERM_MOD_ORDER);
             if (!app.getControl().hasPermission(app.getUser(), perm)) {
                 GUIManager.showErrorMessage(this, "No tiene permisos para realizar esta accion", "Error de privilegios");
                 return;
             }
-            
+
             if (cycle != null && cycle.getId() != inv.getCiclo()) {
                 GUIManager.showErrorMessage(this, "La Orden no pertenece al ultimo ciclo, no se puede editar",
                         "Orden no pertenece al ciclo");
                 return;
             }
-            
+
             Map pago = app.getControl().facturaIsPaga(inv.getFactura());
             if (pago != null && !pago.isEmpty()) {
                 GUIManager.showErrorMessage(this, "La factura esta paga, no puede modifcarse", "Orden paga");
                 return;
             }
-            
+
             enablePedido(true);
-            
+
             block = false;
-            
+
             btConfirm
                     .setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "success.png", 10, 10)));
             btConfirm.setBackground(new Color(153, 153, 255));
             btConfirm.setActionCommand(AC_UPDATE_PEDIDO);
             btConfirm.setText("GUARDAR");
-            
+
             btCancel.setVisible(true);
-            
+
             lbCliente.setText("");
-            
+
             btPrint.setVisible(false);
             btPrint1.setVisible(false);
-            
+
         } else if (AC_UPDATE_PEDIDO.equals(e.getActionCommand())) {
-            
+
             try {
                 tbListado.getCellEditor().stopCellEditing();
             } catch (Exception ex) {
             }
-            
+
             Invoice invoice1 = getInvoice(false);
             invoice1.setId(this.invoice.getId());
             invoice1.setFactura(this.invoice.getFactura());
             invoice1.setStatus(Invoice.ST_MODIFICADA);
-            
+
             Map<ProductoPed, Integer> diffProd = new HashMap<>();
-            
+
             Map<Integer, Integer> productMap = oldProducts.stream()
                     .collect(Collectors.toMap(ProductoPed::hashCode, ProductoPed::getCantidad));
-            
+
             for (ProductoPed product : invoice1.getProducts()) {
                 if (oldProducts.contains(product)) {
                     int q1 = product.getCantidad();
@@ -929,12 +912,12 @@ public class PanelPedido extends PanelCapturaMod
                     diffProd.put(product, product.getCantidad());
                 }
             }
-            
+
             if (validateInvoiceData()) {
                 try {
                     app.getControl().updateInvoiceDiff(invoice1, oldProducts, diffProd);
                     copyInvoiceToLocal(invoice1);
-                    
+
                 } catch (Exception ex) {
                     String msg = "Error updating invoice full";
                     logger.error(msg, ex);
@@ -942,10 +925,10 @@ public class PanelPedido extends PanelCapturaMod
                 } finally {
                     enablePedido(false);
                     block = true;
-                    
+
                     btPrint.setVisible(true);
                     btPrint1.setVisible(true);
-                    
+
                     regMesera.setEditable(false);
                     regMesa.setEditable(false);
                     regCelular.setEditable(false);
@@ -953,28 +936,28 @@ public class PanelPedido extends PanelCapturaMod
                     regDomicilio.setEditable(false);
                     chServ.setEnabled(false);
                     regDescuento.setEnabled(false);
-                    
+
                     btTogle1.setEnabled(false);
                     btTogle2.setEnabled(false);
-                    
+
                     modeloTb.setColumnEditable(0, false);
                     btDelete.setIcon(
                             new ImageIcon(
                                     app.getImgManager().getImagen(app.getFolderIcons() + "new-file.png", 18, 18)));
-                    
+
                     btConfirm
                             .setIcon(new ImageIcon(
                                     app.getImgManager().getImagen(app.getFolderIcons() + "edit.png", 10, 10)));
                     btConfirm.setBackground(new Color(153, 153, 255));
                     btConfirm.setActionCommand(AC_UPDATE_PEDIDO);
                     btConfirm.setText("Modificar");
-                    
+
                     btCancel.setVisible(false);
-                    
+
                 }
-                
+
             }
-            
+
         } else if (AC_CHANGE_SELECTED.equals(e.getActionCommand())) {
             Waiter waitres = (Waiter) regMesera.getSelectedItem();
             Color color = Color.BLACK;
@@ -985,31 +968,70 @@ public class PanelPedido extends PanelCapturaMod
             regMesera.setForeground(color);
             lbIndicator.setBackground(color);
             lbIndicator.setVisible(regMesera.getSelected() > 0);
-            
+
         } else if (AC_CANCEL_MOD.equals(e.getActionCommand())) {
             block = true;
             enablePedido(false);
-            
+
             loadInvoice(this.invoice);
-            
+
             btConfirm.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "edit.png", 10, 10)));
             btConfirm.setBackground(new Color(153, 153, 255));
             btConfirm.setActionCommand(AC_EDITAR_PEDIDO);
             btConfirm.setText("Modi");
             btConfirm.setEnabled(true);
-            
+
             btCancel.setVisible(false);
-            
+
         }
     }
-    
+
+    public void printBill() {
+        if (invoice != null) {
+            Pay pay = app.getControl().getPay(invoice.getFactura());
+            ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED);
+            String propPrinter = config != null ? config.getValor() : "";
+            app.getPrinterService().imprimirFactura(invoice, pay, propPrinter);
+        }
+    }
+
+    public void printGuide() {
+        ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED);
+        String propPrinter = config != null ? config.getValor() : "";
+        if (invoice != null) {
+            app.getPrinterService().imprimirGuide(invoice, propPrinter);
+        } else {
+            if (products.isEmpty()) {
+                GUIManager.showErrorMessage(null, "No hay productos en el pedido", "Advertencia");
+            } else {
+                Invoice invoicePrev = getInvoice();
+                app.getPrinterService().imprimirGuide(invoicePrev, propPrinter);
+            }
+        }
+    }
+
+    public void printOrder() {
+        ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED_2);
+        String propPrinter = config != null ? config.getValor() : "";
+        if (invoice != null) {
+            app.getPrinterService().imprimirPedido(invoice, propPrinter);
+        } else {
+            if (products.isEmpty()) {
+                GUIManager.showErrorMessage(null, "No hay productos en el pedido", "Advertencia");
+            } else {
+                Invoice invoicePrev = getInvoice();
+                app.getPrinterService().imprimirPedido(invoicePrev, propPrinter);
+            }
+        }
+    }
+
     private static final String AC_PRINT_GUIDE = "AC_PRINT_GUIDE";
-    
+
     @Override
     public void stateChanged(ChangeEvent e) {
         calcularValores();
     }
-    
+
     private void enablePedido(boolean enable) {
         regMesera.setEnabled(enable);
         regMesa.setEnabled(enable);
@@ -1031,11 +1053,11 @@ public class PanelPedido extends PanelCapturaMod
         } else {
             popupTabla.remove(itemDelete);
         }
-        
+
     }
-    
+
     private void calcularDelivery() {
-        ConfigDB config = app.getControl().getConfigLocal(Configuration.DELIVERY_VALUE);
+        ConfigDB config = app.getControl().getConfigGlobal(Configuration.DELIVERY_VALUE);
         double valueDelivery = config != null ? (double) config.castValor() : 0;
         int num = 0;
         if (tipo == TIPO_DOMICILIO) {
@@ -1047,7 +1069,7 @@ public class PanelPedido extends PanelCapturaMod
         double delivery = num * valueDelivery;
         lbEntregas.setText(DCFORM_P.format(delivery));
     }
-    
+
     @Override
     public void tableChanged(TableModelEvent e) {
         switch (e.getType()) {
@@ -1098,11 +1120,11 @@ public class PanelPedido extends PanelCapturaMod
             default:
                 break;
         }
-        
+
         calcularValores();
-        
+
     }
-    
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         logger.info(evt.getPropertyName() + ":" + evt);
@@ -1139,16 +1161,16 @@ public class PanelPedido extends PanelCapturaMod
                 lbStatus.setIcon(
                         new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "user-green.png", 18, 18)));
             }
-            
+
         } else if (PanelListPedidos.AC_SHOW_INVOICE.equals(evt.getPropertyName())) {
             Invoice invoice = (Invoice) evt.getOldValue();
             loadInvoice(invoice);
         } else if (PanelNewWaiter.AC_NEW_WAITER.equals(evt.getPropertyName())) {
             loadWaiters();
         }
-        
+
     }
-    
+
     private void populateTabla(ArrayList<Object[]> list) {
         SwingWorker sw = new SwingWorker() {
             @Override
@@ -1159,14 +1181,14 @@ public class PanelPedido extends PanelCapturaMod
                         Object[] data = list.get(i);
                         int cant = Integer.parseInt(data[1].toString());
                         Product prd = (Product) data[0];
-                        
+
                         modeloTb.addRow(new Object[]{
                             cant,
                             prd.getName(),
                             prd.getPrice(),
                             prd.getPrice() * cant
                         });
-                        
+
                         modeloTb.setRowEditable(modeloTb.getRowCount() - 1, false);
                         modeloTb.setCellEditable(modeloTb.getRowCount() - 1, 0, true);
                     } catch (Exception ex) {
@@ -1178,7 +1200,7 @@ public class PanelPedido extends PanelCapturaMod
         };
         sw.execute();
     }
-    
+
     private boolean checkValuePorcService() {
         double calcularServicio = calcularServicio();
         double max = app.getConfiguration().getProperty(Configuration.MAX_SERVICE_PORC, 10);
@@ -1190,35 +1212,35 @@ public class PanelPedido extends PanelCapturaMod
         }
         return true;
     }
-    
+
     private void calcularService() {
         double pserv = calcularServicio();
         double total = calculateTotal();
         double service = total * pserv / 100;
         tfService.setText(DCFORM_P.format(service));
     }
-    
+
     public void addProduct(Product producto, double precio, Presentation pres) {
         ProductoPed productoPed = new ProductoPed(producto);
         productoPed.setPresentation(pres);
         productoPed.setPrecio(precio);
-        
+
         addProductPed(productoPed, 1, precio);
     }
-    
+
     public void addProductPed(ProductoPed productPed, int cantidad, double price) {
         addProductPed(productPed, cantidad, price, false);
     }
-    
+
     public void addProductPed(ProductoPed productPed, int cantidad, double price, boolean isOther) {
         if (block) {
             GUIManager.showErrorMessage(null, "El pedido esta cerrado no se puede agregar más productos",
                     "Pedido cerrado");
             return;
         }
-        
+
         Product producto = productPed.getProduct();
-        
+
         if (productPed.hasPresentation()) {
             HashMap<Integer, HashMap> mapData = app.getControl().checkInventory(productPed.getPresentation().getId());
             // System.out.println(Arrays.toString(mapData.entrySet().toArray()));
@@ -1248,7 +1270,7 @@ public class PanelPedido extends PanelCapturaMod
             }
             checkInventory();
         }
-        
+
         if (productPed.hasAdditionals()) {
             for (AdditionalPed additional : productPed.getAdicionales()) {
                 // System.out.println("Additional:" + additional.getAdditional().getName());
@@ -1269,16 +1291,16 @@ public class PanelPedido extends PanelCapturaMod
                 checkInventory();
             }
         }
-        
+
         if (products.contains(productPed) && price == productPed.getPrecio()) {
             try {
-                
+
                 int row = products.indexOf(productPed);
                 int cant = Integer.valueOf(modeloTb.getValueAt(row, 0).toString());
                 modeloTb.setValueAt(cant + cantidad, row, 0);
                 productPed.setCantidad(cantidad);
                 products.set(row, productPed);
-                
+
             } catch (Exception e) {
             }
         } else {
@@ -1311,13 +1333,13 @@ public class PanelPedido extends PanelCapturaMod
 
         // checkAllInventory();
     }
-    
+
     private HashMap<Integer, Double> checkInventory() {
-        
+
         Set keySet = mapInventory.keySet();
-        
+
         Iterator<MultiKey> it = keySet.iterator();
-        
+
         HashMap<Integer, Double> invSimple = new HashMap<>();
         while (it.hasNext()) {
             MultiKey key = it.next();
@@ -1335,13 +1357,13 @@ public class PanelPedido extends PanelCapturaMod
             }
         }
         return invSimple;
-        
+
     }
-    
+
     private String htmlInfoInventory(HashMap<Integer, Double> simpInv) {
-        
+
         Set<Integer> keys = simpInv.keySet();
-        
+
         StringBuilder stb = new StringBuilder();
         stb.append("<html><table border=1>");
         stb.append("<thead>");
@@ -1362,17 +1384,17 @@ public class PanelPedido extends PanelCapturaMod
         }
         stb.append("</tbody>");
         stb.append("</table></html>");
-        
+
         return stb.toString();
     }
-    
+
     private synchronized boolean checkAllInventory() {
-        
+
         HashMap<Integer, Double> simpInv = checkInventory();
         Set<Integer> keys = simpInv.keySet();
-        
+
         boolean band;
-        
+
         for (Integer next : keys) {
             Item item = app.getControl().getItemWhere("id=" + next);
             Double cant = simpInv.get(next);
@@ -1385,21 +1407,21 @@ public class PanelPedido extends PanelCapturaMod
         }
         return true;
     }
-    
+
     public void addOtherProductPed(OtherProduct otherProduct, int cantidad, double price) {
-        
+
         if (block) {
             GUIManager.showErrorMessage(null, "El pedido esta cerrado no se puede agregar más productos",
                     "Pedido cerrado");
             return;
         }
-        
+
         Product prod = new Product(-1);
         prod.setName(otherProduct.getName());
         prod.setPrice(otherProduct.getPrice());
-        
+
         ProductoPed pPed = new ProductoPed(prod);
-        
+
         if (otherProducts.contains(otherProduct) && price == otherProduct.getPrice()) {
             try {
                 int row = products.indexOf(otherProduct);
@@ -1410,7 +1432,7 @@ public class PanelPedido extends PanelCapturaMod
             } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
-            
+
         } else {
             try {
                 pPed.setCantidad(cantidad);
@@ -1429,9 +1451,9 @@ public class PanelPedido extends PanelCapturaMod
             }
         }
     }
-    
+
     private void clearPedido() {
-        
+
         products.clear();
         mapInventory.clear();
         modeloTb.setRowCount(0);
@@ -1445,10 +1467,10 @@ public class PanelPedido extends PanelCapturaMod
         btConfirm.setBackground(new Color(153, 255, 153));
         btConfirm.setActionCommand(AC_CONFIRMAR_PEDIDO);
         btConfirm.setText("CONFIRMAR");
-        
+
         calcularValores();
     }
-    
+
     private void calcularValores() {
         double subtotal = calculateTotal();
         regSubtotal.setText(DCFORM_P.format(subtotal));
@@ -1466,12 +1488,12 @@ public class PanelPedido extends PanelCapturaMod
         } catch (Exception e) {
         }
         regTotal.setText(DCFORM_P.format(subtotal + domicilio + servicio - descuento));
-        
+
         SwingWorker sw = new SwingWorker() {
-            
+
             @Override
             protected Object doInBackground() throws Exception {
-                
+
                 boolean inventoryOK = checkAllInventory();
                 if (inventoryOK) {
                     btInventoryInfo.setIcon(iconOk);
@@ -1482,9 +1504,9 @@ public class PanelPedido extends PanelCapturaMod
             }
         };
         sw.execute();
-        
+
     }
-    
+
     private void copyInvoiceToLocal(Invoice invoice) {
         this.invoice = invoice;
         oldProducts = new ArrayList<>();
@@ -1494,84 +1516,84 @@ public class PanelPedido extends PanelCapturaMod
             } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
-            
+
         }
-        
+
     }
-    
+
     private void loadInvoice(Invoice invoice1) {
-        
+
         block = false;
-        
+
         clearPedido();
-        
+
         enablePedido(false);
-        
+
         int delivery = invoice1.getTipoEntrega();
-        
+
         Long idClient = invoice1.getIdCliente();
         Waiter waiter = app.getControl().getWaitressByID(invoice1.getIdWaitress());
-        
+
         lbFactura.setText("<html><font>" + invoice1.getFactura() + "</font></html>");
         lbFactura.removeMouseListener(lbFacturaMouseListener);
-        
+
         PrettyTime pt = new PrettyTime(new Locale("es"));
         String text = "<html><font size=-1 color=blue>" + app.DF_FULL3.format(invoice1.getFecha())
                 + "</font><p><font color=red size=-2>" + pt.format(invoice1.getFecha()) + "</font><html>";
-        
+
         if (delivery == TIPO_LOCAL) {
             showLocal();
             regMesa.setText(String.valueOf(invoice1.getTable()));
             regMesera.setSelected(waiter);
-            
+
             chServ.setSelected(invoice1.isService());
             regService.setText(String.valueOf(invoice1.getPorcService()));
-            
+
         } else {
-            
+
             showDelivery();
-            
+
             Client client = app.getControl().getClient(String.valueOf(idClient));
             if (client != null) {
                 regCelular.setText(client.getCellphone());
                 regDireccion.setText(client.getAddresses().get(0).toString());
             }
-            
+
             spNumDom.setValue(invoice1.getNumDeliverys());
             lbEntregas.setText(DCFORM_P.format(invoice1.getValorDelivery().doubleValue()));
-            
+
             if (delivery == TIPO_PARA_LLEVAR) {
                 chRecogido.setSelected(true);
                 regDomicilio.setSelected(1);
             }
-            
+
             lbCliente.setText(text);
-            
+
         }
-        
+
         for (ProductoPed product : invoice1.getProducts()) {
             addProductPed(product, product.getCantidad(), product.getPrecio());
         }
-        
+
         btConfirm.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "edit.png", 10, 10)));
         btConfirm.setBackground(new Color(255, 153, 153));
         btConfirm.setActionCommand(AC_EDITAR_PEDIDO);
         btConfirm.setText("MODIFICAR");
         btConfirm.setEnabled(true);
-        
+
         btLastDelivery.setVisible(false);
         lbStatus.setVisible(false);
-        
+
         tbListado.setEnabled(false);
         btPrint.setVisible(true);
         btPrint1.setVisible(true);
-        
+
         block = true;
-        
+
         copyInvoiceToLocal(invoice1);
-        
+
     }
-    
+
     private boolean validateInvoiceData() {
         boolean validate = true;
         // checkCiclo
@@ -1585,18 +1607,18 @@ public class PanelPedido extends PanelCapturaMod
                     + "Empiece un nuevo ciclo para facturar", "Ciclo cerrado");
             return false;
         }
-        
+
         if (products.isEmpty() && otherProducts.isEmpty()) {
             GUIManager.showErrorMessage(null, "No hay productos en la lista", "Pedido vacio");
             return false;
         }
-        
+
         if (!checkValuePorcService()) {
             return false;
         }
-        
+
         if (!checkAllInventory()) {
-            ConfigDB config = app.getControl().getConfigLocal(Configuration.INVOICE_OUT_STOCK);
+            ConfigDB config = app.getControl().getConfigGlobal(Configuration.INVOICE_OUT_STOCK);
             String property = config != null ? config.getValor() : "false";
             boolean permit = Boolean.valueOf(property);
             GUIManager.showErrorMessage(null, "Los productos exceden las existencias en inventario.\n"
@@ -1606,10 +1628,10 @@ public class PanelPedido extends PanelCapturaMod
                 return false;
             }
         }
-        
+
         Waiter waitres = (Waiter) regMesera.getSelectedItem();
         Table table = (Table) regMesa.getSelectedItem();
-        
+
         if (TIPO_LOCAL == tipo) {
             if (waitres == null || regMesera.getSelected() < 1) {
                 regMesera.setBorderToError();
@@ -1620,7 +1642,7 @@ public class PanelPedido extends PanelCapturaMod
                 validate = false;
             }
         } else {
-            
+
             if (regCelular.getText().isEmpty()) {
                 regCelular.setBorderToError();
                 validate = false;
@@ -1630,73 +1652,73 @@ public class PanelPedido extends PanelCapturaMod
                 validate = false;
             }
         }
-        
+
         return validate;
-        
+
     }
-    
+
     private boolean verificarDatosFactura() throws ParseException {
         String mesa = "";
         String mesero = "";
         String celular = "";
         String direccion = "";
-        
+
         try {
             tbListado.getCellEditor().stopCellEditing();
         } catch (Exception e) {
         }
-        
+
         if (!validateInvoiceData()) {
             return false;
         }
-        
+
         celular = regCelular.getText();
         direccion = regDireccion.getText();
-        
+
         verifyQuantitys();
-        
+
         Invoice invoice = new Invoice();
         invoice.setFactura(calculateProximoRegistro());
-        
+
         Cycle cycle = app.getControl().getLastCycle();
-        
+
         invoice.setCiclo(cycle != null ? cycle.getId() : 0);
         invoice.setFecha(new Date());
-        
+
         invoice.setDescuento(Double.parseDouble(regDescuento.getText()));
-        
+
         Waiter waitres = (Waiter) regMesera.getSelectedItem();
         Table table = (Table) regMesa.getSelectedItem();
-        
+
         if (waitres != null) {
             invoice.setIdWaitress(waitres.getId());
         }
         if (table != null) {
             invoice.setTable(table.getId());
         }
-        
+
         if (!celular.isEmpty()) {
             Client client = new Client(celular);
             client.addAddress(direccion);
-            
+
             int existClave = app.getControl().existClave("clients", "cellphone", celular);
-            
+
             if (existClave > 0) {
                 app.getControl().updateClient(client);
             } else {
                 app.getControl().addClient(client);
             }
-            
+
             invoice.setIdCliente(Long.parseLong(celular));
         } else {
             invoice.setIdCliente(1L);
         }
-        
+
         invoice.setService(false);
         invoice.setPorcService(0);
-        
+
         invoice.setNumDeliverys(0);
-        
+
         String tipoEntrega = regDomicilio.getText().toUpperCase();
         switch (tipoEntrega) {
             case ENTREGA_DOMICILIO:
@@ -1723,24 +1745,24 @@ public class PanelPedido extends PanelCapturaMod
                 invoice.setTable(0);
                 break;
         }
-        
+
         invoice.setProducts(products);
-        
+
         invoice.setOtherProducts(otherProducts);
-        
+
         invoice.isService();
-        
+
         invoice.setValor(totalFact);
-        
+
         this.invoice = invoice;
-        
+
         if (app.getControl().addInvoice(invoice)) {
-            
+
             lbFactura.setText(invoice.getFactura());
-            
+
             btPrint.setVisible(true);
             btPrint1.setVisible(true);
-            
+
             regMesera.setEditable(false);
             regMesa.setEditable(false);
             regCelular.setEditable(false);
@@ -1748,10 +1770,10 @@ public class PanelPedido extends PanelCapturaMod
             regDomicilio.setEditable(false);
             chServ.setEnabled(false);
             regDescuento.setEnabled(false);
-            
+
             btTogle1.setEnabled(false);
             btTogle2.setEnabled(false);
-            
+
             modeloTb.setColumnEditable(0, false);
             btDelete.setIcon(
                     new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "new-file.png", 18, 18)));
@@ -1759,9 +1781,9 @@ public class PanelPedido extends PanelCapturaMod
         // app.getGuiManager().reviewFacture(invoice);
 
         return true;
-        
+
     }
-    
+
     private String getInfoCiclo(Cycle ciclo) {
         if (ciclo == null) {
             return "";
@@ -1774,17 +1796,17 @@ public class PanelPedido extends PanelCapturaMod
                 + "<p>" + pt.formatDuration(presDur)
                 + "<p>Estado:" + (status ? "Cerrado" : "Abierto") + "</font></html>";
     }
-    
+
     public Invoice getInvoice() {
         return getInvoice(true);
     }
-    
+
     public Invoice getInvoice(boolean calcRegister) {
         String mesa = "";
         String mesero = "";
         String celular = "";
         String direccion = "";
-        
+
         Waiter waitres = (Waiter) regMesera.getSelectedItem();
         Table table = (Table) regMesa.getSelectedItem();
         boolean validate = true;
@@ -1807,11 +1829,11 @@ public class PanelPedido extends PanelCapturaMod
                 validate = false;
             }
         }
-        
+
         if (!validate) {
             // return false;
         }
-        
+
         celular = regCelular.getText();
         direccion = regDireccion.getText();
 
@@ -1821,53 +1843,53 @@ public class PanelPedido extends PanelCapturaMod
             invoice.setFactura(calculateProximoRegistro());
         }
         Cycle cycle = app.getControl().getLastCycle();
-        
+
         invoice.setCiclo(cycle != null ? cycle.getId() : 0);
         invoice.setFecha(new Date());
-        
+
         invoice.setDescuento(Double.parseDouble(regDescuento.getText()));
-        
+
         if (waitres != null) {
             invoice.setIdWaitress(waitres.getId());
         }
         if (table != null) {
             invoice.setTable(table.getId());
         }
-        
+
         if (!celular.isEmpty()) {
             Client client = new Client(celular);
             client.addAddress(direccion);
-            
+
             int existClave = app.getControl().existClave("clients", "cellphone", celular);
-            
+
             if (existClave > 0) {
                 app.getControl().updateClient(client);
             } else {
                 app.getControl().addClient(client);
             }
-            
+
             invoice.setIdCliente(Long.parseLong(celular));
         } else {
             invoice.setIdCliente(1L);
         }
-        
+
         invoice.setService(false);
         invoice.setPorcService(0);
-        
+
         invoice.setNumDeliverys(0);
-        
+
         String tipoEntrega = regDomicilio.getText().toUpperCase();
         switch (tipoEntrega) {
             case ENTREGA_DOMICILIO:
                 invoice.setTipoEntrega(TIPO_DOMICILIO);
-                
+
                 try {
                     invoice.setNumDeliverys((Integer) spModelDel.getValue());
                     invoice.setValorDelivery(new BigDecimal(DCFORM_P.parse(lbEntregas.getText()).doubleValue()));
                 } catch (ParseException ex) {
                     invoice.setValorDelivery(BigDecimal.ZERO);
                 }
-                
+
                 invoice.setIdWaitress(0);
                 invoice.setTable(0);
                 break;
@@ -1888,7 +1910,7 @@ public class PanelPedido extends PanelCapturaMod
                 invoice.setTable(0);
                 break;
         }
-        
+
         for (int i = 0; i < products.size(); i++) {
             ProductoPed get = products.get(i);
         }
@@ -1899,15 +1921,15 @@ public class PanelPedido extends PanelCapturaMod
             prodP.setCantidad(Integer.parseInt(tbListado.getValueAt(i, 0).toString()));
             listaProd.add(prodP);
         }
-        
+
         invoice.setProducts(listaProd);
-        
+
         invoice.isService();
-        
+
         invoice.setValor(totalFact);
         return invoice;
     }
-    
+
     private void verifyQuantitys() {
         for (int i = 0; i < products.size(); i++) {
             ProductoPed pp = products.get(i);
@@ -1964,55 +1986,55 @@ public class PanelPedido extends PanelCapturaMod
     private String calculateProximoRegistro() {
         Configuration configuration = app.getConfiguration();
         Control control = app.getControl();
-        
-        ConfigDB config = control.getConfigLocal(Configuration.PREFIX_INVOICES);
+
+        ConfigDB config = control.getConfigGlobal(Configuration.PREFIX_INVOICES);
         String prefix = config != null ? config.getValor() : "";
-        
+
         int leadingZeros = 0;
         try {
             leadingZeros = Integer.parseInt(configuration.getProperty("cf.zeros", "0"));
         } catch (NumberFormatException ignored) {
         }
-        
+
         long maxValue = control.getMaxIDTabla("invoices");
         Object code = control.getCodeFromInvoice(maxValue);
         if (code == null) {
             code = "0";
         }
-        
+
         long value = 0;
         try {
-            
+
             value = Long.parseLong(StringUtils.getDigits(code.toString()));
         } catch (NumberFormatException ex) {
             logger.debug(ex.getMessage() + ": Number in invoice");
         }
-        
+
         int adjustment = 0;
         String generatedCode;
-        
+
         do {
             generatedCode = prefix + com.rb.Utiles.getNumeroFormateado(value + adjustment + 1, leadingZeros);
             adjustment++;
         } while (control.existClave("invoices", "code", "'" + generatedCode + "'") >= 1);
-        
+
         return generatedCode;
     }
-    
+
     private String getConsecutivoFactura() {
-        
+
         String consFactura = "000";
-        
-        ConfigDB cfFactura = app.getControl().getConfigLocal(MyConstants.CF_FACTURA_ACTUAL);
+
+        ConfigDB cfFactura = app.getControl().getConfigGlobal(MyConstants.CF_FACTURA_ACTUAL);
         if (cfFactura != null) {
-            
+
             Integer consecutivo = (Integer) cfFactura.castValor();
-            
+
             consFactura = String.valueOf(consecutivo + 1);
         }
         return consFactura;
     }
-    
+
     private double calcularDescuento() {
         double desc = 0;
         if (!showDescuento) {
@@ -2026,7 +2048,7 @@ public class PanelPedido extends PanelCapturaMod
         }
         return desc;
     }
-    
+
     private double calcularServicio() {
         double serv = 0;
         try {
@@ -2037,7 +2059,7 @@ public class PanelPedido extends PanelCapturaMod
         }
         return serv;
     }
-    
+
     private double calculateTotal() {
         int ROWS = tbListado.getRowCount();
         double total = 0;
@@ -2054,7 +2076,7 @@ public class PanelPedido extends PanelCapturaMod
         totalFact = new BigDecimal(total);
         return total;
     }
-    
+
     private double calculatePrecio(int row) {
         double total = 0;
         try {
@@ -2066,22 +2088,22 @@ public class PanelPedido extends PanelCapturaMod
         }
         return total;
     }
-    
+
     private void showDelivery() {
         tipo = TIPO_DOMICILIO;
-        
+
         btTogle2.setSelected(true);
-        
+
         lbTitle.setForeground(colorDelivery.darker());
         // this.setBackground(colorDelivery.brighter());
         regCelular.setTint(colorDelivery);
         regCelular.setBordeNormal(regCelular.getBorder());
         regDireccion.setTint(colorDelivery);
         regDireccion.setBordeNormal(regDireccion.getBorder());
-        
+
         jScrollPane2.setBorder(BorderFactory.createLineBorder(colorDelivery, 1, true));
         tbListado.getTableHeader().setBackground(colorDelivery.brighter());
-        
+
         spNumDom.setVisible(true);
         regDomicilio.setVisible(true);
         lbEntregas.setVisible(true);
@@ -2101,42 +2123,42 @@ public class PanelPedido extends PanelCapturaMod
         regDomicilio.setSelected(0);
         chServ.setVisible(false);
         chRecogido.setVisible(true);
-        
+
         regService.setTint(colorDelivery);
-        
+
         regService.setTint(colorDelivery);
         regSubtotal.setTint(colorDelivery);
         regDescuento.setTint(colorDelivery);
         regTotal.setTint(colorDelivery);
         regDomicilio.setTint(colorDelivery);
-        
+
         Border border = regService.getBorder();
-        
+
         tfService.setBorder(border);
         lbEntregas.setBorder(border);
         lbDescuento1.setBorder(border);
         chServ.setBorder(border);
-        
+
         containerPanels.removeAll();
         containerPanels.add(pnContDelivery);
         containerPanels.updateUI();
-        
+
     }
-    
+
     private void showLocal() {
         tipo = TIPO_LOCAL;
-        
+
         btTogle1.setSelected(true);
-        
+
         lbTitle.setForeground(colorLocal.darker());
         // this.setBackground(colorLocal.brighter());
         regMesera.setTint(colorLocal);
         lbIndicator.setVisible(regMesera.getSelected() > 0);
         regMesa.setTint(colorLocal);
-        
+
         jScrollPane2.setBorder(BorderFactory.createLineBorder(colorLocal, 1, true));
         tbListado.getTableHeader().setBackground(colorLocal.brighter());
-        
+
         spNumDom.setVisible(false);
         regDomicilio.setVisible(false);
         lbEntregas.setVisible(false);
@@ -2153,27 +2175,27 @@ public class PanelPedido extends PanelCapturaMod
         tfService.setVisible(true);
         chServ.setVisible(true);
         chRecogido.setVisible(false);
-        
+
         regDomicilio.setText(entregasLoc);
         regDomicilio.setSelected(0);
-        
+
         regService.setTint(colorLocal);
         regSubtotal.setTint(colorLocal);
         regDescuento.setTint(colorLocal);
         regTotal.setTint(colorLocal);
         regDomicilio.setTint(colorLocal);
-        
+
         Border border = regService.getBorder();
-        
+
         tfService.setBorder(border);
         lbEntregas.setBorder(border);
         lbDescuento1.setBorder(border);
         chServ.setBorder(border);
-        
+
         containerPanels.removeAll();
         containerPanels.add(pnContService);
         containerPanels.updateUI();
-        
+
     }
 
     /**
@@ -2513,7 +2535,7 @@ public class PanelPedido extends PanelCapturaMod
     // End of variables declaration//GEN-END:variables
 
     private class LinkMouseListener extends MouseAdapter {
-        
+
         @Override
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             String cellphone = regCelular.getText();
@@ -2524,9 +2546,9 @@ public class PanelPedido extends PanelCapturaMod
             }
         }
     }
-    
+
     private class LabelFacturaMouseListener extends MouseAdapter {
-        
+
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2) {
@@ -2536,29 +2558,29 @@ public class PanelPedido extends PanelCapturaMod
             }
         }
     }
-    
+
     public class WaiterListCellRender extends JLabel implements javax.swing.ListCellRenderer<Object> {
-        
+
         public WaiterListCellRender() {
             setOpaque(true);
             setForeground(Utiles.colorAleatorio(0, 255));
             setBorder(BorderFactory.createEmptyBorder(3, 2, 3, 2));
             setFont(new Font("Sans", 1, 16));
         }
-        
+
         @Override
         public Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index,
                 boolean isSelected, boolean cellHasFocus) {
             if (value != null && value instanceof Waiter) {
                 Waiter waiter = (Waiter) value;
-                
+
                 setText(waiter.getName().toUpperCase());
                 Color color = Color.BLACK;
                 try {
                     color = Color.decode(waiter.getStColor());
                 } catch (Exception e) {
                 }
-                
+
                 setForeground(color);
                 if (isSelected) {
                     setBackground(list.getSelectionBackground());
@@ -2569,5 +2591,5 @@ public class PanelPedido extends PanelCapturaMod
             return this;
         }
     }
-    
+
 }

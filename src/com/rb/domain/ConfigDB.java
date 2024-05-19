@@ -20,6 +20,7 @@ public class ConfigDB {
     private String valor;
     private String user;
     private String device;
+    private boolean global;
     public static final String INTEGER = "INTEGER";
     public static final String STRING = "STRING";
     public static final String DOUBLE = "DOUBLE";
@@ -35,6 +36,7 @@ public class ConfigDB {
         this.clave = clave;
         this.tipo = tipo;
         this.valor = valor;
+        this.global = true;
     }
 
     public ConfigDB(String clave, String tipo, String valor, String user, String device) {
@@ -43,6 +45,16 @@ public class ConfigDB {
         this.valor = valor;
         this.user = user;
         this.device = device;
+        this.global = false;
+    }
+    
+    public ConfigDB(String clave, String tipo, String valor, String user, String device, boolean global) {
+        this.clave = clave;
+        this.tipo = tipo;
+        this.valor = valor;
+        this.user = user;
+        this.device = device;
+        this.global = global;
     }
 
     public int getId() {
@@ -93,6 +105,14 @@ public class ConfigDB {
         return device;
     }
 
+    public boolean isGlobal() {
+        return global;
+    }
+
+    public void setGlobal(boolean global) {
+        this.global = global;
+    }
+
     public java.util.Date castValorToDate() throws Exception {
         if (!DATE.equals(tipo)) {
             throw new Exception("Tipo no valido");
@@ -108,29 +128,29 @@ public class ConfigDB {
         switch (tipo) {
             case INTEGER:
                 try {
-                return Integer.parseInt(valor);
-            } catch (Exception e) {
-                return null;
-            }
+                    return Integer.parseInt(valor);
+                } catch (Exception e) {
+                    return null;
+                }
             case DATE:
                 try {
-                return DATE_FORMAT.parse(valor);
-            } catch (Exception e) {
-                System.err.println("CastValor:" + e.getMessage());
-                return null;
-            }
+                    return DATE_FORMAT.parse(valor);
+                } catch (Exception e) {
+                    System.err.println("CastValor:" + e.getMessage());
+                    return null;
+                }
             case BOOLEAN:
                 try {
-                return Boolean.valueOf(valor);
-            } catch (Exception e) {
-                return null;
-            }
+                    return Boolean.valueOf(valor);
+                } catch (Exception e) {
+                    return null;
+                }
             case DOUBLE:
                 try {
-                return Double.valueOf(valor);
-            } catch (Exception e) {
-                return null;
-            }
+                    return Double.valueOf(valor);
+                } catch (Exception e) {
+                    return null;
+                }
             default:
                 throw new AssertionError();
         }
@@ -138,7 +158,7 @@ public class ConfigDB {
 
     @Override
     public String toString() {
-        return clave + "(" + tipo + ")->" + valor + "[" + user + "/" + device + "]";
+        return clave + "(" + tipo + ")->" + valor + "[" + user + "/" + device + "] : (" + (global ? " GLOBAL)" : " LOCAL)");
     }
 
 }

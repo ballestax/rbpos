@@ -85,34 +85,34 @@ public class PrinterService {
             EscPosImage escposImage = new EscPosImage(buffImagen, algorithm);
 
             //DATOS PARA LA FACTURA
-            ConfigDB config = app.getControl().getConfigLocal(com.rb.Configuration.BS_NAME);
+            ConfigDB config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_NAME);
             String BS_NAME = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_NAME);
 
-            config = app.getControl().getConfigLocal(com.rb.Configuration.BS_ID);
+            config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_ID);
             String BS_ID = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_ID);
 
-            config = app.getControl().getConfigLocal(com.rb.Configuration.BS_ADDRESS);
+            config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_ADDRESS);
             String BS_ADDRESS = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_ADDRESS);
 
-            config = app.getControl().getConfigLocal(com.rb.Configuration.BS_PHONE);
+            config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_PHONE);
             String BS_PHONE = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_PHONE);
 
-            config = app.getControl().getConfigLocal(com.rb.Configuration.BS_CUSTOM_TOP);
+            config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_CUSTOM_TOP);
             String BS_CUSTOM1 = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_CUSTOM_TOP);
 
-            config = app.getControl().getConfigLocal(com.rb.Configuration.BS_CUSTOM_BOTTON);
+            config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_CUSTOM_BOTTON);
             String BS_CUSTOM2 = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_CUSTOM_BOTTON);
 
-            config = app.getControl().getConfigLocal(com.rb.Configuration.BS_CUSTOM_SERVICE);
+            config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_CUSTOM_SERVICE);
             String BS_CUSTOM3 = config != null ? config.getValor() : ""; //app.getConfiguration().getProperty(Configuration.BS_CUSTOM_SERVICE);
 
-            config = app.getControl().getConfigLocal(com.rb.Configuration.BS_CUSTOM_QUALITY_MSG);
+            config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_CUSTOM_QUALITY_MSG);
             String BS_QUALITY_MESSAGE = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_CUSTOM_QUALITY_MSG);
 
-            config = app.getControl().getConfigLocal(com.rb.Configuration.BS_CUSTOM_QUALITY_ENABLED);
+            config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_CUSTOM_QUALITY_ENABLED);
             String BS_QUALITY_ENABLED = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_CUSTOM_QUALITY_ENABLED);
 
-            config = app.getControl().getConfigLocal(com.rb.Configuration.BS_CUSTOM_QUALITY_SCALE);
+            config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_CUSTOM_QUALITY_SCALE);
             String BS_QUALITY_SCALE = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_CUSTOM_QUALITY_SCALE);
 
             // this wrapper uses esc/pos sequence: "ESC '*'"
@@ -150,7 +150,7 @@ public class PrinterService {
             }
             escpos.feed(1);
 
-            config = app.getControl().getConfigLocal(Configuration.DOCUMENT_NAME);
+            config = app.getControl().getConfigGlobal(Configuration.DOCUMENT_NAME);
             String docName = config != null ? config.getValor() : "Ticket N°:";
             escpos.writeLF(font3, String.format(docName + " %1s %25.25s", invoice.getFactura(), app.DF_FULL.format(invoice.getFecha())));
             escpos.feed(1);
@@ -387,7 +387,7 @@ public class PrinterService {
 
     public void imprimirGuide(Invoice invoice, String printerName) {
 
-        ConfigDB config = app.getControl().getConfigLocal(com.rb.Configuration.BS_NAME);
+        ConfigDB config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_NAME);
         String BS_NAME = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_NAME);
 
         Waiter waiter = null;
@@ -423,7 +423,7 @@ public class PrinterService {
                     BS_NAME);
             escpos.feed(1);
 
-            config = app.getControl().getConfigLocal(Configuration.DOCUMENT_NAME);
+            config = app.getControl().getConfigGlobal(Configuration.DOCUMENT_NAME);
             String docName = config != null ? config.getValor() : "Ticket N°:";
             escpos.writeLF(font3, String.format(docName + "  %1s", invoice.getFactura()));
             escpos.writeLF(font3, String.format("Fecha:       %1s", app.DF_FULL2.format(invoice.getFecha())));
