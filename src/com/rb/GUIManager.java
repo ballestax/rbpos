@@ -369,6 +369,7 @@ public class GUIManager {
     private PanelOrderList getPanelOrderslList() {
         if (panelOrderList == null) {
             panelOrderList = new PanelOrderList(app);
+            panelOrderList.addPropertyChangeListener(getPanelPedido());
         }
         return panelOrderList;
     }
@@ -565,6 +566,7 @@ public class GUIManager {
     public PanelNewLocation getPanelNewLocation() {
         if (pnNewLocation == null) {
             pnNewLocation = new PanelNewLocation(app);
+            pnNewLocation.addPropertyChangeListener(getPanelAddItem());
         }
         return pnNewLocation;
     }

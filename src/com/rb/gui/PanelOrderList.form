@@ -64,7 +64,7 @@
           <Group type="102" alignment="0" attributes="0">
               <Component id="panelTop" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="splitPane" pref="381" max="32767" attributes="0"/>
+              <Component id="splitPane" pref="363" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="lbStatus" min="-2" pref="28" max="-2" attributes="0"/>
           </Group>
@@ -84,15 +84,58 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="regFilter1" min="-2" pref="130" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                  <Component id="regFilter2" min="-2" pref="130" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="regFilter3" min="-2" pref="130" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="cbPend" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="btUpdate" min="-2" pref="44" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="40" max="32767" attributes="0"/>
+              <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="cbPend" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="btUpdate" linkSize="2" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="regFilter3" linkSize="2" alignment="2" min="-2" pref="38" max="-2" attributes="0"/>
+                      <Component id="regFilter2" linkSize="2" alignment="2" min="-2" pref="38" max="-2" attributes="0"/>
+                      <Component id="regFilter1" linkSize="2" alignment="2" min="-2" pref="38" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
           </Group>
         </DimensionLayout>
       </Layout>
+      <SubComponents>
+        <Component class="com.rb.gui.util.Registro" name="regFilter1">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.rb.gui.util.Registro(1, &quot;Filter1&quot;, new String[0])"/>
+          </AuxValues>
+        </Component>
+        <Component class="com.rb.gui.util.Registro" name="regFilter2">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.rb.gui.util.Registro(1, &quot;Filter1&quot;, new String[0])"/>
+          </AuxValues>
+        </Component>
+        <Component class="com.rb.gui.util.Registro" name="regFilter3">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.rb.gui.util.Registro(1, &quot;Filter1&quot;, new String[0])"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JButton" name="btUpdate">
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="cbPend">
+        </Component>
+      </SubComponents>
     </Container>
     <Container class="javax.swing.JSplitPane" name="splitPane">
 

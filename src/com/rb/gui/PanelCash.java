@@ -14,11 +14,9 @@ import com.rb.domain.Cycle;
 import com.rb.domain.Invoice;
 import com.rb.domain.Table;
 import com.rb.domain.Waiter;
-import static com.rb.gui.PanelPedido.logger;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.EventObject;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import static javax.swing.BorderFactory.createLineBorder;
@@ -68,7 +65,6 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
     private BigDecimal total;
     public static final Logger logger = Logger.getLogger(PanelCash.class.getCanonicalName());
     private MyDefaultTableModel model;
-    private DecimalFormat decimalFormat;
     private MyDefaultTableModel modelExt;
     private ImageIcon icOpen;
     private ImageIcon icClose;
@@ -80,6 +76,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
      * Creates new form PanelCash
      *
      * @param app
+     * @param cycle
      */
     public PanelCash(Aplication app, Cycle cycle) {
         this.app = app;
@@ -120,9 +117,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         btAddExtra.setActionCommand(AC_ADD_GASTO);
         btAddExtra.addActionListener(this);
         btAddExtra.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "add1.png", 24, 24)));
-
-        decimalFormat = app.getDCFORM_W();
-
+        
         tableInvoices.setModel(model);
         tableInvoices.setRowHeight(24);
         Font f = new Font("Sans", 0, 14);
@@ -136,16 +131,11 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         popupTable = new JPopupMenu();
         popupListenerTabla = new com.rb.gui.util.MyPopupListener(popupTable, true);
         JMenuItem item1 = new JMenuItem("Pagar");
-        item1.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int r = tableInvoices.getSelectedRow();
-                String fact = tableInvoices.getValueAt(r, 0).toString();
-                Invoice inv = app.getControl().getInvoiceByCode(fact);
-                showPayInvoice(inv);
-            }
-
+        item1.addActionListener((ActionEvent e) -> {
+            int r = tableInvoices.getSelectedRow();
+            String fact = tableInvoices.getValueAt(r, 0).toString();
+            Invoice inv = app.getControl().getInvoiceByCode(fact);
+            showPayInvoice(inv);
         });
         popupTable.add(item1);
 
@@ -290,13 +280,6 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
     private static final String AC_FILTER = "AC_FILTER";
 
     private void showPayInvoice(Invoice inv) {
-//        StringBuilder msg = new StringBuilder();
-//        msg.append("<html>");
-//        msg.append("</html>");
-//        int opt = JOptionPane.showConfirmDialog(null, msg, "Advertencia", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-//        if (opt == JOptionPane.OK_OPTION) {
-//
-//        }
         app.getGuiManager().showPanelPayInvoice(inv);
     }
 
@@ -337,7 +320,6 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
 //            btNewCiclo.setEnabled(true);
             btNewCiclo.setIcon(icOpen);
             btNewCiclo.setActionCommand(AC_NEW_CYCLE);
-
         }
 
         populateTabla("");
@@ -385,7 +367,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
                         model.addRow(new Object[]{
                             //                            ct++,
                             invoice.getFactura(),
-                            app.DF_FULL2.format(invoice.getFecha()),
+                            Aplication.DF_FULL2.format(invoice.getFecha()),
                             app.DCFORM_P.format(invoice.getValor()),
                             MyConstants.TIPO_PEDIDO[invoice.getTipoEntrega() - 1],
                             //invoice.getIdCliente(),

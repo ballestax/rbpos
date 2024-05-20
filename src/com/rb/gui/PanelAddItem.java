@@ -953,7 +953,7 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
+    public void propertyChange(PropertyChangeEvent evt) {System.err.println(evt.getPropertyName());
         if (PanelList.AC_SELECTED.equals(evt.getPropertyName())) {
             regMeseure.setText(evt.getNewValue().toString());
         } else if (PanelList.AC_ADD.equals(evt.getPropertyName())) {
@@ -966,7 +966,8 @@ public class PanelAddItem extends PanelCaptura implements ActionListener, Proper
             app.getControl().deleteUnit(evt.getNewValue().toString());
             updateUnitList();
         } else if (PanelNewLocation.AC_ADD_LOCATION.equals(evt.getPropertyName())) {
-
+            System.out.println("HEHEHEHE");
+            updateLocationList();
         }
     }
 
