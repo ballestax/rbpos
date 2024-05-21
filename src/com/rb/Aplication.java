@@ -53,7 +53,7 @@ import org.dz.Imagenes;
 public final class Aplication implements ActionListener, PropertyChangeListener, ListSelectionListener {
 
     public static final String TITLE = "Rubidium POS";
-    public static final String VERSION = "2.3"; // 27/Abril/2024
+    public static final String VERSION = "2.4"; // 20/Mayo/2024
     public static final String ACTION_CANCEL_PANEL = "acCancelPanel";
     public static final String ACTION_EXIT_APP = "acExitApp";
     public static final String ACTION_SHOW_PREFERENCES = "acShowPreferences";
@@ -73,15 +73,15 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
     public static final String CONFIG_LASTUPDATE = "lastUpdate";
 
     public static final String PREFERENCES = "";
-    public static final String DATABASE = "rubidium1";
+    public static final String DATABASE = "rubidium";
     public static final String WORK_FOLDER = "rubidium";
-    public static final String DB_USER = "admin";
+    public static final String DB_USER = "root";
     public static boolean INSTALL_DB = true;
     private static final boolean messaged = true;
     public static final String DEFAULT_EXPORT_DIR = "";
 
     //Correr la aplicacion con configuracion de servidor local
-    private static boolean local =true;
+    private static boolean local = !true;
 
     public static final DateFormat DF = new SimpleDateFormat("dd-MM-yyyy");
     public static final DateFormat DF_FULL = new SimpleDateFormat("dd MMMM yyyy hh:mm");
@@ -211,7 +211,7 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
             modules = new ArrayList<>();
         }
         modules.add(new Module(Aplication.ACTION_SHOW_ORDER, MyConstants.PERM_ORDERS_MODULE));
-        //modules.add(new Module(Aplication.ACTION_SHOW_ORDER_LIST, MyConstants.PERM_ORDERLIST_MODULE));
+        modules.add(new Module(Aplication.ACTION_SHOW_ORDER_LIST, MyConstants.PERM_ORDERLIST_MODULE));
         modules.add(new Module(Aplication.ACTION_SHOW_CASH, MyConstants.PERM_CASH_MODULE));
         modules.add(new Module(Aplication.ACTION_SHOW_SALES, MyConstants.PERM_SALES_MODULE));        
         modules.add(new Module(Aplication.ACTION_SHOW_PRODUCTS, MyConstants.PERM_PRODUCTS_MODULE));

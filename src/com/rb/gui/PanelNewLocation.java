@@ -217,7 +217,7 @@ public class PanelNewLocation extends PanelCapturaMod implements ActionListener 
             if (loc != null) {
                 try {
                     JDBCDAOFactory.getInstance().getLocationDAO().addLocation(loc);
-                    pcs.firePropertyChange(AC_ADD_LOCATION, null, 1);                    
+                    pcs.firePropertyChange(AC_ADD_LOCATION, null, null);                    
                 } catch (Exception ex) {
                     app.getGuiManager().showError(ex.getMessage());
                 }
