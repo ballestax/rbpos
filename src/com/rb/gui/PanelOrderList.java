@@ -112,7 +112,7 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
 
         pTime = new PrettyTime(new Locale("es"));
 
-        String[] colNames = {"1", "2", "3", "4", "5", "6", "7"};
+        String[] colNames = {"No", "Pedido", "Valor", "Fecha", "Tiempo", "Estado", "Accion"};
         model = new MyDefaultTableModel(colNames, 0);
         tbOrders.setModel(model);
         tbOrders.setRowHeight(35);
@@ -137,7 +137,7 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         regFilter2.setText(waiterslList.toArray());
         regFilter2.setLabelText("Mesero");
 
-        regFilter3.setLabelText("Pedido");
+        regFilter3.setLabelText("Estado");
         mapStatus = IntStream.range(0, Invoice.STATUSES.length)
                 .boxed()
                 .collect(Collectors.toMap(i -> Invoice.STATUSES[i], i -> i));
@@ -300,12 +300,12 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
     }
 
     public void showTable(Invoice order) {
+        StringBuilder str = new StringBuilder();
         if (order != null) {
 
             String color = "#34cdaa";
             Waiter waiter = app.getControl().getWaitressByID(order.getIdWaitress());
 
-            StringBuilder str = new StringBuilder();
             str.append("<html><table width=\"600\" cellspacing=\"0\" border=\"1\">");
             str.append("<tr>");
             str.append("<td bgcolor=").append(color).append(">").append("ID").append("</td>");
@@ -507,7 +507,6 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
 
         panelTopLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btUpdate, regFilter1, regFilter2, regFilter3});
 
-        lbStatus.setText("jLabel1");
         lbStatus.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -646,13 +645,16 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
                     case 1:
                         String html = "<html>Domicilio<br><font color=red>3006052119<font></html>";
                         Invoice order = (Invoice) value;
+                        Waiter waiter = app.getControl().getWaitressByID(order.getIdWaitress());
                         if (order.getTipoEntrega() == PanelPedido.TIPO_LOCAL) {
-                            html = "<html>Local<br><font color=red>Mesa: " + order.getTable() + "<font></html>";
+                            html = "<html>Local<br><table width=\"100%\"><tr><td align=\"left\"><font color=red>Mesa: " + order.getTable() + "<font></td>"
+                                    + "<td bgcolor=\"#" + waiter.getColor().darker() + "\" align=\"right\"><font color=blue>" + waiter.getName() + "</font></td></tr></table></html>";
                         } else if (order.getTipoEntrega() == PanelPedido.TIPO_DOMICILIO) {
                             html = "<html>Domicilio<br><font color=red>" + order.getIdCliente() + "<font></html>";
                         }
                         label.setText(String.valueOf(html));
                         break;
+
                     case 2:
                         String format = "0";
                         if (value instanceof BigDecimal) {
