@@ -115,6 +115,31 @@ public class PrinterService {
             config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_CUSTOM_QUALITY_SCALE);
             String BS_QUALITY_SCALE = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_CUSTOM_QUALITY_SCALE);
 
+            config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_TICKECT_WIDTH);
+            String BS_TICKET_WIDTH = config != null ? config.getValor() : "32";
+
+            config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_SHOW_SERVICE);
+            String BS_SHOW_SERVICE = config != null ? config.getValor() : "false";
+
+            int WIDTH = 32;
+            boolean SHOW_SERVICE = false;
+            try {
+                WIDTH = Integer.parseInt(BS_TICKET_WIDTH);
+
+                SHOW_SERVICE = Boolean.parseBoolean(BS_SHOW_SERVICE);
+
+            } catch (Exception e) {
+            }
+
+            String LINE_1 = String.valueOf("=").repeat(WIDTH);
+            String LINE_2 = String.valueOf("_").repeat(WIDTH);
+
+            int espacioRem = WIDTH - 22;
+            int espacioRem2 = WIDTH - 15;
+            System.out.println("espacioRem = " + espacioRem);
+            String newFormatoLEFT = "%-" + espacioRem + "." + espacioRem + "s";
+            String newFormatoRIGHT = "%" + espacioRem2 + "." + espacioRem2 + "s";
+
             // this wrapper uses esc/pos sequence: "ESC '*'"
             BitImageWrapper imageWrapper = new BitImageWrapper();
 
@@ -152,11 +177,12 @@ public class PrinterService {
 
             config = app.getControl().getConfigGlobal(Configuration.DOCUMENT_NAME);
             String docName = config != null ? config.getValor() : "Ticket N°:";
-            escpos.writeLF(font3, String.format(docName + " %1s %25.25s", invoice.getFactura(), app.DF_FULL.format(invoice.getFecha())));
+            escpos.writeLF(font3, String.format(docName + " %1s", invoice.getFactura()));
+            escpos.writeLF(font3, String.format("%1s", app.DF_FULL.format(invoice.getFecha())));
             escpos.feed(1);
 
             String column1Format = "%3.3s";  // fixed size 3 characters, left aligned
-            String column2Format = "%-25.25s";  // fixed size 8 characters, left aligned
+            String column2Format = newFormatoLEFT;  // fixed size 8 characters, left aligned
             String column3Format = "%7.7s";   // fixed size 6 characters, right aligned
             String column4Format = "%9.9s";   // fixed size 6 characters, right aligned
             String formatInfo = column1Format + " " + column2Format + " " + column3Format + " " + column4Format;
@@ -166,14 +192,28 @@ public class PrinterService {
                         "* * * ANULADA * * *");
             }
 
-            escpos.writeLF(font2, "===============================================");
+            escpos.writeLF(font2, LINE_1);
             List<ProductoPed> products = invoice.getProducts();
             for (int i = 0; i < products.size(); i++) {
                 ProductoPed product = products.get(i);
                 Presentation presentation = product.getPresentation();
+                String prodName = product.getProduct().getName();
                 double priceFinal = product.getPrecio() + product.getValueAdicionales();
-                escpos.writeLF(String.format(formatInfo, product.getCantidad(), (product.getProduct().getName()).toUpperCase(),
-                        app.DCFORM_P.format(priceFinal), app.DCFORM_P.format(product.getCantidad() * priceFinal)));
+                System.out.println(prodName.length() + ">" + espacioRem);
+                if (prodName.length() < espacioRem) {
+                    escpos.writeLF(String.format(formatInfo, product.getCantidad(), (prodName).toUpperCase(),
+                            app.DCFORM_P.format(priceFinal), app.DCFORM_P.format(product.getCantidad() * priceFinal)));
+                } else {
+                    int espacio = WIDTH - 4;
+                    int espacio2 = WIDTH - 15;
+                    String column2FormatX = "%-" + espacio + "." + espacio + "s";
+                    String column3FormatX = "%-" + espacio2 + "." + espacio + "s";
+                    String formatInfoX = column1Format + " " + column2FormatX;
+                    String formatInfoY = column3FormatX + " " + column4Format;
+                    escpos.writeLF(String.format(formatInfoX, product.getCantidad(), (prodName).toUpperCase()));
+                    escpos.writeLF(String.format(formatInfoY,
+                            app.DCFORM_P.format(priceFinal), app.DCFORM_P.format(product.getCantidad() * priceFinal)));
+                }
                 String stPres = "";
                 if (presentation != null) {
                     stPres = " (" + presentation.getName() + ")";
@@ -191,29 +231,31 @@ public class PrinterService {
 
             BigDecimal total = invoice.getValor();
 
-            escpos.writeLF(font2, "________________________________________________");
+            escpos.writeLF(font2, LINE_2);
             escpos.writeLF(String.format(formatInfo, "", "Subtotal:", "", app.DCFORM_P.format(total)));
 
             if (invoice.getTipoEntrega() == TIPO_DOMICILIO) {
-                escpos.writeLF(font2, "________________________________________________");
+                escpos.writeLF(font2, LINE_2);
 
                 escpos.writeLF(String.format(formatInfo, invoice.getNumDeliverys(), "Domicilio", "", app.DCFORM_P.format(invoice.getValorDelivery())));
                 total = total.add(invoice.getValorDelivery());
             } else if (invoice.getTipoEntrega() == PanelPedido.TIPO_LOCAL) {
-                escpos.writeLF(font2, "________________________________________________");
-                if (invoice.getPorcService() > 0) {
-                    escpos.writeLF(font2Bold, String.format(formatInfo, "", "Servicio voluntario", invoice.getPorcService() + "%", app.DCFORM_P.format(invoice.getValueService())));
-                } else {
-                    escpos.writeLF("No incluye servicio voluntario");
+                if (SHOW_SERVICE) {
+                    escpos.writeLF(font2, LINE_2);
+                    if (invoice.getPorcService() > 0) {
+                        escpos.writeLF(font2Bold, String.format(formatInfo, "", "Servicio voluntario", invoice.getPorcService() + "%", app.DCFORM_P.format(invoice.getValueService())));
+                    } else {
+                        escpos.writeLF("No incluye servicio voluntario");
+                    }
                 }
 
                 total = total.add(invoice.getValor().multiply(BigDecimal.valueOf(invoice.getPorcService() / 100)));
             }
-            escpos.writeLF(font2, "________________________________________________");
+            escpos.writeLF(font2, LINE_2);
 
             escpos.writeLF(String.format(formatInfo, "", "", "Total:", app.DCFORM_P.format(total)));
 
-            escpos.writeLF(font2, "================================================");
+            escpos.writeLF(font2, LINE_1);
             if (invoice.getStatus() == Invoice.ST_ANULADA) {
                 escpos.writeLF(new Style().setFontSize(Style.FontSize._2, Style.FontSize._2).setJustification(EscPosConst.Justification.Center),
                         "* * * ANULADA * * *");
@@ -227,7 +269,7 @@ public class PrinterService {
             }
 
             if (invoice.getTipoEntrega() == PanelPedido.TIPO_LOCAL) {
-                if (invoice.getPorcService() > 0) {
+                if (SHOW_SERVICE && invoice.getPorcService() > 0) {
                     escpos.writeLF(font2Bold, "***ADVERTENCIA DE SERVICIO VOLUNTARIO***");
                     escpos.writeLF(font2, BS_CUSTOM3);
 //                    escpos.writeLF(font2, "Segun lo establecido en la Ley 1935 del 3/ago/2018"
@@ -240,6 +282,7 @@ public class PrinterService {
 //                    escpos.writeLF(font2, "Indíquele a la persona que lo atiende si quiere pagar el valor del servicio voluntario en la factura."
 //                            + " En caso de inconveniente comuníquese con nuestras líneas de atención.");
                 }
+
             }
 
             if (invoice.getTipoEntrega() == PanelPedido.TIPO_LOCAL && Boolean.parseBoolean(BS_QUALITY_ENABLED)) {

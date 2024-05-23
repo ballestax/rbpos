@@ -59,8 +59,7 @@ public class Configuration {
     public static final String NUM_COLUMNS_VIEW1 = "cf.numcolumnsv1";
     public static final String NUM_COLUMNS_VIEW2 = "cf.numcolumnsv2";
     public static final String SHOW_DISABLE_ITEMS = "cf.showdisableditems";
-    public static final String AUTO_SEND_ORDER_TO_STATIONS ="cf.autosendorder";
-    
+    public static final String AUTO_SEND_ORDER_TO_STATIONS = "cf.autosendorder";
 
     public static final String BS_ID = "cf.tck.id";
     public static final String BS_NAME = "cf.tck.name";
@@ -68,10 +67,12 @@ public class Configuration {
     public static final String BS_PHONE = "cf.tck.phone";
     public static final String BS_CUSTOM_TOP = "cf.tck.custom1";
     public static final String BS_CUSTOM_BOTTON = "cf.tck.custom2";
+    public static final String BS_SHOW_SERVICE = "cf.tck.show_service";
     public static final String BS_CUSTOM_SERVICE = "cf.tck.custom3";
     public static final String BS_CUSTOM_QUALITY_MSG = "cf.tck.quality_msg";
     public static final String BS_CUSTOM_QUALITY_SCALE = "cf.tck.quality_scale";
-    public static final String BS_CUSTOM_QUALITY_ENABLED = "cf.tck.quality_enabled";
+    public static final String BS_CUSTOM_QUALITY_ENABLED = "cf.tck.ticket_width";
+    public static final String BS_TICKECT_WIDTH = "cf.tck.ticket_width";
 
     private StandardPBEStringEncryptor encryptor;
 
@@ -165,12 +166,12 @@ public class Configuration {
         return configuration.getProperty(property, propDefault);
     }
 
-    public int getProperty(String property, int propDefault) {        
+    public int getProperty(String property, int propDefault) {
         int valor = propDefault;
         try {
             valor = Integer.parseInt(configuration.getProperty(property, "" + propDefault));
         } catch (Exception e) {
-        }        
+        }
         return valor;
     }
 
