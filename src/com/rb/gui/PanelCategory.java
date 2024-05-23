@@ -11,6 +11,7 @@ import com.rb.Configuration;
 import com.rb.domain.ConfigDB;
 import com.rb.domain.Product;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -51,7 +52,7 @@ public class PanelCategory extends PanelCapturaMod implements PropertyChangeList
     public static final String ORDEN_PRICE = "PRECIO";
     public static final String ORDEN_RATING = "RATING";
     private HashMap<Long, PanelProduct4> mapProdsV2;
-    private HashMap<Long, PanelProduct2> mapProdsV1;
+    private HashMap<Long, PanelProduct3> mapProdsV1;
     private List<Category> categoriesList;
 
     /**
@@ -109,7 +110,7 @@ public class PanelCategory extends PanelCapturaMod implements PropertyChangeList
 
         lbTitle.setVisible(false);
 
-        showView2();
+        showView1();
 
         oldSize = products != null ? products.size() : 0;
     }
@@ -158,7 +159,7 @@ public class PanelCategory extends PanelCapturaMod implements PropertyChangeList
                     pnProd.addPropertyChangeListener(app.getGuiManager().getPanelPedido());
                     publish(new Object[]{pnProd, product.getId()});
 
-                    PanelProduct2 pnProd2 = new PanelProduct2(app, product);
+                    PanelProduct3 pnProd2 = new PanelProduct3(app, product);
                     pnProd2.addPropertyChangeListener(app.getGuiManager().getPanelPedido());
                     publish(new Object[]{pnProd2, product.getId()});
 
@@ -170,9 +171,9 @@ public class PanelCategory extends PanelCapturaMod implements PropertyChangeList
             protected void process(List<Object[]> chunks) {
                 for (Object[] chunk : chunks) {
 
-                    if (chunk[0] instanceof PanelProduct2) {
+                    if (chunk[0] instanceof PanelProduct3) {
                         long prodId = Long.parseLong(chunk[1].toString());
-                        mapProdsV1.put(prodId, (PanelProduct2) chunk[0]);
+                        mapProdsV1.put(prodId, (PanelProduct3) chunk[0]);
                     } else if (chunk[0] instanceof PanelProduct4) {
                         long prodId = Long.parseLong(chunk[1].toString());
                         mapProdsV2.put(prodId, (PanelProduct4) chunk[0]);
@@ -245,28 +246,95 @@ public class PanelCategory extends PanelCapturaMod implements PropertyChangeList
         app.getGuiManager().setDefaultCursor();
     }
 
+//    public void showView1() {
+//        view = 1;
+//        app.getGuiManager().setWaitCursor();
+//        pnItems.removeAll();
+//        pnItems.setBackground(Color.yellow);
+//
+//        // Retrieve the number of columns from configuration, default to 2 if not found
+//        ConfigDB config = app.getControl().getConfigLocal(Configuration.NUM_COLUMNS_VIEW2);
+//        int COLS = config != null ? (int) config.castValor() : 2;
+//
+//        pnItems.setLayout(new GridLayout(0, COLS, 10, 10)); // Set the layout once
+//
+//        if (products != null) {
+//            int totalProducts = products.size();
+//            int rows = (int) Math.ceil((double) totalProducts / COLS);
+//
+//            int productIndex = 0;
+//            for (int i = 0; i < rows; i++) {
+//                for (int j = 0; j < COLS; j++) {
+//                    if (productIndex >= totalProducts) {
+//                        break;
+//                    }
+//                    PanelProduct3 pnProd = mapProdsV1.get(products.get(productIndex).getId());
+//                    if (pnProd != null) {
+//                        pnItems.add(pnProd);
+//                    }
+//                    productIndex++;
+//                }
+//            }
+//
+//            // Add glue to ensure the layout looks good even if the last row isn't completely filled
+//            pnItems.add(Box.createVerticalGlue());
+//            pnItems.add(Box.createVerticalGlue());
+//            pnItems.add(Box.createVerticalGlue());
+//            pnItems.add(Box.createVerticalGlue());
+//            pnItems.add(Box.createVerticalGlue());
+//            pnItems.add(Box.createVerticalGlue());
+//        }
+//
+//        pnItems.updateUI();
+//        app.getGuiManager().setDefaultCursor();
+//    }
     public void showView1() {
         view = 1;
         app.getGuiManager().setWaitCursor();
         pnItems.removeAll();
-        pnItems.setLayout(new GridLayout(0, 2, 10, 10));
+//        pnItems.setBackground(Color.yellow);
 
+        // Retrieve the number of columns from configuration, default to 2 if not found
         ConfigDB config = app.getControl().getConfigLocal(Configuration.NUM_COLUMNS_VIEW1);
         int COLS = config != null ? (int) config.castValor() : 2;
 
-        pnItems.setLayout(new GridLayout(0, COLS, 10, 10));
+        pnItems.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5); // Spacing between components
 
         if (products != null) {
-            for (int i = 0; i < products.size(); i++) {
-                PanelProduct2 pnProd2 = mapProdsV1.get(products.get(i).getId());
-                if (pnProd2 != null) {
-                    pnItems.add(pnProd2);
+            int totalProducts = products.size();
+            int rows = (int) Math.ceil((double) totalProducts / COLS);
+
+            int productIndex = 0;
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < COLS; j++) {
+                    if (productIndex >= totalProducts) {
+                        break;
+                    }
+                    PanelProduct3 pnProd = mapProdsV1.get(products.get(productIndex).getId());
+//                    pnProd.setPreferredSize(new Dimension(200, 100));
+                    if (pnProd != null) {
+                        gbc.gridx = j;
+                        gbc.gridy = i;
+                        gbc.anchor = GridBagConstraints.CENTER;
+                        gbc.fill = GridBagConstraints.HORIZONTAL;
+                        gbc.weightx = 0.5;
+                        gbc.weighty = 0;
+                        pnItems.add(pnProd, gbc);
+                    }
+                    productIndex++;
                 }
             }
+
+            // Fill remaining space to ensure the layout looks consistent
+            gbc.gridx = 0;
+            gbc.gridy = rows;
+            gbc.gridwidth = COLS;
+            gbc.weighty = 1.0;
+            pnItems.add(Box.createVerticalGlue(), gbc);
         }
 
-        pnItems.add(Box.createVerticalGlue());
-        pnItems.add(Box.createVerticalGlue());
         pnItems.updateUI();
         app.getGuiManager().setDefaultCursor();
     }

@@ -2,6 +2,7 @@ package com.rb.gui;
 
 import com.rb.Aplication;
 import com.rb.Configuration;
+import com.rb.domain.ConfigDB;
 import com.rb.domain.Presentation;
 import com.rb.domain.Product;
 import com.rb.domain.ProductoPed;
@@ -76,7 +77,11 @@ public class PanelProduct4 extends PanelCapturaMod implements ActionListener {
 
         Color color = new Color(125, 11, 7);
 
-        int MAX_LENGTH = 20;
+        ConfigDB config = app.getControl().getConfigLocal(Configuration.MAX_LETTERS);
+        int valueMaxLetters = config != null ? (int) config.castValor() : 25;
+        
+
+        int MAX_LENGTH = valueMaxLetters;
         String pName = product.getName();
         if (pName.length() > MAX_LENGTH) {
             pName = pName.substring(0, MAX_LENGTH) + "..";

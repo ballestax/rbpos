@@ -81,7 +81,7 @@ public class PanelTopSearch extends PanelCaptura implements ActionListener {
         btView2.addActionListener(this);
 //        btView2.setForeground(colorDelivery);
 
-        btView2.setSelected(true);
+        btView1.setSelected(true);
 
         btRefresh.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "update.png", 20, 20)));
         btRefresh.setActionCommand(AC_REFRESH_PRODUCTS);
@@ -103,6 +103,8 @@ public class PanelTopSearch extends PanelCaptura implements ActionListener {
         cbSort.setModel(model);
         cbSort.setActionCommand(AC_CHANGE_SORT);
         cbSort.addActionListener(this);
+        
+        btCustomProduct.setEnabled(false);
 
 //        cbSort.setEnabled(false);
 //        lbSort.setEnabled(false);

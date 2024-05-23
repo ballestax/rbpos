@@ -135,8 +135,6 @@ public class PrinterService {
             String LINE_2 = String.valueOf("_").repeat(WIDTH);
 
             int espacioRem = WIDTH - 23;
-            int espacioRem2 = WIDTH - 14;
-            System.out.println("espacioRem = " + espacioRem);
             String newFormatoLEFT = "%-" + espacioRem + "." + espacioRem + "s";
 //            String newFormatoRIGHT = "%" + espacioRem2 + "." + espacioRem2 + "s";
 
@@ -207,7 +205,7 @@ public class PrinterService {
                 } else {
                     int espacio = WIDTH - 4;
                     int espacio2 = WIDTH - 6;
-                    int spaceForNums = WIDTH-10-1;
+                    int spaceForNums = WIDTH - 10 - 1;
                     String column2FormatX = "%-" + espacio + "." + espacio + "s";
                     String column3FormatX = "%-" + espacio2 + "s %6s";
                     String formatInfoX = column1Format + " " + column2FormatX;
@@ -313,6 +311,20 @@ public class PrinterService {
 
     public void imprimirPedido(Invoice invoice, String printerName) {
 
+        ConfigDB config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_TICKECT_WIDTH);
+        String BS_TICKET_WIDTH = config != null ? config.getValor() : "32";
+
+        int WIDTH = 32;
+
+        try {
+            WIDTH = Integer.parseInt(BS_TICKET_WIDTH);
+
+        } catch (Exception e) {
+        }
+
+        String LINE_1 = String.valueOf("=").repeat(WIDTH);
+        String LINE_2 = String.valueOf(". ").repeat((int) (WIDTH / 2));
+
         Waiter waiter = null;
         Table table = null;
         Client client = null;
@@ -341,8 +353,8 @@ public class PrinterService {
             escpos.write(font2, "Comanda  :");
             escpos.writeLF(font6, String.format(" %1s", invoice.getFactura()));
             escpos.writeLF("");
-            escpos.write(font3, String.format("%20.20s", app.DF_SL.format(invoice.getFecha())));
-            escpos.write(font6, String.format("%8.8s", app.DF_TIME.format(invoice.getFecha())));
+            escpos.writeLF(font3, String.format("%-12.12s", app.DF_SL.format(invoice.getFecha())));
+            escpos.writeLF(font6, String.format("%-6.6s", app.DF_TIME.format(invoice.getFecha())));
             escpos.writeLF("");
 
             if (invoice.getTipoEntrega() == PanelPedido.TIPO_LOCAL) {
@@ -363,10 +375,10 @@ public class PrinterService {
 
             if (invoice.getStatus() == Invoice.ST_ANULADA || invoice.getStatus() == Invoice.ST_MODIFICADA) {
                 escpos.writeLF(new Style().setFontSize(Style.FontSize._2, Style.FontSize._2).setJustification(EscPosConst.Justification.Center),
-                        "* * * " + Invoice.STATUSES[invoice.getStatus()] + " * * *");
+                        "*** " + Invoice.STATUSES[invoice.getStatus()] + " ***");
             }
 
-            escpos.writeLF(font2, "===============================================");
+            escpos.writeLF(font2, LINE_1);
             List<ProductoPed> products = invoice.getProducts();
             for (int i = 0; i < products.size(); i++) {
                 ProductoPed product = products.get(i);
@@ -404,15 +416,15 @@ public class PrinterService {
                     stb.setLength(0);
                 }
                 if (i != products.size() - 1) {
-                    escpos.writeLF(font2, ". . . . . . . . . . . . . . . . . . . . . .");
+                    escpos.writeLF(font2, LINE_2);
                 }
             }
 
-            escpos.writeLF(font2, "================================================");
+            escpos.writeLF(font2, LINE_1);
 
             if (invoice.getStatus() == Invoice.ST_ANULADA || invoice.getStatus() == Invoice.ST_MODIFICADA) {
                 escpos.writeLF(new Style().setFontSize(Style.FontSize._2, Style.FontSize._2).setJustification(EscPosConst.Justification.Center),
-                        "* * * " + Invoice.STATUSES[invoice.getStatus()] + " * * *");
+                        "*** " + Invoice.STATUSES[invoice.getStatus()] + " ***");
             }
 
             escpos.feed(1);
@@ -434,6 +446,27 @@ public class PrinterService {
         ConfigDB config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_NAME);
         String BS_NAME = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_NAME);
 
+        config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_TICKECT_WIDTH);
+        String BS_TICKET_WIDTH = config != null ? config.getValor() : "32";
+
+        config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_SHOW_SERVICE);
+        String BS_SHOW_SERVICE = config != null ? config.getValor() : "false";
+
+        int WIDTH = 32;
+        boolean SHOW_SERVICE = false;
+        try {
+            WIDTH = Integer.parseInt(BS_TICKET_WIDTH);
+            SHOW_SERVICE = Boolean.parseBoolean(BS_SHOW_SERVICE);
+
+        } catch (Exception e) {
+        }
+
+        int espacioRem = WIDTH - 22;
+        String newFormatoLEFT = "%-" + espacioRem + "." + espacioRem + "s";
+
+        String LINE_1 = String.valueOf("=").repeat(WIDTH);
+        String LINE_2 = String.valueOf("_").repeat(WIDTH);
+
         Waiter waiter = null;
         Table table = null;
         Client client = null;
@@ -452,10 +485,11 @@ public class PrinterService {
             Style font2 = new Style().setFontSize(Style.FontSize._1, Style.FontSize._1).setJustification(EscPosConst.Justification.Center);
             Style font3 = new Style().setFontSize(Style.FontSize._1, Style.FontSize._1);
             Style font4 = new Style().setFontSize(Style.FontSize._1, Style.FontSize._1).setJustification(EscPosConst.Justification.Right);
-            Style font5 = new Style().setFontSize(Style.FontSize._2, Style.FontSize._2);
+            Style font5 = new Style().setFontSize(Style.FontSize._2, Style.FontSize._2).setJustification(EscPosConst.Justification.Right);
+            Style font6 = new Style().setFontSize(Style.FontSize._2, Style.FontSize._2);
 
             String column1Format = "%3.3s";  // fixed size 3 characters, left aligned
-            String column2Format = "%-25.25s";  // fixed size 8 characters, left aligned
+            String column2Format = newFormatoLEFT;  //"%-25.25s";  // fixed size 8 characters, left aligned
             String column3Format = "%7.7s";   // fixed size 6 characters, right aligned
             String column4Format = "%9.9s";   // fixed size 6 characters, right aligned
             String formatInfo = column1Format + " " + column2Format + " " + column3Format + " " + column4Format;
@@ -469,43 +503,46 @@ public class PrinterService {
 
             config = app.getControl().getConfigGlobal(Configuration.DOCUMENT_NAME);
             String docName = config != null ? config.getValor() : "Ticket N°:";
-            escpos.writeLF(font3, String.format(docName + "  %1s", invoice.getFactura()));
-            escpos.writeLF(font3, String.format("Fecha:       %1s", app.DF_FULL2.format(invoice.getFecha())));
+            escpos.write(font3, docName);
+            escpos.write(font5, String.format(" %s\n", invoice.getFactura()));
+            escpos.writeLF(font3, String.format("Fecha:    %16.16s", app.DF_FULL2.format(invoice.getFecha())));
 
             escpos.feed(1);
             if (invoice.getTipoEntrega() == PanelPedido.TIPO_LOCAL) {
-                escpos.writeLF(font3, "Mesa:     " + (table != null ? table.getName() : "- - -"));
+                escpos.write(font3, "Mesa:     ");
+                escpos.write(font5, (table != null ? table.getName() : "- - -"));
                 escpos.writeLF(font3, "Mesero:   " + (waiter != null ? waiter.getName().toUpperCase() : "- - -"));
             } else {
-                escpos.writeLF(font3, "Cliente:   " + (client != null ? client.getCellphone() : "- - -"));
+                escpos.write(font3, "Cliente:   ");
+                escpos.write(font5, (client != null ? client.getCellphone() : "- - -") + "\n");
                 escpos.writeLF(font3, "Direccion: " + (client != null && !client.getAddresses().isEmpty() ? client.getAddresses().get(0) : "- - -"));
             }
             escpos.feed(1);
 
             BigDecimal total = invoice.getValor();
 
-            escpos.writeLF(font2, "================================================");
+            escpos.writeLF(font2, LINE_1);
 
             escpos.writeLF(String.format(formatInfo, "", "Subtotal:", "", app.DCFORM_P.format(total)));
             if (invoice.getTipoEntrega() == TIPO_DOMICILIO) {
-                escpos.writeLF(font2, "________________________________________________");
+                escpos.writeLF(font2, LINE_2);
 
-                escpos.writeLF(String.format(formatInfo, "1", "Domicilio", "", app.DCFORM_P.format(invoice.getValorDelivery())));
+                escpos.writeLF(String.format(formatInfo, invoice.getNumDeliverys(), "Domicilio", "", app.DCFORM_P.format(invoice.getValorDelivery())));
                 total = total.add(invoice.getValorDelivery());
             }
 
-            if (invoice.isService() && invoice.getPorcService() > 0) {
-                escpos.writeLF(font2, "________________________________________________");
+            if (SHOW_SERVICE && invoice.isService() && invoice.getPorcService() > 0) {
+                escpos.writeLF(font2, LINE_2);
 
                 escpos.writeLF(String.format(formatInfo, invoice.getPorcService(), "Servicio vol.", "", app.DCFORM_P.format(invoice.getValueService())));
                 total = total.add(new BigDecimal(invoice.getValueService()));
             }
 
-            escpos.writeLF(font2, "________________________________________________");
+            escpos.writeLF(font2, LINE_2);
 
-            escpos.writeLF(String.format(formatInfo, "", "", "Total:", app.DCFORM_P.format(total)));
+            escpos.writeLF(font5, String.format(formatInfo, "", "", "Total:", app.DCFORM_P.format(total)));
 
-            escpos.writeLF(font2, "================================================");
+            escpos.writeLF(font2, LINE_1);
 
             escpos.feed(4);
 
@@ -559,6 +596,17 @@ public class PrinterService {
 
     public void imprimirInventario(List<Item> list, String TAG, String printerName) {
 
+        ConfigDB config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_TICKECT_WIDTH);
+        String BS_TICKET_WIDTH = config != null ? config.getValor() : "32";
+
+        int WIDTH = 32;
+        try {
+            WIDTH = Integer.parseInt(BS_TICKET_WIDTH);
+        } catch (Exception e) {
+        }
+
+        String LINE_1 = String.valueOf("=").repeat(WIDTH);
+
         PrintService printService = PrinterOutputStream.getPrintServiceByName(printerName);
         EscPos escpos;
         try {
@@ -586,7 +634,7 @@ public class PrinterService {
             String column4Format = "%12.12s";   // fixed size 6 characters, right aligned
             String formatInfo = column1Format + " " + column2Format + " " + column3Format + " " + column4Format;
 
-            escpos.writeLF(font2, "===============================================");
+            escpos.writeLF(font2, LINE_1);
             for (int i = 0; i < list.size(); i++) {
                 Item item = list.get(i);
                 escpos.writeLF(String.format(formatInfo, "", item.getName().toUpperCase(),
@@ -594,7 +642,7 @@ public class PrinterService {
 
             }
 
-            escpos.writeLF(font2, "================================================");
+            escpos.writeLF(font2, LINE_1);
 
             escpos.feed(5);
 

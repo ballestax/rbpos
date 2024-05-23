@@ -6,6 +6,7 @@ import com.rb.domain.Category;
 import com.rb.domain.ConfigDB;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,6 +37,7 @@ public class PanelSelCategory extends PanelCapturaMod implements ActionListener 
     private JButton btExtras;
     private JButton lastButtonSel;
     private String lastCategorySel;
+    private Box boxContainer3;
 
     public PanelSelCategory(Aplication app, ArrayList<Category> categories) {
         this.app = app;
@@ -52,10 +54,12 @@ public class PanelSelCategory extends PanelCapturaMod implements ActionListener 
 
         boxContainer1 = new Box(BoxLayout.X_AXIS);
         boxContainer2 = new Box(BoxLayout.X_AXIS);
+        boxContainer3 = new Box(BoxLayout.X_AXIS);
 
         loadCategories();
         add(boxContainer1);
         add(boxContainer2);
+        add(boxContainer3);
     }
 
     private void loadCategories() {
@@ -65,12 +69,13 @@ public class PanelSelCategory extends PanelCapturaMod implements ActionListener 
 
         config = app.getControl().getConfigLocal(Configuration.CATEGORY_ROWS);
         int ROWS = config != null ? (int) config.castValor() : 1;
-        System.out.println("ROWS = " + ROWS);
 
         boxContainer1.removeAll();
         //remove(boxContainer1);
 
         boxContainer2.removeAll();
+
+        boxContainer3.removeAll();
         //remove(boxContainer2);
 
         Border marginBorder = BorderFactory.createEmptyBorder(7, 5, 7, 5);
@@ -83,21 +88,27 @@ public class PanelSelCategory extends PanelCapturaMod implements ActionListener 
                 btCategory.setBackground(categories.get(i).getColor());
                 btCategory.setForeground(Color.black);
                 btCategory.setMargin(new Insets(1, 1, 1, 1));
+                btCategory.setMinimumSize(new Dimension(60, 40));
                 String name = categories.get(i).getName().toUpperCase();
                 btCategory.setText(name);
                 btCategory.setActionCommand(SEL_CAT_ + name);
                 btCategory.addActionListener(this);
                 if (i < MAX) {
                     boxContainer1.add(btCategory);
-                    boxContainer1.add(Box.createHorizontalStrut(4));
+                    boxContainer1.add(Box.createHorizontalStrut(6));
                 } else if (ROWS > 1 && i < MAX * 2) {
                     boxContainer2.add(btCategory);
-                    boxContainer2.add(Box.createHorizontalStrut(4));
+                    boxContainer2.add(Box.createHorizontalStrut(6));
+
+                } else if (ROWS > 2 && i < MAX * 3) {
+                    boxContainer3.add(btCategory);
+                    boxContainer3.add(Box.createHorizontalStrut(6));
 
                 }
             }
             boxContainer1.add(Box.createHorizontalGlue());
             boxContainer2.add(Box.createHorizontalGlue());
+            boxContainer3.add(Box.createHorizontalGlue());
 
             int lim = ROWS > 1 ? 2 : 1;
             if (categories.size() - 1 > MAX * lim) {
@@ -112,7 +123,12 @@ public class PanelSelCategory extends PanelCapturaMod implements ActionListener 
                 btExtras.setForeground(Color.black);
                 btExtras.setActionCommand(SHOW_EXTRA_CATEGORIES);
                 btExtras.addActionListener(this);
-                if (ROWS > 1) {
+                if (ROWS > 2) {
+                    boxContainer1.add(Box.createHorizontalGlue());
+                    boxContainer2.add(Box.createHorizontalGlue());
+                    boxContainer3.add(Box.createHorizontalGlue());
+                    boxContainer3.add(btExtras);
+                } else if (ROWS > 1) {
                     boxContainer1.add(Box.createHorizontalGlue());
                     boxContainer2.add(Box.createHorizontalGlue());
                     boxContainer2.add(btExtras);
@@ -123,7 +139,7 @@ public class PanelSelCategory extends PanelCapturaMod implements ActionListener 
 
                 popupExtraCategories = new JPopupMenu();
 
-                for (int i = (ROWS > 1 ? MAX * 2 : MAX); i < categories.size(); i++) {
+                for (int i = (ROWS > 1 ? MAX * ROWS : MAX); i < categories.size(); i++) {
                     JMenuItem item = new JMenuItem(categories.get(i).getName().toUpperCase());
                     item.addActionListener(this);
                     item.setActionCommand(SEL_CAT_ + categories.get(i).getName());

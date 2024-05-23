@@ -50,19 +50,23 @@ import org.dz.Resources;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import com.rb.Aplication;
+import com.rb.Configuration;
 import com.rb.MyConstants;
 import com.rb.domain.AdditionalPed;
+import com.rb.domain.ConfigDB;
 import com.rb.domain.Cycle;
 import com.rb.domain.Invoice;
 import com.rb.domain.Permission;
 import com.rb.domain.ProductoPed;
 import com.rb.domain.Waiter;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import static javax.swing.BorderFactory.createLineBorder;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
@@ -210,6 +214,21 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
 
         splitPane.setLeftComponent(scTableOrders);
         splitPane.setRightComponent(panelDetail);
+        
+        ConfigDB config = app.getControl().getConfigLocal(Configuration.SPLIT_PANE_ORDERS_LIST);
+        String splitPosition = config != null ? config.getValor() : "600";
+        int pos = Integer.parseInt(splitPosition);
+
+        splitPane.setDividerLocation(pos);
+
+        splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                int newPosition = splitPane.getDividerLocation();
+                app.getControl().addConfig(
+                        new ConfigDB(Configuration.SPLIT_PANE_ORDERS_LIST, ConfigDB.INTEGER, String.valueOf(newPosition), app.getUser().getUsername(), Aplication.getUserDevice()));
+            }
+        });
 
         regFilter1.setActionCommand(AC_FILTER);
         regFilter1.addActionListener(this);

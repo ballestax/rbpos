@@ -40,6 +40,7 @@ public class Configuration {
     public static final String PRINTER_SELECTED = "cf.printer";
     public static final String PRINTER_SELECTED_2 = "cf.printer2";
     public static final String DELIVERY_VALUE = "cf.delivery";
+    public static final String MAX_LETTERS = "cf.max_letters";
     public static final String PREFIX_INVOICES = "cf.prefix";
     public static final String ZEROS_INVOICES = "cf.zeros";
     public static final String MAX_SERVICE_PORC = "cf.maxservice";
@@ -73,6 +74,9 @@ public class Configuration {
     public static final String BS_CUSTOM_QUALITY_SCALE = "cf.tck.quality_scale";
     public static final String BS_CUSTOM_QUALITY_ENABLED = "cf.tck.ticket_width";
     public static final String BS_TICKECT_WIDTH = "cf.tck.ticket_width";
+
+    public static final String SPLIT_PANE_ORDERS = "cf.split_panel_orders";
+    public static final String SPLIT_PANE_ORDERS_LIST = "cf.split_panel_orders_list";
 
     private StandardPBEStringEncryptor encryptor;
 

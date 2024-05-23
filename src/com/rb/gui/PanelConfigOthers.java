@@ -42,6 +42,9 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
     private Registro regRowCategories;
     private Registro regAutoSendOrder;
     private Registro regDefServ;
+    private Registro regAllowServ;
+    private Registro regMaxLetters;
+    private Registro regPaperWidth;
 
     /**
      * Creates new form PanelConfigMotor
@@ -84,6 +87,17 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         cCont.addCampo(regDocName);
         jPanel1.add(cCont);
         jPanel1.add(Box.createVerticalStrut(5));
+        
+        regPaperWidth= new Registro(BoxLayout.X_AXIS, "Ancho", "", 100);
+        regPaperWidth.setBackground(color1);
+        regPaperWidth.setFontCampo(font);
+        regPaperWidth.setDocument(TextFormatter.getIntegerLimiter());
+        cCont = new ConfigCont(app);
+        cCont.setBackgroundTitle(new Color(200, 210, 220));
+        cCont.setTitle("Ancho del papel (caracteres)");
+        cCont.addCampo(regPaperWidth);
+        jPanel1.add(cCont);
+        jPanel1.add(Box.createVerticalStrut(5));
 
         regNumZeros = new Registro(BoxLayout.X_AXIS, "Ceros", "", 100);
         regNumZeros.setBackground(color1);
@@ -93,6 +107,16 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         cCont.setBackgroundTitle(new Color(200, 210, 220));
         cCont.setTitle("Numero de ceros a formatear el consecutivo");
         cCont.addCampo(regNumZeros);
+        jPanel1.add(cCont);
+        jPanel1.add(Box.createVerticalStrut(5));
+
+        regAllowServ = new Registro(BoxLayout.X_AXIS, "Permitir", false, 100);
+        regAllowServ.setBackground(color1);
+        regAllowServ.setFontCampo(font);
+        cCont = new ConfigCont(app);
+        cCont.setBackgroundTitle(new Color(200, 210, 220));
+        cCont.setTitle("Permitir servicio voluntario");
+        cCont.addCampo(regAllowServ);
         jPanel1.add(cCont);
         jPanel1.add(Box.createVerticalStrut(5));
 
@@ -188,7 +212,6 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         cCont.setTitle("Numero de categorias a visualizar");
         cCont.addCampo(regNumCategories);
         jPanel1.add(cCont);
-        jPanel1.add(Box.createVerticalGlue());
         jPanel1.add(Box.createVerticalStrut(5));
 
         regRowCategories = new Registro(BoxLayout.X_AXIS, "Filas", "", 100);
@@ -199,6 +222,17 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         cCont.setBackgroundTitle(new Color(200, 210, 220));
         cCont.setTitle("Numero de filas de categorias a visualizar");
         cCont.addCampo(regRowCategories);
+        jPanel1.add(cCont);
+        jPanel1.add(Box.createVerticalStrut(5));
+
+        regMaxLetters = new Registro(BoxLayout.X_AXIS, "Filas", "", 100);
+        regMaxLetters.setBackground(color1);
+        regMaxLetters.setFontCampo(font);
+        regMaxLetters.setDocument(TextFormatter.getIntegerLimiter());
+        cCont = new ConfigCont(app);
+        cCont.setBackgroundTitle(new Color(200, 210, 220));
+        cCont.setTitle("Maximo numero de lestras en Card Producto");
+        cCont.addCampo(regMaxLetters);
         jPanel1.add(cCont);
         jPanel1.add(Box.createVerticalGlue());
         jPanel1.add(Box.createVerticalStrut(5));
@@ -257,9 +291,21 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
         boolean autoSendOrder = config != null ? (boolean) config.castValor() : false;
         regAutoSendOrder.setSelected(autoSendOrder);
 
+        config = app.getControl().getConfigGlobal(Configuration.BS_SHOW_SERVICE);
+        boolean allowService = config != null ? (boolean) config.castValor() : false;
+        regAllowServ.setSelected(allowService);
+
         config = app.getControl().getConfigGlobal(Configuration.DEF_SERVICE_PORC);
         double defServValue = config != null ? (double) config.castValor() : 0;
         regDefServ.setText(app.getDCFORM_W().format(defServValue));
+
+        config = app.getControl().getConfigLocal(Configuration.MAX_LETTERS);
+        int maxLetters = config != null ? (int) config.castValor() : 25;
+        regMaxLetters.setText(app.getDCFORM_W().format(maxLetters));
+        
+        config = app.getControl().getConfigGlobal(Configuration.BS_TICKECT_WIDTH);
+        int ticketWidth = config != null ? (int) config.castValor() : 32;
+        regPaperWidth.setText(app.getDCFORM_W().format(ticketWidth));
 
     }
 
@@ -385,9 +431,21 @@ public class PanelConfigOthers extends javax.swing.JPanel implements ActionListe
             app.getControl().addConfig(
                     new ConfigDB(Configuration.AUTO_SEND_ORDER_TO_STATIONS, ConfigDB.BOOLEAN, String.valueOf(selected4), userName, userDevice));
 
+            boolean selected5 = regAllowServ.isSelected();
+            app.getControl().addConfigOrUpdate(
+                    new ConfigDB(Configuration.BS_SHOW_SERVICE, ConfigDB.BOOLEAN, String.valueOf(selected5), userName, userDevice, true));
+
             String serv = regDefServ.getText();
             app.getControl().addConfigOrUpdate(
                     new ConfigDB(com.rb.Configuration.DEF_SERVICE_PORC, ConfigDB.DOUBLE, serv, userName, userDevice, true));
+
+            String maxLetter = regMaxLetters.getText();
+            app.getControl().addConfig(
+                    new ConfigDB(com.rb.Configuration.MAX_LETTERS, ConfigDB.INTEGER, maxLetter, userName, userDevice));
+            
+            String ticketWidth = regPaperWidth.getText();
+            app.getControl().addConfigOrUpdate(
+                    new ConfigDB(com.rb.Configuration.BS_TICKECT_WIDTH, ConfigDB.INTEGER, ticketWidth, userName, userDevice, true));
 
             String time = Aplication.DF_SQL_TS.format(new Date());
             lbInfo.setText("<html><font color=blue>Ultima configuracion guardada: " + time + "</font></html>");
