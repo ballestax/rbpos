@@ -116,7 +116,7 @@ public class PrinterService {
             String BS_QUALITY_SCALE = config != null ? config.getValor() : app.getConfiguration().getProperty(Configuration.BS_CUSTOM_QUALITY_SCALE);
 
             config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_TICKECT_WIDTH);
-            String BS_TICKET_WIDTH = config != null ? config.getValor() : "32";
+            String BS_TICKET_WIDTH = config != null ? config.getValor() : "40";
 
             config = app.getControl().getConfigGlobal(com.rb.Configuration.BS_SHOW_SERVICE);
             String BS_SHOW_SERVICE = config != null ? config.getValor() : "false";
@@ -134,11 +134,11 @@ public class PrinterService {
             String LINE_1 = String.valueOf("=").repeat(WIDTH);
             String LINE_2 = String.valueOf("_").repeat(WIDTH);
 
-            int espacioRem = WIDTH - 22;
-            int espacioRem2 = WIDTH - 15;
+            int espacioRem = WIDTH - 23;
+            int espacioRem2 = WIDTH - 14;
             System.out.println("espacioRem = " + espacioRem);
             String newFormatoLEFT = "%-" + espacioRem + "." + espacioRem + "s";
-            String newFormatoRIGHT = "%" + espacioRem2 + "." + espacioRem2 + "s";
+//            String newFormatoRIGHT = "%" + espacioRem2 + "." + espacioRem2 + "s";
 
             // this wrapper uses esc/pos sequence: "ESC '*'"
             BitImageWrapper imageWrapper = new BitImageWrapper();
@@ -184,7 +184,7 @@ public class PrinterService {
             String column1Format = "%3.3s";  // fixed size 3 characters, left aligned
             String column2Format = newFormatoLEFT;  // fixed size 8 characters, left aligned
             String column3Format = "%7.7s";   // fixed size 6 characters, right aligned
-            String column4Format = "%9.9s";   // fixed size 6 characters, right aligned
+            String column4Format = "%10.10s";   // fixed size 6 characters, right aligned
             String formatInfo = column1Format + " " + column2Format + " " + column3Format + " " + column4Format;
 
             if (invoice.getStatus() == Invoice.ST_ANULADA) {
@@ -199,20 +199,21 @@ public class PrinterService {
                 Presentation presentation = product.getPresentation();
                 String prodName = product.getProduct().getName();
                 double priceFinal = product.getPrecio() + product.getValueAdicionales();
+                double total = product.getCantidad() * priceFinal;
                 System.out.println(prodName.length() + ">" + espacioRem);
                 if (prodName.length() < espacioRem) {
                     escpos.writeLF(String.format(formatInfo, product.getCantidad(), (prodName).toUpperCase(),
                             app.DCFORM_P.format(priceFinal), app.DCFORM_P.format(product.getCantidad() * priceFinal)));
                 } else {
                     int espacio = WIDTH - 4;
-                    int espacio2 = WIDTH - 15;
+                    int espacio2 = WIDTH - 6;
+                    int spaceForNums = WIDTH-10-1;
                     String column2FormatX = "%-" + espacio + "." + espacio + "s";
-                    String column3FormatX = "%-" + espacio2 + "." + espacio + "s";
+                    String column3FormatX = "%-" + espacio2 + "s %6s";
                     String formatInfoX = column1Format + " " + column2FormatX;
-                    String formatInfoY = column3FormatX + " " + column4Format;
+                    String formatInfoY = column3FormatX;
                     escpos.writeLF(String.format(formatInfoX, product.getCantidad(), (prodName).toUpperCase()));
-                    escpos.writeLF(String.format(formatInfoY,
-                            app.DCFORM_P.format(priceFinal), app.DCFORM_P.format(product.getCantidad() * priceFinal)));
+                    escpos.writeLF(String.format("%" + spaceForNums + "s %10s", app.DCFORM_P.format(priceFinal), app.DCFORM_P.format(total)));
                 }
                 String stPres = "";
                 if (presentation != null) {
