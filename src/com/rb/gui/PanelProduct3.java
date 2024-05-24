@@ -72,8 +72,8 @@ public class PanelProduct3 extends PanelCapturaMod implements ActionListener {
         }
 
         Font font1 = new Font("Sans", 1, 14);
-        Font font2 = new Font("Serif", 2, 12);                                                                                                                                              
-        Font font3 = new Font("Tahoma", 1, 16);
+        Font font2 = new Font("Serif", 2, 13);                                                                                                                                              
+        Font font3 = new Font("Tahoma", 1, 15);
 
         NumberFormat NF = DecimalFormat.getCurrencyInstance();
         NF.setMaximumFractionDigits(0);
@@ -91,7 +91,7 @@ public class PanelProduct3 extends PanelCapturaMod implements ActionListener {
 
         setBackground(Utiles.colorAleatorio(220, 255));
 
-        lbName.setText(pName.toUpperCase());
+        lbName.setText("<html>"+pName.toUpperCase()+"</html>");
         lbName.setToolTipText(product.getName().toUpperCase());
         lbName.setFont(font1);
         lbName.setForeground(Color.blue.darker().darker());
@@ -250,7 +250,7 @@ public class PanelProduct3 extends PanelCapturaMod implements ActionListener {
         btAddPress = new javax.swing.JButton();
 
         setAlignmentY(0.0F);
-        setPreferredSize(new java.awt.Dimension(225, 110));
+        setPreferredSize(new java.awt.Dimension(225, 130));
 
         lbName.setText("jLabel1");
 
@@ -269,8 +269,8 @@ public class PanelProduct3 extends PanelCapturaMod implements ActionListener {
                 .addGap(3, 3, 3)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lbPrice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(24, 24, 24)
+                        .addComponent(lbPrice, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btAddPress, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btAddCustom, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -278,14 +278,14 @@ public class PanelProduct3 extends PanelCapturaMod implements ActionListener {
                         .addComponent(btAddQuick, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(lbCategory, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbName, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGap(10, 10, 10))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(3, 3, 3)
-                .addComponent(lbName)
-                .addGap(2, 2, 2)
+                .addComponent(lbName, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbCategory)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
