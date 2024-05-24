@@ -213,7 +213,7 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
         modules.add(new Module(Aplication.ACTION_SHOW_ORDER, MyConstants.PERM_ORDERS_MODULE));
         modules.add(new Module(Aplication.ACTION_SHOW_ORDER_LIST, MyConstants.PERM_ORDERLIST_MODULE));
         modules.add(new Module(Aplication.ACTION_SHOW_CASH, MyConstants.PERM_CASH_MODULE));
-        modules.add(new Module(Aplication.ACTION_SHOW_SALES, MyConstants.PERM_SALES_MODULE));        
+        modules.add(new Module(Aplication.ACTION_SHOW_SALES, MyConstants.PERM_SALES_MODULE));
         modules.add(new Module(Aplication.ACTION_SHOW_PRODUCTS, MyConstants.PERM_PRODUCTS_MODULE));
         modules.add(new Module(Aplication.ACTION_SHOW_INVENTORY, MyConstants.PERM_INVENTORY_MODULE));
         modules.add(new Module(Aplication.ACTION_SHOW_REPORTS, MyConstants.PERM_REPORTS_MODULE));
@@ -365,6 +365,7 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
         }
         this.user = user;
         getGuiManager().reloadToolbar();
+        getGuiManager().reloadMenuPrc();
     }
 
     public SimpleDateFormat getSdfExport() {

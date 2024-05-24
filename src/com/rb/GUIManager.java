@@ -192,7 +192,7 @@ public class GUIManager {
     private JMenuBar menubar;
     private JStatusbar statusbar;
     private JPanel container;
-    private JPanel panelPresentation;
+    private PanelDash panelPresentation;
     private PanelBasic panelBasicOrdersList;
 
     public void configurar() {
@@ -406,13 +406,12 @@ public class GUIManager {
         return panelBasicInventory;
     }
 
-    private Component getPanelPresentation() {
+    private PanelDash getPanelPresentation() {
         if (panelPresentation == null) {
             panelPresentation = new PanelDash(app);
         }
         return panelPresentation;
     }
-
 
     public PanelAdminBackup getPanelAdminBackup() {
         if (pnAdminBackup == null) {
@@ -442,7 +441,6 @@ public class GUIManager {
         }
         return panelBasicOrdersList;
     }
-
 
     public PanelAdminWaiters getPanelAdminWaiters() {
         if (pnAdminWaiters == null) {
@@ -631,7 +629,7 @@ public class GUIManager {
         panelNewWaiter.addPropertyChangeListener(pcl);
         return panelNewWaiter;
     }
-    
+
     private PanelNewTable getPanelNewTable(PropertyChangeListener pcl, Table table) {
         PanelNewTable panelNewTable = new PanelNewTable(app, table);
         panelNewTable.addPropertyChangeListener(pcl);
@@ -716,6 +714,10 @@ public class GUIManager {
 
         }
         return toolbar;
+    }
+
+    public void reloadMenuPrc() {
+        getPanelPresentation().reloadModules();
     }
 
     public void reloadToolbar() {
@@ -1001,7 +1003,7 @@ public class GUIManager {
         setDefaultCursor();
         dialog.setVisible(true);
     }
-    
+
     public void showNewTable(PropertyChangeListener pcl, Table table) {
         setWaitCursor();
         JDialog dialog = getDialog(true);

@@ -7,6 +7,8 @@ package com.rb.gui;
 
 import com.rb.Aplication;
 import com.rb.domain.Module;
+import com.rb.domain.Permission;
+import com.rb.domain.User;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Component;
@@ -44,8 +46,8 @@ public class PanelDash extends JPanel {
     private Aplication app;
     private final Image imagen;
     private final BufferedImage imgMas = null;
-    private int wl=0;
-    private int hl=0;
+    private int wl = 0;
+    private int hl = 0;
 
     public PanelDash(Aplication app) {
         this.app = app;
@@ -73,17 +75,28 @@ public class PanelDash extends JPanel {
 
     }
 
+    public void reloadModules() {
+        loadModules();
+    }
+
     private void loadModules() {
         removeAll();
+
+        User user = app.getUser();
         List<Module> modules = app.getModules();
         int COLS = 5;
         int ix = 1, iy = 1;
         for (Module module : modules) {
-            add(newButton(app.getAction(module.getName())), constrains(ix, iy, 30));
-            ix++;
-            if (ix == COLS) {
-                ix = 1;
-                iy++;
+
+            Permission perm = app.getControl().getPermissionByName(module.getPermision());
+            if (user != null && app.getControl().hasPermission(user, perm)) {
+
+                add(newButton(app.getAction(module.getName())), constrains(ix, iy, 30));
+                ix++;
+                if (ix == COLS) {
+                    ix = 1;
+                    iy++;
+                }
             }
         }
 
