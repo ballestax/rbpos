@@ -12,6 +12,7 @@ package com.rb.domain;
 public class Additional extends Ingredient {
 
     private double precio;
+    private boolean enabled;
 
     public Additional() {
     }
@@ -27,6 +28,14 @@ public class Additional extends Ingredient {
 
     public void setPrecio(double precio) {
         this.precio = precio;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override
@@ -54,4 +63,3 @@ public class Additional extends Ingredient {
     }
 
 }
-
