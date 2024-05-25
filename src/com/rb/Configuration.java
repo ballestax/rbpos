@@ -49,6 +49,7 @@ public class Configuration {
     public static final String IS_SERVICE_DEF = "cf.isservice";
     public static final String PATH_IMG = "cf.pathimg";
     public static final String PRINT_PREV_DELIVERY = "cf.printprevius";
+    public static final String OPEN_CASH = "cf.opencash";
     public static final String SHOW_EXCLUSIONS = "cf.showexclusions";
     public static final String MAX_CATEGORIES_LIST = "cf.maxcategorieslist";
     public static final String CATEGORY_ROWS = "cf.categoryrows";
@@ -77,6 +78,7 @@ public class Configuration {
 
     public static final String SPLIT_PANE_ORDERS = "cf.split_panel_orders";
     public static final String SPLIT_PANE_ORDERS_LIST = "cf.split_panel_orders_list";
+    public static final String SPLIT_PANE_PRODUCTS = "cf.split_panel_products";
 
     private StandardPBEStringEncryptor encryptor;
 

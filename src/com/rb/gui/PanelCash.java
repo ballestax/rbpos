@@ -110,14 +110,14 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         btRefresh.addActionListener(this);
         btRefresh.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "update.png", 32, 32)));
 
-        btRefresh1.setActionCommand(AC_OPEN_CASH);
-        btRefresh1.addActionListener(this);
-        btRefresh1.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "cashdrawer.png", 32, 32)));
+        btOpenCash.setActionCommand(AC_OPEN_CASH);
+        btOpenCash.addActionListener(this);
+        btOpenCash.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "cashdrawer.png", 32, 32)));
 
         btAddExtra.setActionCommand(AC_ADD_GASTO);
         btAddExtra.addActionListener(this);
         btAddExtra.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "add1.png", 24, 24)));
-        
+
         tableInvoices.setModel(model);
         tableInvoices.setRowHeight(24);
         Font f = new Font("Sans", 0, 14);
@@ -258,6 +258,9 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         lbData4.setText("0");
         lbData5.setText("0");
         lbData6.setText("0");
+
+        ConfigDB config = app.getControl().getConfigGlobal(Configuration.OPEN_CASH);
+        btOpenCash.setEnabled(config != null ? (Boolean.valueOf(config.getValor())) : false);
 
         regFilter1.setActionCommand(AC_FILTER);
         regFilter1.addActionListener(this);
@@ -461,7 +464,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
                 cycle.setStatus(0);
                 cycle.setEnd(new Date());
                 app.getControl().saveSnapshotData(cycle);
-                app.getControl().updateCycle(cycle);                
+                app.getControl().updateCycle(cycle);
                 showCycle(cycle);
                 pulsePinPrinter();
             }
@@ -559,7 +562,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         lbEnd = new javax.swing.JLabel();
         lbStatus = new javax.swing.JLabel();
         btRefresh = new javax.swing.JButton();
-        btRefresh1 = new javax.swing.JButton();
+        btOpenCash = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableInvoices = new javax.swing.JTable();
         lbFacturas = new javax.swing.JLabel();
@@ -622,7 +625,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btRefresh1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btOpenCash, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -645,7 +648,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btRefresh1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btOpenCash, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -836,8 +839,8 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAddExtra;
     private javax.swing.JButton btNewCiclo;
+    private javax.swing.JButton btOpenCash;
     private javax.swing.JButton btRefresh;
-    private javax.swing.JButton btRefresh1;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

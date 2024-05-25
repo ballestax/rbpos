@@ -176,7 +176,7 @@ public class Control {
             logger.error("Error adding config.", e);
         }
     }
-    
+
     public void addConfigOrUpdate(ConfigDB config) {
         try {
             JDBCConfigDAO configDAO = (JDBCConfigDAO) DAOFactory.getInstance().getConfigDAO();
@@ -514,6 +514,17 @@ public class Control {
         }
     }
 
+    public boolean updateAdditional(Additional addit) {
+        try {
+            JDBCAdditionalDAO additDao = (JDBCAdditionalDAO) DAOFactory.getInstance().getAdditionalDAO();
+            additDao.updateAdditional(addit);
+            return true;
+        } catch (DAOException ex) {
+            logger.error("Error updating Aditional", ex);
+            return false;
+        }
+    }
+
     public ArrayList<Product> getProductsList(String where, String order) {
         try {
             JDBCProductDAO prodDAO = (JDBCProductDAO) DAOFactory.getInstance().getProductDAO();
@@ -540,6 +551,29 @@ public class Control {
             return prodDAO.getProductBy("id=" + String.valueOf(id));
         } catch (DAOException ex) {
             logger.error("Error getting Products list.", ex);
+            return null;
+        }
+    }
+
+    public boolean addAdditionalWhitIngredient(Additional additional) {
+        try {
+            JDBCAdditionalDAO additionalDao = (JDBCAdditionalDAO) DAOFactory.getInstance().getAdditionalDAO();
+            additionalDao.addAdditionalWhitIngredient(additional);
+            return true;
+        } catch (DAOException ex) {
+            String msg = "Error adding adicional: " + additional.getName();
+            logger.error(msg, ex);
+            GUIManager.showErrorMessage(null, msg, "Error");
+            return false;
+        }
+    }
+
+    public Additional getAdditionalById(long id) {
+        try {
+            JDBCAdditionalDAO additDao = (JDBCAdditionalDAO) DAOFactory.getInstance().getAdditionalDAO();
+            return additDao.getAdditionalBy("id=" + String.valueOf(id));
+        } catch (DAOException ex) {
+            logger.error("Error getting Additional.", ex);
             return null;
         }
     }

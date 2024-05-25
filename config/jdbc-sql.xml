@@ -858,7 +858,7 @@
         
         <SQLStatement method="ADD_ADDITIONAL">
             <SQLFragment>
-                INSERT INTO additionals (producto_id,precio) VALUES (?,?);
+                INSERT INTO additionals (ingredient_id,precio) VALUES (?,?);
             </SQLFragment>
         </SQLStatement>        
         

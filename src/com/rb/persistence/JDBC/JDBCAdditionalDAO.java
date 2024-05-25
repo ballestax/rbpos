@@ -7,6 +7,7 @@ package com.rb.persistence.JDBC;
 
 import com.rb.DBManager;
 import com.rb.domain.Additional;
+import static com.rb.persistence.JDBC.JDBCIngredientDAO.ADD_INGREDIENT_KEY;
 import com.rb.persistence.SQLExtractor;
 import com.rb.persistence.SQLLoader;
 import com.rb.persistence.dao.DAOException;
@@ -145,7 +146,7 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
         try {
             conn = dataSource.getConnection();
             retrieve = conn.prepareStatement(retrieveAdditionals);
-            rs = retrieve.executeQuery();            
+            rs = retrieve.executeQuery();
 
             while (rs.next()) {
                 additional = new Additional();
@@ -180,6 +181,52 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
                 additional.getName(),
                 additional.getCode(),
                 additional.getMeasure(),
+                additional.getPrecio()
+            };
+            ps = sqlStatements.buildSQLStatement(conn, ADD_ADDITIONAL_KEY, parameters);
+
+            ps.executeUpdate();
+            conn.commit();
+        } catch (SQLException e) {
+            DBManager.rollbackConn(conn);
+            throw new DAOException("Cannot add Additional", e);
+        } catch (IOException e) {
+            DBManager.rollbackConn(conn);
+            throw new DAOException("Cannot add Additional", e);
+        } finally {
+            DBManager.closeStatement(ps);
+            DBManager.closeConnection(conn);
+        }
+    }
+
+    public void addAdditionalWhitIngredient(Additional additional) throws DAOException {
+        if (additional == null) {
+            throw new IllegalArgumentException("Null additional");
+        }
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+
+            Object[] parameters = {
+                additional.getName(),
+                additional.getCode(),
+                additional.getMeasure()
+            };
+            ps = sqlStatements.buildSQLStatement(conn, ADD_INGREDIENT_KEY, parameters, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            long idIngr = 0;
+
+            if (ps.executeUpdate() > 0) {
+                ResultSet genKey = ps.getGeneratedKeys();
+                if (genKey.next()) {
+                    idIngr = genKey.getLong(1);
+                }
+            }
+
+            parameters = new Object[]{
+                idIngr,
                 additional.getPrecio()
             };
             ps = sqlStatements.buildSQLStatement(conn, ADD_ADDITIONAL_KEY, parameters);
