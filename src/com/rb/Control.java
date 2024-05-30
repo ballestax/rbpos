@@ -513,6 +513,17 @@ public class Control {
             return false;
         }
     }
+    
+    public boolean updateAdditional(Additional addit) {
+        try {
+            JDBCAdditionalDAO additDao = (JDBCAdditionalDAO) DAOFactory.getInstance().getAdditionalDAO();
+            additDao.updateAdditional(addit);
+            return true;
+        } catch (DAOException ex) {
+            logger.error("Error updating Aditional", ex);
+            return false;
+        }
+    }
 
     public boolean updateAdditional(Additional addit) {
         try {
