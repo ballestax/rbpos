@@ -175,7 +175,6 @@ public class JDBCUtilDAO implements UtilDAO {
     public static final String UPDATE_CATEGORY_KEY = "UPDATE_CATEGORY";
 
     // public static final String ADD_WAITER_KEY = "ADD_WAITER";
-
     public static final String GET_EXPENSE_INCOME_LIST_KEY = "GET_EXPENSE_INCOME_LIST";
 
     public static final String GET_EXPENSES_CATEGORIES_LIST_KEY = "GET_EXPENSES_CATEGORY";
@@ -192,7 +191,7 @@ public class JDBCUtilDAO implements UtilDAO {
 
     public static final String ADD_WAITER_KEY = "ADD_WAITER";
     public static final String UPDATE_WAITER_KEY = "UPDATE_WAITER";
-    
+
     public static final String ADD_TABLE_KEY = "ADD_TABLE";
     public static final String UPDATE_TABLE_KEY = "UPDATE_TABLE";
 
@@ -1109,9 +1108,9 @@ public class JDBCUtilDAO implements UtilDAO {
                 cycle.setInit(rs.getTimestamp(2));
                 cycle.setEnd(rs.getTimestamp(3));
                 cycle.setInitialBalance(rs.getBigDecimal(4));
-                cycle.setStatus(rs.getInt(5));                
+                cycle.setStatus(rs.getInt(5));
             }
-            
+
         } catch (SQLException e) {
             throw new DAOException("Could not properly retrieve the cycle: " + e);
         } finally {
@@ -1834,7 +1833,6 @@ public class JDBCUtilDAO implements UtilDAO {
     //         DBManager.closeConnection(conn);
     //     }
     // }
-
     public void updateCategory(String category, String id) throws DAOException {
         Connection conn = null;
         PreparedStatement update = null;
@@ -1917,6 +1915,10 @@ public class JDBCUtilDAO implements UtilDAO {
     public boolean updatePresentationToDefault(Presentation pres) throws DAOException {
         Connection conn = null;
         PreparedStatement update = null;
+        if (pres == null) {
+            return false;
+        }
+
         try {
             conn = dataSource.getConnection();
             conn.setAutoCommit(false);
@@ -2966,7 +2968,7 @@ public class JDBCUtilDAO implements UtilDAO {
             DBManager.closeConnection(conn);
         }
     }
-    
+
     public void addTable(Table table) throws DAOException {
         if (table == null) {
             throw new IllegalArgumentException("Null table");

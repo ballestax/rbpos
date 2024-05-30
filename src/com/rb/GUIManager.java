@@ -108,6 +108,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import static org.dz.GuiUtil.centrarFrame;
 import org.dz.MyDialogEsc;
@@ -208,6 +209,11 @@ public class GUIManager {
             SwingUtilities.updateComponentTreeUI(frame);
         } catch (Exception exception) {
 
+        }
+        
+        UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+        if (defaults.get("Table.alternateRowColor") == null) {
+            defaults.put("Table.alternateRowColor", new Color(240, 240, 240));
         }
 
         centrarFrame(getFrame());

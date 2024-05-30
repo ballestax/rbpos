@@ -12,6 +12,8 @@ import com.rb.domain.Ingredient;
 import com.rb.domain.Presentation;
 import com.rb.domain.Product;
 import com.rb.domain.ProductoPed;
+import static com.rb.gui.PanelAddition.AC_QUANTITY_ADD;
+import static com.rb.gui.PanelAddition.AC_QUANTITY_MINUS;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -133,6 +135,15 @@ public class PanelCustomPedido extends PanelCapturaMod implements ActionListener
         });
 
         spCantidad.requestFocus();
+        
+         btMinus.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "minus.png", 18, 18)));
+        btMinus.setActionCommand(AC_QUANTITY_MINUS
+        );
+        btMinus.addActionListener(this);
+
+        btPlus.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "plus.png", 18, 18)));
+        btPlus.setActionCommand(AC_QUANTITY_ADD);
+        btPlus.addActionListener(this);
 
         btConfirm.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "success.png", 10, 10)));
         btConfirm.setBackground(new Color(153, 255, 153));
@@ -165,7 +176,7 @@ public class PanelCustomPedido extends PanelCapturaMod implements ActionListener
         sPanel1.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         ArrayList<Additional> adds = app.getControl().getAdditionalList("", "i.name");
-        int COLS = 4;
+        int COLS = 3;
         panel2.setLayout(new GridLayout(0, COLS, 5, 5));
         sPanel1.setViewportView(panel2);
         for (int i = 0; i < adds.size(); i++) {
@@ -328,9 +339,26 @@ public class PanelCustomPedido extends PanelCapturaMod implements ActionListener
             if (presentation != null) {
                 lbPrice.setText(NF.format(presentation.getPrice()));
             }
+        }else if (AC_QUANTITY_MINUS.equals(e.getActionCommand())) {
+            updateSpCantidad(-1);
+        } else if (AC_QUANTITY_ADD.equals(e.getActionCommand())) {
+            updateSpCantidad(1);
         }
     }
     public static final String AC_CUSTOM_ADD = "AC_CUSTOM_ADD";
+    
+    private void updateSpCantidad(int diff) {
+
+        Integer value = Integer.valueOf(spModel.getValue().toString());
+        value += diff;
+        if (value >= 1 && value < 100) {
+            spModel.setValue(value);
+        }
+        btMinus.setEnabled( value > 1);
+        btPlus.setEnabled(value < 10000);
+
+//        lastValue = value;
+    }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -363,6 +391,8 @@ public class PanelCustomPedido extends PanelCapturaMod implements ActionListener
         panel3 = new javax.swing.JPanel();
         spPrice = new javax.swing.JSpinner();
         sPanel1 = new javax.swing.JScrollPane();
+        btMinus = new javax.swing.JButton();
+        btPlus = new javax.swing.JButton();
 
         lbName.setFont(new java.awt.Font("Ubuntu", 1, 17)); // NOI18N
         lbName.setText("jLabel1");
@@ -443,16 +473,22 @@ public class PanelCustomPedido extends PanelCapturaMod implements ActionListener
                         .addComponent(lbImage, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lbDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lbName, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
+                            .addComponent(lbDescription, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(spCantidad, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
                             .addComponent(lbCant, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(spPrice)
                                 .addGap(3, 3, 3)
-                                .addComponent(lbPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
+                                .addComponent(lbPrice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(btMinus, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(1, 1, 1)
+                                .addComponent(spCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(1, 1, 1)
+                                .addComponent(btPlus, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))))
                     .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbTitle2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1)
@@ -469,8 +505,7 @@ public class PanelCustomPedido extends PanelCapturaMod implements ActionListener
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lbImage, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(lbPrice, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
@@ -478,11 +513,15 @@ public class PanelCustomPedido extends PanelCapturaMod implements ActionListener
                             .addComponent(lbName, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbDescription, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lbDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(lbCant)
-                                .addGap(0, 0, 0)
-                                .addComponent(spCantidad)))))
+                                .addGap(1, 1, 1)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                                    .addComponent(btMinus, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(spCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE)
+                                    .addComponent(btPlus, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addComponent(lbImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbTitle3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -496,7 +535,7 @@ public class PanelCustomPedido extends PanelCapturaMod implements ActionListener
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(sPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 16, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -508,11 +547,15 @@ public class PanelCustomPedido extends PanelCapturaMod implements ActionListener
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btConfirm, lbInfo});
 
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btMinus, btPlus, spCantidad});
+
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btConfirm;
+    private javax.swing.JButton btMinus;
+    private javax.swing.JButton btPlus;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbCant;
     private javax.swing.JLabel lbDescription;

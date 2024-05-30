@@ -462,7 +462,7 @@ public class PanelPedido extends PanelCapturaMod
         formatRenderer.setForeground(color);
         ProductRenderer prodRenderer = new ProductRenderer(BoxLayout.Y_AXIS);
 
-        int[] colW = new int[]{40, 220, 70, 80};
+        int[] colW = new int[]{30, 230, 60, 80};
         for (int i = 0; i < colW.length; i++) {
             tbListado.getColumnModel().getColumn(i).setMinWidth(colW[i]);
             tbListado.getColumnModel().getColumn(i).setPreferredWidth(colW[i]);
