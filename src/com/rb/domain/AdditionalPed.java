@@ -58,4 +58,11 @@ public class AdditionalPed {
         return hash;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getAdditional().getName()).append("(x").append(getCantidad()).append(")");
+        return sb.toString();
+    }
+
 }

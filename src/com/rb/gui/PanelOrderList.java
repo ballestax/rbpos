@@ -637,7 +637,7 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
             btn.setPreferredSize(new Dimension(28, 28));
             btn.setMaximumSize(new Dimension(28, 28));
             btn.setIcon(
-                    new ImageIcon(Resources.getImagen("gui/img/icons/navigate-down.png", Aplication.class, 20, 20)));
+                    new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons()+"navigate-down.png",  20, 20)));
             btn.setActionCommand(AC_DISPLAY_OPTIONS);
 
             btn2 = new JButton();
@@ -645,7 +645,7 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
             btn2.setPreferredSize(new Dimension(28, 28));
             btn2.setMaximumSize(new Dimension(28, 28));
             btn2.setIcon(
-                    new ImageIcon(Resources.getImagen("gui/img/icons/edit.png", Aplication.class, 20, 20)));
+                    new ImageIcon(Resources.getImagen(app.getFolderIcons()+"edit.png", Aplication.class, 20, 20)));
             btn2.setActionCommand(AC_EDITAR_PEDIDO);
 
         }

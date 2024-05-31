@@ -525,16 +525,7 @@ public class Control {
         }
     }
 
-    public boolean updateAdditional(Additional addit) {
-        try {
-            JDBCAdditionalDAO additDao = (JDBCAdditionalDAO) DAOFactory.getInstance().getAdditionalDAO();
-            additDao.updateAdditional(addit);
-            return true;
-        } catch (DAOException ex) {
-            logger.error("Error updating Aditional", ex);
-            return false;
-        }
-    }
+    
 
     public ArrayList<Product> getProductsList(String where, String order) {
         try {

@@ -193,7 +193,7 @@ public class ProductRenderer extends Box implements TableCellRenderer {
                 int height0 = 8;
                 if (presentation != null) {
                     labelPres.setVisible(true);
-                    stPres = "<html><font size=3 color=blue> (" + presentation.getName() + ")</font> </html>";
+                    stPres = "<html><font size=4 color=blue> (" + presentation.getName() + ")</font> </html>";
                     labelPres.setText(stPres);
                     labelPres.setPreferredSize(new Dimension(width, height0));
                 }

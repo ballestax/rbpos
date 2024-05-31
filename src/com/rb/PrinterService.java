@@ -324,6 +324,11 @@ public class PrinterService {
 
         String LINE_1 = String.valueOf("=").repeat(WIDTH);
         String LINE_2 = String.valueOf(". ").repeat((int) (WIDTH / 2));
+        
+        int espacioRem = WIDTH - 23;
+            String newFormatoLEFT = "%-" + espacioRem + "." + espacioRem + "s";
+        
+        
 
         Waiter waiter = null;
         Table table = null;
@@ -368,10 +373,10 @@ public class PrinterService {
             escpos.feed(1);
 
             String column1Format = "%3.3s";  // fixed size 3 characters, left aligned
-            String column2Format = "%-20.20s";  // fixed size 8 characters, left aligned
+            String column2Format = newFormatoLEFT;  // fixed size 8 characters, left aligned
             String column3Format = "%7.7s";   // fixed size 6 characters, right aligned
             String column4Format = "%12.12s";   // fixed size 6 characters, right aligned
-            String formatInfo = column1Format + " " + column2Format + " " + column3Format + " " + column4Format;
+            String formatInfo = column1Format + " " + column2Format + " " + column4Format;
 
             if (invoice.getStatus() == Invoice.ST_ANULADA || invoice.getStatus() == Invoice.ST_MODIFICADA) {
                 escpos.writeLF(new Style().setFontSize(Style.FontSize._2, Style.FontSize._2).setJustification(EscPosConst.Justification.Center),
@@ -394,7 +399,7 @@ public class PrinterService {
 //                if (product.hasTermino()) {
 //                    stPres += "  [" + product.getTermino() + "]";
 //                }
-                escpos.writeLF(font3, "    " + stPres);
+                escpos.writeLF(font2, " > " + stPres);
 
                 StringBuilder stb = new StringBuilder();
                 if (product.getExclusiones().size() > 0) {
