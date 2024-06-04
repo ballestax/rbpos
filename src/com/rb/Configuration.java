@@ -70,6 +70,7 @@ public class Configuration {
     public static final String BS_CUSTOM_TOP = "cf.tck.custom1";
     public static final String BS_CUSTOM_BOTTON = "cf.tck.custom2";
     public static final String BS_SHOW_SERVICE = "cf.tck.show_service";
+    public static final String BS_SHOW_DISCOUNT = "cf.tck.show_discount";
     public static final String BS_CUSTOM_SERVICE = "cf.tck.custom3";
     public static final String BS_CUSTOM_QUALITY_MSG = "cf.tck.quality_msg";
     public static final String BS_CUSTOM_QUALITY_SCALE = "cf.tck.quality_scale";

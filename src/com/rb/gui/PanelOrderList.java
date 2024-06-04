@@ -214,7 +214,7 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
 
         splitPane.setLeftComponent(scTableOrders);
         splitPane.setRightComponent(panelDetail);
-        
+
         ConfigDB config = app.getControl().getConfigLocal(Configuration.SPLIT_PANE_ORDERS_LIST);
         String splitPosition = config != null ? config.getValor() : "600";
         int pos = Integer.parseInt(splitPosition);
@@ -244,7 +244,7 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         btUpdate.setActionCommand(AC_UPDATE);
 
         cbPend.setActionCommand(AC_SHOW_ONLY_PEND);
-        cbPend.setText("Solo pend");
+        cbPend.setText("<html>Solo <br>pendientes<html>");
         cbPend.addActionListener(this);
 
         timer = new Timer(1000, e
@@ -320,40 +320,58 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
 
     public void showTable(Invoice order) {
         StringBuilder str = new StringBuilder();
+        int width = labelInfo.getWidth() - 10;
+
+        String style1 = " style='font-family: Arial; font-size: 13px;'";
+        String style2 = " style='font-family: Roboto; font-size: 11px;'";
+        String style3 = " style='font-family: Roboto; font-size: 10px;";
         if (order != null) {
 
-            String color = "#34cdaa";
+            String color = "#cccccc";
             Waiter waiter = app.getControl().getWaitressByID(order.getIdWaitress());
+            String delivery = MyConstants.TIPO_PEDIDO[order.getTipoEntrega()-1];
 
-            str.append("<html><table width=\"600\" cellspacing=\"0\" border=\"1\">");
-            str.append("<tr>");
-            str.append("<td bgcolor=").append(color).append(">").append("ID").append("</td>");
-            str.append("<td>").append(order.getId()).append("</td></tr>");
+            str.append("<html><table width=\"").append(width).append("\" cellspacing=\"0\" border=\"1\">");
+
+            str.append("<tr><td width=\"45%\" bgcolor=").append(color).append(">").append("Tipo").append("</td>");
+            str.append("<td").append(style1).append(">").append(delivery).append("</td></tr>");
+
+            str.append("<tr><td width=\"45%\" bgcolor=").append(color).append(">").append("ID").append("</td>");
+            str.append("<td").append(style1).append(">").append(order.getId()).append("</td></tr>");
             // str.append("<td
             // bgcolor=").append(color).append(">").append("Consecutivo").append("</td>");
             // str.append("<td>").append(order.getConsecutive()).append("</td></tr>");
             if (order.getTipoEntrega() == PanelPedido.TIPO_LOCAL) {
-                str.append("<tr><td bgcolor=").append(color).append(">").append("Mesa").append("</td>");
-                str.append("<td>").append(order.getTable()).append("</td></tr>");
-                str.append("<tr><td bgcolor=").append(color).append(">").append("Mesero").append("</td>");
-                str.append("<td>").append(waiter.getName().toUpperCase()).append("</td></tr>");
+                str.append("<tr><td width=\"45%\" bgcolor=").append(color).append(">").append("Mesa").append("</td>");
+                str.append("<td").append(style1).append(">").append(order.getTable()).append("</td></tr>");
+                str.append("<tr><td width=\"45%\" bgcolor=").append(color).append(">").append("Mesero").append("</td>");
+                str.append("<td").append(style1).append(">").append(waiter.getName().toUpperCase()).append("</td></tr>");
             } else {
                 str.append("<tr><td bgcolor=").append(color).append(">").append("Cliente").append("</td>");
-                str.append("<td>").append(order.getIdCliente()).append("</td></tr>");
+                str.append("<td").append(style1).append(">").append(order.getIdCliente()).append("</td></tr>");
             }
-            str.append("<tr><td bgcolor=").append(color).append(">").append("Fecha").append("</td>");
-            str.append("<td>").append(app.DF_FULL3.format(order.getFecha())).append("</td></tr>");
-            str.append("<tr><td bgcolor=").append(color).append(">").append("Transcurrido").append("</td>");
-            str.append("<td>").append(pTime.formatDuration(pTime.calculatePreciseDuration(order.getFecha())))
+            str.append("<tr><td width=\"45%\" bgcolor=").append(color).append(">").append("Fecha").append("</td>");
+            str.append("<td").append(style1).append(">").append(app.DF_FULL3.format(order.getFecha())).append("</td></tr>");
+            str.append("<tr><td width=\"45%\" bgcolor=").append(color).append(">").append("Transcurrido").append("</td>");
+            str.append("<td").append(style1).append(">").append(pTime.formatDuration(pTime.calculatePreciseDuration(order.getFecha())))
                     .append("</td></tr>");
             str.append("</table>");
 
-            str.append("<br><br><br>");
+            str.append("<br>");
+
+            str.append("<table width=\"").append(width).append("\" cellspacing=\"0\" border=\"1\">");
+            str.append("<tr><td width=\"25%\" bgcolor=").append(color).append(">").append("Total").append("</td>");
+            str.append("<td style='font-family: Arial; font-size: 14px;'>").append(app.DCFORM_P.format(order.getValor())).append("</td>");
+            str.append("<td width=\"25%\" bgcolor=").append(color).append(">").append("Estado").append("</td>");
+            str.append("<td style='font-family: Arial; font-size: 14px;' color=").append(Invoice.COLORS[order.getStatus()]).append("><strong>");
+            str.append(Invoice.STATUSES[order.getStatus()]).append("</strong></td></tr></table>");
+
+            str.append("<br>");
 
             List<ProductoPed> productos = order.getProducts();
             // StringBuilder str = new StringBuilder();
-            str.append("<table width=\"600\" cellspacing=\"0\" border=\"1\">");
-            str.append("<html><table width=\"600\" cellspacing=\"0\" border=\"1\">");
+
+            str.append("<table").append(style2).append(" width=\"").append(width).append("\" cellspacing=\"0\" border=\"1\">");
             str.append("<tr bgcolor=\"#A4C1FF\">");
             str.append("<td width=\"45%\">").append("Producto").append("</td>");
             // str.append("<td>").append("Codigo").append("</td>");
@@ -372,12 +390,13 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
                         ? (product.getProduct().getName() + " (" + product.getPresentation().getName() + ")")
                         : product.getProduct().getName()).toUpperCase());
                 for (AdditionalPed adicional : product.getAdicionales()) {
-                    str.append("<br><font color=blue size=2> +").append(adicional.getAdditional().getName())
-                            .append("(x").append(adicional.getCantidad()).append(")").append("</font>");
+                    str.append("<br><span").append(style3).append(" color:blue;'> +").append(adicional.getAdditional().getName())
+                            .append("(x").append(adicional.getCantidad()).append(")").append("</span>");
                 }
 
-                str.append("<br>").append(product.hasExcluisones() ? "Sin: " : "").append("<font color=red size=2>")
-                        .append(product.getStExclusiones()).append("</font></td>");
+                str.append("<br>").append(product.hasExcluisones() ? "Sin: " : "")
+                        .append("<span").append(style3).append(" color:red;'>")
+                        .append(product.getStExclusiones()).append("</span></td>");
                 // str.append("<td
                 // bgcolor=\"#FFFFFF\">").append(product.getProduct().getCode()).append("</td>");
                 str.append("<td bgcolor=\"#FFFFFF\" align=\"right\">").append(app.DCFORM_P.format(cantidad))
@@ -390,7 +409,12 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
             }
             str.append("</table></html>");
 
+            labelInfo.setVerticalAlignment(SwingConstants.TOP);
             labelInfo.setText(str.toString());
+        } else {
+            labelInfo.setVerticalAlignment(SwingConstants.CENTER);
+            labelInfo.setText("<html><table width=\"" + width + "\" cellspacing=\"0\" border=\"1\"><tr><td align=\"center\">"
+                    + "<font color=#a0a0aa size=+2>Seleccione un pedido.</font></td></tr></table></html>");
         }
     }
 
@@ -438,11 +462,12 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         if (row < 0) {
             showTable(null);
             invoice = null;
-        }
-        try {
-            invoice = (Invoice) model.getValueAt(row, 1);
-            showTable(invoice);
-        } catch (Exception ex) {
+        } else {
+            try {
+                invoice = (Invoice) model.getValueAt(row, 1);
+                showTable(invoice);
+            } catch (Exception ex) {
+            }
         }
     }
 
@@ -494,6 +519,9 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
 
         panelTop.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        cbPend.setBackground(new java.awt.Color(255, 255, 51));
+        cbPend.setContentAreaFilled(false);
+
         javax.swing.GroupLayout panelTopLayout = new javax.swing.GroupLayout(panelTop);
         panelTop.setLayout(panelTopLayout);
         panelTopLayout.setHorizontalGroup(
@@ -506,7 +534,7 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(regFilter3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(cbPend)
+                .addComponent(cbPend, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -514,17 +542,17 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         panelTopLayout.setVerticalGroup(
             panelTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTopLayout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(panelTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(cbPend)
-                    .addComponent(btUpdate)
-                    .addComponent(regFilter3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(regFilter1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(regFilter2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(regFilter1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(regFilter3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbPend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(6, 6, 6))
         );
 
-        panelTopLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btUpdate, regFilter1, regFilter2, regFilter3});
+        panelTopLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btUpdate, cbPend, regFilter1, regFilter2, regFilter3});
 
         lbStatus.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -532,9 +560,12 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE)
             .addComponent(panelTop, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(lbStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 642, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -637,7 +668,7 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
             btn.setPreferredSize(new Dimension(28, 28));
             btn.setMaximumSize(new Dimension(28, 28));
             btn.setIcon(
-                    new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons()+"navigate-down.png",  20, 20)));
+                    new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "navigate-down.png", 20, 20)));
             btn.setActionCommand(AC_DISPLAY_OPTIONS);
 
             btn2 = new JButton();
@@ -645,7 +676,7 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
             btn2.setPreferredSize(new Dimension(28, 28));
             btn2.setMaximumSize(new Dimension(28, 28));
             btn2.setIcon(
-                    new ImageIcon(Resources.getImagen(app.getFolderIcons()+"edit.png", Aplication.class, 20, 20)));
+                    new ImageIcon(Resources.getImagen(app.getFolderIcons() + "edit.png", Aplication.class, 20, 20)));
             btn2.setActionCommand(AC_EDITAR_PEDIDO);
 
         }
@@ -662,7 +693,7 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
                         label.setText("<html><font color=blue size=+1>#" + value + "</html>");
                         break;
                     case 1:
-                        String html = "<html>Domicilio<br><font color=red>3006052119<font></html>";
+                        String html = "";
                         Invoice order = (Invoice) value;
                         Waiter waiter = app.getControl().getWaitressByID(order.getIdWaitress());
                         if (order.getTipoEntrega() == PanelPedido.TIPO_LOCAL) {

@@ -1,5 +1,6 @@
 package com.rb.domain;
 
+import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +32,13 @@ public class Invoice {
     private int status;
     private int numItems;
     public static final String[] STATUSES = {"NORMAL", "ANULADA", "MODIFICADA", "ENVIADA", "PAGADA"};
+    public static final String[] COLORS = {
+        "#4CAF50", // NORMAL
+        "#F44336", // ANULADA
+        "#FF9800", // MODIFICADA
+        "#2196F3", // ENVIADA
+        "#388E3C" // PAGADA
+    };
     public static final int ST_NORMAL = 0;
     public static final int ST_ANULADA = 1;
     public static final int ST_MODIFICADA = 2;

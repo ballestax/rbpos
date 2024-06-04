@@ -263,4 +263,9 @@ public class ProductoPed implements Cloneable {
         }
     }
 
+    @Override
+    public String toString() {
+        return "ProductoPed{" + "id=" + id + ", producto=" + producto + ", cantidad=" + cantidad + ", precio=" + precio + '}';
+    }
+
 }

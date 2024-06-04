@@ -394,12 +394,12 @@ public class PrinterService {
                 String stPres = "";
                 if (presentation != null) {
                     stPres = " (" + presentation.getName() + ")";
-
+                    escpos.writeLF(font2, "    > " + stPres);
                 }
 //                if (product.hasTermino()) {
 //                    stPres += "  [" + product.getTermino() + "]";
 //                }
-                escpos.writeLF(font2, " > " + stPres);
+//                escpos.writeLF(font2, " > " + stPres);
 
                 StringBuilder stb = new StringBuilder();
                 if (product.getExclusiones().size() > 0) {

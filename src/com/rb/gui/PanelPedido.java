@@ -44,6 +44,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -555,8 +556,6 @@ public class PanelPedido extends PanelCapturaMod
 
         // containerPanels.setBorder(bordeError);
         lbFactura.addMouseListener(lbFacturaMouseListener);
-        
-       
 
         // showAlertCycle();
     }
@@ -856,11 +855,14 @@ public class PanelPedido extends PanelCapturaMod
             dial.pack();
             dial.setLocationRelativeTo(null);
             dial.setVisible(true);
-        } else if (AC_EDITAR_PEDIDO.equals(e.getActionCommand())) {
+        } else if (AC_EDITAR_PEDIDO.equals(e.getActionCommand())) { //permitir modifcar pedido
+
+            logger.debug("Editando pedido: " + invoice.getFactura());
 
             SimpleDateFormat formFecha = new SimpleDateFormat("dd MMMM yyyy");
 
             Invoice inv = invoice;
+            loadInvoice(app.getControl().getInvoiceByCode(inv.getFactura()));
 
             Cycle cycle = app.getControl().getLastCycle();
 
@@ -884,6 +886,7 @@ public class PanelPedido extends PanelCapturaMod
 
             enablePedido(true);
 
+//            copyInvoiceToLocal(invoice);  
             block = false;
 
             btConfirm
@@ -900,6 +903,10 @@ public class PanelPedido extends PanelCapturaMod
             btPrint1.setVisible(false);
 
         } else if (AC_UPDATE_PEDIDO.equals(e.getActionCommand())) {
+            logger.debug("Update pedido: " + invoice.getFactura());
+            for (ProductoPed oldProduct : oldProducts) {
+                System.out.println(oldProduct.hashCode() + "::" + oldProduct.getProduct().getName());
+            }
 
             try {
                 tbListado.getCellEditor().stopCellEditing();
@@ -912,26 +919,34 @@ public class PanelPedido extends PanelCapturaMod
             invoice1.setStatus(Invoice.ST_MODIFICADA);
 
             Map<ProductoPed, Integer> diffProd = new HashMap<>();
-
-            Map<Integer, Integer> productMap = oldProducts.stream()
-                    .collect(Collectors.toMap(ProductoPed::hashCode, ProductoPed::getCantidad));
+//            Map<Integer, ProductoPed> productMap = oldProducts.stream()
+//                    .collect(Collectors.toMap(ProductoPed::hashCode, p -> p));
+            Map<Integer, ProductoPed> productMap = oldProducts.stream()
+                    .collect(Collectors.toMap(
+                            ProductoPed::hashCode, // Key mapper
+                            p -> p, // Value mapper
+                            (existingValue, newValue) -> existingValue // Merge function (keep existing value)
+                    ));
 
             for (ProductoPed product : invoice1.getProducts()) {
-                if (oldProducts.contains(product)) {
+                if (productMap.containsKey(product.hashCode())) {
                     int q1 = product.getCantidad();
-                    int q2 = productMap.get(product.hashCode());
+                    int q2 = productMap.get(product.hashCode()).getCantidad();
                     diffProd.put(product, q1 - q2);
-                } else {
-                    System.out
-                            .println("no exist.. add" + product.getProduct().getName() + "::" + product.getCantidad());
-                    diffProd.put(product, product.getCantidad());
+                    productMap.remove(product.hashCode());
                 }
+            }
+
+            for (Integer eliminado : productMap.keySet()) {
+                ProductoPed prod = productMap.get(eliminado);
+                diffProd.put(prod, prod.getCantidad() * -1);
             }
 
             if (validateInvoiceData()) {
                 try {
                     app.getControl().updateInvoiceDiff(invoice1, oldProducts, diffProd);
-                    copyInvoiceToLocal(invoice1);
+//                    copyInvoiceToLocal(invoice1);
+//                    oldProducts = invoice1.getProducts();
 
                 } catch (Exception ex) {
                     String msg = "Error updating invoice full";
@@ -964,10 +979,12 @@ public class PanelPedido extends PanelCapturaMod
                             .setIcon(new ImageIcon(
                                     app.getImgManager().getImagen(app.getFolderIcons() + "edit.png", 10, 10)));
                     btConfirm.setBackground(new Color(153, 153, 255));
-                    btConfirm.setActionCommand(AC_UPDATE_PEDIDO);
+                    btConfirm.setActionCommand(AC_EDITAR_PEDIDO);
                     btConfirm.setText("Modificar");
 
                     btCancel.setVisible(false);
+
+                    loadInvoice(invoice1);
 
                 }
 
@@ -988,7 +1005,7 @@ public class PanelPedido extends PanelCapturaMod
             block = true;
             enablePedido(false);
 
-            loadInvoice(this.invoice);
+            loadInvoice(app.getControl().getInvoiceByCode(invoice.getFactura()));
 
             btConfirm.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "edit.png", 10, 10)));
             btConfirm.setBackground(new Color(153, 153, 255));
@@ -1254,6 +1271,7 @@ public class PanelPedido extends PanelCapturaMod
             return;
         }
 
+        logger.debug("Add product: " + productPed);
         Product producto = productPed.getProduct();
 
         if (productPed.hasPresentation()) {
@@ -1524,7 +1542,11 @@ public class PanelPedido extends PanelCapturaMod
 
     private void copyInvoiceToLocal(Invoice invoice) {
         this.invoice = invoice;
-        oldProducts = new ArrayList<>();
+        if (oldProducts != null) {
+            oldProducts.clear();
+        } else {
+            oldProducts = new ArrayList<>();
+        }
         for (ProductoPed product : invoice.getProducts()) {
             try {
                 oldProducts.add(product.clone());
@@ -1586,6 +1608,7 @@ public class PanelPedido extends PanelCapturaMod
 
         }
 
+        products.clear();
         for (ProductoPed product : invoice1.getProducts()) {
             addProductPed(product, product.getCantidad(), product.getPrecio());
         }
@@ -2183,6 +2206,18 @@ public class PanelPedido extends PanelCapturaMod
         jScrollPane2.setBorder(BorderFactory.createLineBorder(colorLocal, 1, true));
         tbListado.getTableHeader().setBackground(colorLocal.brighter());
 
+        ConfigDB config = app.getControl().getConfigGlobal(Configuration.BS_SHOW_SERVICE);
+        boolean showService = config != null ? (Boolean.valueOf(config.getValor())) : false;
+        regService.setEnabled(showService);
+        tfService.setEnabled(showService);
+        chServ.setEnabled(showService);
+        
+//        config = app.getControl().getConfigGlobal(Configuration.BS_SHOW_DISCOUNT);
+//        boolean showDiscount = config != null ? (Boolean.valueOf(config.getValor())) : false;
+//        regService.setVisible(showDiscount);
+//        tfService.setVisible(showDiscount);
+//        chServ.setVisible(showDiscount);        
+
         spNumDom.setVisible(false);
         regDomicilio.setVisible(false);
         lbEntregas.setVisible(false);
@@ -2195,9 +2230,7 @@ public class PanelPedido extends PanelCapturaMod
         btClear.setVisible(false);
         regMesera.setVisible(true);
         regMesa.setVisible(true);
-        regService.setVisible(true);
-        tfService.setVisible(true);
-        chServ.setVisible(true);
+        
         chRecogido.setVisible(false);
 
         regDomicilio.setText(entregasLoc);
