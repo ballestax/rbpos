@@ -82,6 +82,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
     private Product currentProduct;
     private JMenuItem itemEdit;
     private Product editingProduct;
+    private Additional editingAditional;
     private boolean band;
     private int status;
     public static final int STATUS_NORMAL = 0;
@@ -191,10 +192,19 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             @Override
             public void actionPerformed(ActionEvent e) {
                 int row = tbProducts.getSelectedRow();
-                long idProd = Long.parseLong(tbProducts.getValueAt(row, 0).toString());
-                Product prod = app.getControl().getProductById(idProd);
+                if (tabSelected == 1) {
 
-                makeProductEditable(prod);
+                    long idProd = Long.parseLong(tbProducts.getValueAt(row, 0).toString());
+                    Product prod = app.getControl().getProductById(idProd);
+
+                    makeProductEditable(prod);
+                } else {
+                    long idAddt = Long.parseLong(tbProducts.getValueAt(row, 0).toString());
+                    Additional addit = app.getControl().getAdditionalById(idAddt);
+
+                    makeAdditionalEditable(addit);
+                }
+
             }
 
         });
@@ -430,6 +440,30 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         regName.addCaretListener(this);
         regPrice.addCaretListener(this);
         regDesc.addCaretListener(this);
+        regCode.addCaretListener(this);
+
+        tbProducts.setEnabled(false);
+        btSave.setActionCommand(AC_SAVE_EDIT);
+        btSave.setVisible(true);
+        btSave.setEnabled(false);
+        btCancel.setVisible(true);
+        btAddPress.setVisible(false);
+        lbTitlePress.setVisible(false);
+        jScrollPane2.setVisible(false);
+
+    }
+
+    public void makeAdditionalEditable(Additional addit) {
+        status = STATUS_EDITING;
+        editingAditional = addit;
+        regName.setText(addit.getName());
+        regPrice.setText(app.getDCFORM_W().format(addit.getPrecio()));
+
+        lbID1.setText("Editando: " + addit.getName().toUpperCase());
+
+        editCampos(true);
+        regName.addCaretListener(this);
+        regPrice.addCaretListener(this);
         regCode.addCaretListener(this);
 
         tbProducts.setEnabled(false);
@@ -1224,7 +1258,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
                 panelContainPress.removeAll();
                 lbID.setBackground(new Color(120, 144, 240));
                 lbID1.setBackground(new Color(120, 144, 240));
-                
+
                 btTab1.setEnabled(true);
                 btTab2.setEnabled(true);
                 btNewProduct.setEnabled(true);
@@ -1280,7 +1314,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             }
 
         } else if (AC_SAVE_EDIT.equals(e.getActionCommand())) {
-            if (editingProduct != null) {
+            if (tabSelected == 1 && editingProduct != null) {
                 long id = editingProduct.getId();
                 Product product = parseProduct();
                 if (product != null) {
@@ -1293,6 +1327,31 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
                         btSave.setVisible(false);
                         btCancel.setVisible(false);
                         editingProduct = null;
+                        regPrice.setBorder(bordeNormal);
+                        regPrice.setForeground(Color.black);
+                        regDesc.setBorder(bordeNormal);
+                        textArea.setForeground(Color.black);
+                        regName.setBorder(bordeNormal);
+                        regName.setForeground(Color.black);
+                        regCode.setBorder(bordeNormal);
+                        regCode.setForeground(Color.black);
+                        regCat.setBorder(bordeNormal);
+                        regCat.setForeground(Color.black);
+                    }
+                }
+            } else if (editingAditional != null) {
+                long id = editingAditional.getId();
+                Additional additional = parseAdditional();
+                if (additional != null) {
+                    additional.setId(id);
+                    if (app.getControl().updateAdditional(additional)) {
+                        populateTable("");
+                        tbProducts.setEnabled(true);
+                        editCampos(false);
+                        resetPanelNewProduct();
+                        btSave.setVisible(false);
+                        btCancel.setVisible(false);
+                        editingAditional = null;
                         regPrice.setBorder(bordeNormal);
                         regPrice.setForeground(Color.black);
                         regDesc.setBorder(bordeNormal);
@@ -1350,11 +1409,39 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
                 } catch (Exception ex) {
                 }
             }
+            if (editingAditional != null) {
+                String value = regName.getText();
+                try {
+                    if (!editingAditional.getName().equalsIgnoreCase(value)) {
+                        regName.setBorder(bordeEdit);
+                        regName.setForeground(Color.blue);
+                        band = true;
+                    } else {
+                        regName.setBorder(bordeNormal);
+                        regName.setForeground(Color.black);
+                    }
+                } catch (Exception ex) {
+                }
+            }
         } else if (e.getSource().equals(regPrice.getComponent())) {
             if (editingProduct != null) {
                 double value = Double.parseDouble(regPrice.getText());
                 try {
                     if (editingProduct.getPrice() != value) {
+                        regPrice.setBorder(bordeEdit);
+                        regPrice.setForeground(Color.blue);
+                        band = true;
+                    } else {
+                        regPrice.setBorder(bordeNormal);
+                        regPrice.setForeground(Color.black);
+                    }
+                } catch (Exception ex) {
+                }
+            }
+            if (editingAditional != null) {
+                double value = Double.parseDouble(regPrice.getText());
+                try {
+                    if (editingAditional.getPrecio() != value) {
                         regPrice.setBorder(bordeEdit);
                         regPrice.setForeground(Color.blue);
                         band = true;
@@ -1454,12 +1541,14 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         } else {
             try {
                 String id = tbProducts.getValueAt(row, 0).toString();
+                System.out.println("id = " + id);
                 if (tabSelected == 1) {
 
                     Product prod = app.getControl().getProductById(Long.valueOf(id));
                     showProduct(prod);
                 } else {
                     Additional adition = app.getControl().getAdditionalById(Long.valueOf(id));
+                    System.out.println("showing additional:" + adition);
                     showAditional(adition);
                 }
             } catch (Exception ex) {

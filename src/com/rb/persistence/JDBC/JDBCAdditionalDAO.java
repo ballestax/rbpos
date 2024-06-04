@@ -74,6 +74,7 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
     }
 
     public Additional getAdditionalBy(String query) throws DAOException {
+        System.out.println("query = " + query);
         String retrieveImporter;
         try {
             SQLExtractor sqlExtractorWhere = new SQLExtractor(query, SQLExtractor.Type.WHERE);
@@ -93,6 +94,7 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
         try {
             conn = dataSource.getConnection();
             retrieve = conn.prepareStatement(retrieveImporter);
+            System.out.println("retrieve = " + retrieve);
             rs = retrieve.executeQuery();
             while (rs.next()) {
                 additional = new Additional();
