@@ -103,6 +103,7 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
                 additional.setCode(rs.getString(3));
                 additional.setMeasure(rs.getString(4));
                 additional.setPrecio(rs.getDouble(5));
+                additional.setEnabled(rs.getBoolean(6));
             }
         } catch (SQLException e) {
             throw new DAOException("Could not properly retrieve the Additional: " + e);
@@ -157,6 +158,7 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
                 additional.setCode(rs.getString(3));
                 additional.setMeasure(rs.getString(4));
                 additional.setPrecio(rs.getDouble(5));
+                additional.setEnabled(rs.getBoolean(6));
                 additionals.add(additional);
             }
         } catch (SQLException e) {
@@ -183,7 +185,7 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
                 additional.getName(),
                 additional.getCode(),
                 additional.getMeasure(),
-                additional.getPrecio()
+                additional.getPrecio(),                
             };
             ps = sqlStatements.buildSQLStatement(conn, ADD_ADDITIONAL_KEY, parameters);
 
@@ -229,7 +231,8 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
 
             parameters = new Object[]{
                 idIngr,
-                additional.getPrecio()
+                additional.getPrecio(),
+                additional.isEnabled(),
             };
             ps = sqlStatements.buildSQLStatement(conn, ADD_ADDITIONAL_KEY, parameters);
 
@@ -280,7 +283,8 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
                 additional.getName(),
                 additional.getCode(),
                 additional.getMeasure(),
-                additional.getPrecio()
+                additional.getPrecio(),
+                additional.isEnabled()
             };
             update = sqlStatements.buildSQLStatement(conn, UPDATE_ADDITIONAL_KEY, parameters);
             update.executeUpdate();
@@ -315,6 +319,7 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
                 additional.setCode(rs.getString(3));
                 additional.setMeasure(rs.getString(4));
                 additional.setPrecio(rs.getDouble(5));
+                additional.setEnabled(rs.getBoolean(6));
                 additionals.add(additional);
             }
         } catch (SQLException e) {

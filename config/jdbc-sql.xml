@@ -817,9 +817,7 @@
                 medida=? 
                 WHERE code = ?
             </SQLFragment>
-        </SQLStatement> 
-        
-        
+        </SQLStatement>         
         
         <SQLStatement method="CREATE_PRODUCT_INGREDIENT_TABLE">
             <SQLFragment>
@@ -850,7 +848,8 @@
                 CREATE TABLE additionals(
                 id INTEGER AUTO_INCREMENT,
                 ingredient_id INTEGER NOT NULL,
-                precio DECIMAL(20,2),                
+                precio DECIMAL(20,2),
+                enabled TINYINT(1),                
                 PRIMARY KEY (id)
                 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
             </SQLFragment>
@@ -858,7 +857,7 @@
         
         <SQLStatement method="ADD_ADDITIONAL">
             <SQLFragment>
-                INSERT INTO additionals (ingredient_id,precio) VALUES (?,?);
+                INSERT INTO additionals (ingredient_id,precio,enabled) VALUES (?,?,?);
             </SQLFragment>
         </SQLStatement>        
         
@@ -867,7 +866,7 @@
                 SELECT
             </SQLFragment>
             <SQLFragment>                
-                a.id, i.name,i.code,i.medida,a.precio
+                a.id, i.name,i.code,i.medida,a.precio,a.enabled
             </SQLFragment>
             <SQLFragment>
                 FROM ingredients i, additionals a                
@@ -890,7 +889,8 @@
         <SQLStatement method="UPDATE_ADDITIONAL">
             <SQLFragment>
                 UPDATE additionals SET                 
-                precio=?
+                precio=?,
+                enabled=? 
                 WHERE id = ?
             </SQLFragment>
         </SQLStatement> 

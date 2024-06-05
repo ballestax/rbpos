@@ -720,7 +720,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
                         adit.getId(),
                         adit.getName(),
                         adit.getPrecio(),
-                        true //adit.isEnabled() ? "Habilitado" : "Deshabilitado"
+                        adit.isEnabled() ? "Habilitado" : "Deshabilitado"
                     });
                     modelAditions.setRowEditable(modelAditions.getRowCount() - 1, false);
                 }
