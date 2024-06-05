@@ -1270,7 +1270,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         } else if (AC_SAVE_NEW_ADDITIONAL.equals(e.getActionCommand())) {
             Additional additional = parseAdditional();
             if (additional != null && app.getControl().addAdditionalWhitIngredient(additional)) {
-                populateTable("");
+                populateTableAditions("","");
                 currentAdditional = additional;
                 tbProducts.setEnabled(true);
                 //resetPanelNewProduct();

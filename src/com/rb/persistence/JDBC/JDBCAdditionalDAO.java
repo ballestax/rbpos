@@ -8,6 +8,8 @@ package com.rb.persistence.JDBC;
 import com.rb.DBManager;
 import com.rb.domain.Additional;
 import static com.rb.persistence.JDBC.JDBCIngredientDAO.ADD_INGREDIENT_KEY;
+import static com.rb.persistence.JDBC.JDBCIngredientDAO.UPDATE_INGREDIENT_KEY;
+
 import com.rb.persistence.SQLExtractor;
 import com.rb.persistence.SQLLoader;
 import com.rb.persistence.dao.DAOException;
@@ -280,13 +282,18 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
             conn = dataSource.getConnection();
             conn.setAutoCommit(false);
             Object[] parameters = {
-                additional.getName(),
-                additional.getCode(),
-                additional.getMeasure(),
-                additional.getPrecio(),
-                additional.isEnabled()
+                additional.getName()                
             };
-            update = sqlStatements.buildSQLStatement(conn, UPDATE_ADDITIONAL_KEY, parameters);
+            update = sqlStatements.buildSQLStatement(conn, UPDATE_INGREDIENT_KEY, parameters);
+            update.executeUpdate();
+
+            long idIngredient =0;
+
+            Object[] parameters1 = {
+                idIngredient,
+                additional.getPrecio()                
+            };
+            update = sqlStatements.buildSQLStatement(conn, UPDATE_ADDITIONAL_KEY, parameters1);
             update.executeUpdate();
             conn.commit();
         } catch (SQLException e) {

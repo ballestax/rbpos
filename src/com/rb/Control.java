@@ -573,7 +573,7 @@ public class Control {
     public Additional getAdditionalById(long id) {
         try {
             JDBCAdditionalDAO additDao = (JDBCAdditionalDAO) DAOFactory.getInstance().getAdditionalDAO();
-            return additDao.getAdditionalBy("id=" + String.valueOf(id));
+            return additDao.getAdditionalBy("a.id=" + String.valueOf(id));
         } catch (DAOException ex) {
             logger.error("Error getting Additional.", ex);
             return null;

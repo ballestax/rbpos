@@ -860,7 +860,7 @@
                 INSERT INTO additionals (ingredient_id,precio,enabled) VALUES (?,?,?);
             </SQLFragment>
         </SQLStatement>        
-        
+                
         <SQLStatement method="GET_ADDITIONAL">
             <SQLFragment>
                 SELECT
@@ -869,10 +869,12 @@
                 a.id, i.name,i.code,i.medida,a.precio,a.enabled
             </SQLFragment>
             <SQLFragment>
-                FROM ingredients i, additionals a                
+                FROM additionals a
+                INNER JOIN ingredients i
+                ON i.id=a.ingredient_id                
             </SQLFragment>
-            <SQLFragment>
-                where i.id=a.ingredient_id
+            <SQLFragment excludeIfNamedParamEmpty="TRUE">
+                WHERE {where}
             </SQLFragment>
             <SQLFragment excludeIfNamedParamEmpty="TRUE">
                 ORDER BY {orderby}
