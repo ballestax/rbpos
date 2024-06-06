@@ -594,7 +594,6 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
 
     private void updateButtonSave() {
         if (band) {
-
             btSave.setToolTipText("Existen cambios sin guardar");
             btSave.setEnabled(true);
             btSave.setActionCommand(AC_SAVE_EDIT);
@@ -1392,7 +1391,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
 
     @Override
     public void caretUpdate(CaretEvent e) {
-        band = false;
+       // band = false;
         if (e.getSource().equals(regName.getComponent())) {
             if (editingProduct != null) {
                 String value = regName.getText();
@@ -1404,6 +1403,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
                     } else {
                         regName.setBorder(bordeNormal);
                         regName.setForeground(Color.black);
+                        band = false;
                     }
                 } catch (Exception ex) {
                 }
@@ -1418,6 +1418,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
                     } else {
                         regName.setBorder(bordeNormal);
                         regName.setForeground(Color.black);
+                        band = false;
                     }
                 } catch (Exception ex) {
                 }
@@ -1433,6 +1434,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
                     } else {
                         regPrice.setBorder(bordeNormal);
                         regPrice.setForeground(Color.black);
+                        band = false;
                     }
                 } catch (Exception ex) {
                 }
@@ -1447,6 +1449,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
                     } else {
                         regPrice.setBorder(bordeNormal);
                         regPrice.setForeground(Color.black);
+                        band = false;
                     }
                 } catch (Exception ex) {
                 }
@@ -1462,6 +1465,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
                     } else {
                         regDesc.setBorder(bordeNormal);
                         textArea.setForeground(Color.black);
+                        band = false;
                     }
                 } catch (Exception ex) {
                 }
@@ -1477,6 +1481,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
                     } else {
                         regCode.setBorder(bordeNormal);
                         regCode.setForeground(Color.black);
+                        band = false;
                     }
                 } catch (Exception ex) {
                 }
@@ -1540,7 +1545,6 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         } else {
             try {
                 String id = tbProducts.getValueAt(row, 0).toString();
-                System.out.println("id = " + id);
                 if (tabSelected == 1) {
 
                     Product prod = app.getControl().getProductById(Long.valueOf(id));
