@@ -38,6 +38,7 @@ public class JDBCIngredientDAO implements IngredientDAO {
     protected static final String CREATE_INGREDIENTS_TABLE_KEY = "CREATE_INGREDIENTS_TABLE";
     protected static final String ADD_INGREDIENT_KEY = "ADD_INGREDIENT";
     protected static final String UPDATE_INGREDIENT_KEY = "UPDATE_INGREDIENT";
+    protected static final String UPDATE_INGREDIENT_NAME_KEY = "UPDATE_INGREDIENT_NAME";
     protected static final String GET_INGREDIENT_KEY = "GET_INGREDIENT";
     protected static final String DELETE_INGREDIENT_KEY = "DELETE_INGREDIENT";
 

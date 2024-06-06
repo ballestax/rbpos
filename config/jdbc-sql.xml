@@ -74,7 +74,7 @@
                     |GET_SUM_REGISTRO
                     |CREATE_PAYS_TABLE|ADD_PAY|GET_PAYS|UPDATE_PAY
                     |INVOICE_IS_PAYED|ADD_WAITER|UPDATE_WAITER|ADD_TABLE|UPDATE_TABLE
-                    |GET_PAY_BY_INVOICE
+                    |GET_PAY_BY_INVOICE|UPDATE_INGREDIENT_NAME
                     ) #REQUIRED
                     
 	>
@@ -816,6 +816,14 @@
                 name=?,                
                 medida=? 
                 WHERE code = ?
+            </SQLFragment>
+        </SQLStatement>      
+        
+             <SQLStatement method="UPDATE_INGREDIENT_NAME">
+            <SQLFragment>
+                UPDATE ingredients SET 
+                name=? 
+                WHERE name = ?
             </SQLFragment>
         </SQLStatement>         
         

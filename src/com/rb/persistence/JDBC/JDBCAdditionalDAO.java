@@ -187,8 +187,7 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
                 additional.getName(),
                 additional.getCode(),
                 additional.getMeasure(),
-                additional.getPrecio(),                
-            };
+                additional.getPrecio(),};
             ps = sqlStatements.buildSQLStatement(conn, ADD_ADDITIONAL_KEY, parameters);
 
             ps.executeUpdate();
@@ -234,8 +233,7 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
             parameters = new Object[]{
                 idIngr,
                 additional.getPrecio(),
-                additional.isEnabled(),
-            };
+                additional.isEnabled(),};
             ps = sqlStatements.buildSQLStatement(conn, ADD_ADDITIONAL_KEY, parameters);
 
             ps.executeUpdate();
@@ -282,16 +280,22 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
             conn = dataSource.getConnection();
             conn.setAutoCommit(false);
             Object[] parameters = {
-                additional.getName()                
+                additional.getName(),
+                additional.getName()
             };
-            update = sqlStatements.buildSQLStatement(conn, UPDATE_INGREDIENT_KEY, parameters);
-            update.executeUpdate();
+            update = sqlStatements.buildSQLStatement(conn, JDBCIngredientDAO.UPDATE_INGREDIENT_NAME_KEY, parameters, PreparedStatement.RETURN_GENERATED_KEYS);
 
-            long idIngredient =0;
+            long idIngr = 0;
+
+            update.executeUpdate();
+            ResultSet genKey = update.getGeneratedKeys();
+            if (genKey.next()) {
+                idIngr = genKey.getLong(1);
+            }
 
             Object[] parameters1 = {
-                idIngredient,
-                additional.getPrecio()                
+                idIngr,
+                additional.getPrecio()
             };
             update = sqlStatements.buildSQLStatement(conn, UPDATE_ADDITIONAL_KEY, parameters1);
             update.executeUpdate();
