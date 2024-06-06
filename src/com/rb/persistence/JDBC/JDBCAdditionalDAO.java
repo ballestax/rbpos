@@ -76,7 +76,6 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
     }
 
     public Additional getAdditionalBy(String query) throws DAOException {
-        System.out.println("query = " + query);
         String retrieveImporter;
         try {
             SQLExtractor sqlExtractorWhere = new SQLExtractor(query, SQLExtractor.Type.WHERE);
@@ -96,7 +95,6 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
         try {
             conn = dataSource.getConnection();
             retrieve = conn.prepareStatement(retrieveImporter);
-            System.out.println("retrieve = " + retrieve);
             rs = retrieve.executeQuery();
             while (rs.next()) {
                 additional = new Additional();
@@ -118,7 +116,7 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
     }
 
     @Override
-    public Additional getAdditional(int id) throws DAOException {
+    public Additional getAdditional(long id) throws DAOException {
         return getAdditionalBy("id=" + id);
     }
 
@@ -187,7 +185,9 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
                 additional.getName(),
                 additional.getCode(),
                 additional.getMeasure(),
-                additional.getPrecio(),};
+                additional.getPrecio(),
+                additional.isEnabled()
+            };
             ps = sqlStatements.buildSQLStatement(conn, ADD_ADDITIONAL_KEY, parameters);
 
             ps.executeUpdate();
@@ -251,7 +251,7 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
     }
 
     @Override
-    public void deleteAdditional(int id) throws DAOException {
+    public void deleteAdditional(long id) throws DAOException {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
@@ -281,23 +281,12 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
             conn.setAutoCommit(false);
             Object[] parameters = {
                 additional.getName(),
-                additional.getName()
+                additional.getCode(),
+                additional.getMeasure(),
+                additional.getPrecio(),
+                additional.isEnabled()
             };
-            update = sqlStatements.buildSQLStatement(conn, JDBCIngredientDAO.UPDATE_INGREDIENT_NAME_KEY, parameters, PreparedStatement.RETURN_GENERATED_KEYS);
-
-            long idIngr = 0;
-
-            update.executeUpdate();
-            ResultSet genKey = update.getGeneratedKeys();
-            if (genKey.next()) {
-                idIngr = genKey.getLong(1);
-            }
-
-            Object[] parameters1 = {
-                idIngr,
-                additional.getPrecio()
-            };
-            update = sqlStatements.buildSQLStatement(conn, UPDATE_ADDITIONAL_KEY, parameters1);
+            update = sqlStatements.buildSQLStatement(conn, UPDATE_ADDITIONAL_KEY, parameters);
             update.executeUpdate();
             conn.commit();
         } catch (SQLException e) {

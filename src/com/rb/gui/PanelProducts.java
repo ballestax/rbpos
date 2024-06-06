@@ -1269,7 +1269,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             }
         } else if (AC_SAVE_NEW_ADDITIONAL.equals(e.getActionCommand())) {
             Additional additional = parseAdditional();
-            if (additional != null && app.getControl().addAdditionalWhitIngredient(additional)) {
+            if (additional != null && app.getControl().addAdditional(additional)) {
                 populateTableAditions("","");
                 currentAdditional = additional;
                 tbProducts.setEnabled(true);
@@ -1548,7 +1548,6 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
                     showProduct(prod);
                 } else {
                     Additional adition = app.getControl().getAdditionalById(Long.valueOf(id));
-                    System.out.println("showing additional:" + adition);
                     showAditional(adition);
                 }
             } catch (Exception ex) {

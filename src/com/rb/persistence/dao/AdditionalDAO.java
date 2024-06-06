@@ -15,13 +15,13 @@ import java.util.ArrayList;
  */
 public interface AdditionalDAO {
 
-    public Additional getAdditional(int id) throws com.rb.persistence.dao.DAOException;
+    public Additional getAdditional(long id) throws com.rb.persistence.dao.DAOException;
 
     public ArrayList<Additional> getAdditionalList() throws com.rb.persistence.dao.DAOException;
 
     public void addAdditional(Additional additional) throws com.rb.persistence.dao.DAOException;
 
-    public void deleteAdditional(int id) throws com.rb.persistence.dao.DAOException;
+    public void deleteAdditional(long id) throws com.rb.persistence.dao.DAOException;
 
     public void updateAdditional(Additional additional) throws com.rb.persistence.dao.DAOException;
 

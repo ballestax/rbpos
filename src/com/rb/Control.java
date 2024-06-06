@@ -557,10 +557,10 @@ public class Control {
         }
     }
 
-    public boolean addAdditionalWhitIngredient(Additional additional) {
+    public boolean addAdditional(Additional additional) {
         try {
             JDBCAdditionalDAO additionalDao = (JDBCAdditionalDAO) DAOFactory.getInstance().getAdditionalDAO();
-            additionalDao.addAdditionalWhitIngredient(additional);
+            additionalDao.addAdditional(additional);
             return true;
         } catch (DAOException ex) {
             String msg = "Error adding adicional: " + additional.getName();
@@ -573,7 +573,7 @@ public class Control {
     public Additional getAdditionalById(long id) {
         try {
             JDBCAdditionalDAO additDao = (JDBCAdditionalDAO) DAOFactory.getInstance().getAdditionalDAO();
-            return additDao.getAdditionalBy("a.id=" + String.valueOf(id));
+            return additDao.getAdditional(id);
         } catch (DAOException ex) {
             logger.error("Error getting Additional.", ex);
             return null;

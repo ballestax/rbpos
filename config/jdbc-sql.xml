@@ -855,8 +855,10 @@
             <SQLFragment>
                 CREATE TABLE additionals(
                 id INTEGER AUTO_INCREMENT,
-                ingredient_id INTEGER NOT NULL,
-                precio DECIMAL(20,2),
+                name VARCHAR(255) NOT NULL UNIQUE,
+                code VARCHAR(255) NOT NULL UNIQUE,      
+                measurement VARCHAR(50),
+                price DECIMAL(20,2),
                 enabled TINYINT(1),                
                 PRIMARY KEY (id)
                 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -865,21 +867,16 @@
         
         <SQLStatement method="ADD_ADDITIONAL">
             <SQLFragment>
-                INSERT INTO additionals (ingredient_id,precio,enabled) VALUES (?,?,?);
+                INSERT INTO additionals (name,code,measurement,price,enabled) VALUES (?,?,?,?,?);
             </SQLFragment>
         </SQLStatement>        
                 
         <SQLStatement method="GET_ADDITIONAL">
             <SQLFragment>
-                SELECT
-            </SQLFragment>
-            <SQLFragment>                
-                a.id, i.name,i.code,i.medida,a.precio,a.enabled
-            </SQLFragment>
+                SELECT *
+            </SQLFragment>          
             <SQLFragment>
-                FROM additionals a
-                INNER JOIN ingredients i
-                ON i.id=a.ingredient_id                
+                FROM additionals              
             </SQLFragment>
             <SQLFragment excludeIfNamedParamEmpty="TRUE">
                 WHERE {where}
@@ -898,8 +895,11 @@
         
         <SQLStatement method="UPDATE_ADDITIONAL">
             <SQLFragment>
-                UPDATE additionals SET                 
-                precio=?,
+                UPDATE additionals SET  
+                name=?,
+                code=?,
+                measurement=?,               
+                price=?,
                 enabled=? 
                 WHERE id = ?
             </SQLFragment>
@@ -1133,9 +1133,9 @@
      
         <SQLStatement method="GET_ADDITIONAL_PRODUCT">
             <SQLFragment>
-                SELECT a.id, i.name, i.code, i.medida, a.precio, ap.cantidad
-                FROM ingredients i, additionals a, additional_product ap
-                WHERE ap.id_additional=a.id AND a.ingredient_id=i.id AND ap.id_product=?
+                SELECT a.id, a.name, a.code, a.medida, a.price, ap.cantidad
+                FROM additionals a, additional_product ap
+                WHERE ap.id_additional=a.id AND ap.id_product=?
             </SQLFragment>
         </SQLStatement>
         
@@ -1701,9 +1701,9 @@
         
         <SQLStatement method="CHECK_INVENTORY_ADDITIONAL">
             <SQLFragment>
-                SELECT i.id, i.name, ing.name as pres, i.measure, i.quantity as exist, ad.id  as idAdd, ip.quantity, i.onlyDelivery 
-                FROM inventory i, inventory_product ip, additionals ad, ingredients ing 
-                WHERE i.id=ip.item_id AND ad.ingredient_id =ing.id AND ad.id =ip.adition_id  AND ip.adition_id=?;
+                SELECT i.id, i.name, ad.name as pres, i.measure, i.quantity as exist, ad.id  as idAdd, ip.quantity, i.onlyDelivery 
+                FROM inventory i, inventory_product ip, additionals ad
+                WHERE i.id=ip.item_id AND ad.id =ip.adition_id  AND ip.adition_id=?;
             </SQLFragment>
         </SQLStatement>
                 

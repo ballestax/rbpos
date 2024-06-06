@@ -81,7 +81,7 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
     public static final String DEFAULT_EXPORT_DIR = "";
 
     //Correr la aplicacion con configuracion de servidor local
-    private static boolean local = true;
+    private static boolean local = !true;
 
     public static final DateFormat DF = new SimpleDateFormat("dd-MM-yyyy");
     public static final DateFormat DF_FULL = new SimpleDateFormat("dd MMMM yyyy hh:mm");
