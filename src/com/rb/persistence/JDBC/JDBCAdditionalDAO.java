@@ -284,7 +284,8 @@ public class JDBCAdditionalDAO implements AdditionalDAO {
                 additional.getCode(),
                 additional.getMeasure(),
                 additional.getPrecio(),
-                additional.isEnabled()
+                additional.isEnabled(),
+                additional.getId()
             };
             update = sqlStatements.buildSQLStatement(conn, UPDATE_ADDITIONAL_KEY, parameters);
             update.executeUpdate();

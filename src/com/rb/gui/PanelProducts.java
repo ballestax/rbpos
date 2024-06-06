@@ -410,7 +410,6 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
     private void showProducts() {
         tabSelected = 1;
         regFilterCat.setVisible(true);
-
         setupTableProducts();
         populateTable("");
         resetPanelNewProduct();
@@ -852,14 +851,14 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             return null;
         }
 
-        if (status == STATUS_EDITING && currentProduct != null) {
+        if (status == STATUS_EDITING && currentAdditional != null) {
             if (!currentAdditional.getName().equals(name)) {
                 if (app.getControl().existClave("additionals", "name", "'" + name + "'") > 0) {
                     showErrorMessage(name, "Ya existe un Adicional registrado con este nombre:");
                     return null;
                 }
             }
-            if (!currentProduct.getCode().equals(code)) {
+            if (!currentAdditional.getCode().equals(code)) {
                 if (app.getControl().existClave("additionals", "code", "'" + code + "'") > 0) {
                     showErrorMessage(code, "Ya existe un adicional registrado con este código:");
                     return null;
@@ -1339,13 +1338,13 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
                         regCat.setForeground(Color.black);
                     }
                 }
-            } else if (editingAditional != null) {
+            } else if (tabSelected== 2 && editingAditional != null) {
                 long id = editingAditional.getId();
                 Additional additional = parseAdditional();
                 if (additional != null) {
                     additional.setId(id);
                     if (app.getControl().updateAdditional(additional)) {
-                        populateTable("");
+                        populateTableAditions("","");
                         tbProducts.setEnabled(true);
                         editCampos(false);
                         resetPanelNewProduct();
