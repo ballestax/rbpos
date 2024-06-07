@@ -33,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import org.dom4j.rule.Action;
 import org.dz.Imagenes;
 
 /**
@@ -161,6 +162,7 @@ public class PanelDash extends JPanel {
 //        bt1.setContentAreaFilled(false);
         bt1.setFont(new Font("tahoma", 1, 16));
         bt1.setAction(action);
+        bt1.setText("<html><div style='text-align: center;'>"+action.getValue(javax.swing.Action.NAME)+"</div></html>");
         bt1.setRolloverIcon(bt1.getIcon());
         bt1.setVerticalTextPosition(SwingConstants.BOTTOM);
         bt1.setHorizontalTextPosition(SwingConstants.CENTER);

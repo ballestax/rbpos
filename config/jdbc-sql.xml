@@ -69,7 +69,7 @@
                     |GET_PRODUCTS_BY_VARPRICE_RANK_LIST
                     |CREATE_STATIONS_TABLE|ADD_STATION|GET_STATIONS|CREATE_PRODUCT_STATION_TABLE|GET_PRODUCT_STATIONS
                     |GET_STATION_BY_ID
-                    |CREATE_CATEGORIES_TABLE|ADD_CATEGORY|GET_CATEGORY_PROD|UPDATE_CATEGORY
+                    |CREATE_CATEGORIES_TABLE|ADD_CATEGORY|GET_CATEGORY_PROD|UPDATE_CATEGORY|DELETE_CATEGORY
                     |ADD_PRESENTATION|UPDATE_PRESENTATION|UPDATE_PRESENTATION_TO_DEFAULT|UPDATE_PRESENTATION_TO_DEFAULT_BY_ID
                     |GET_SUM_REGISTRO
                     |CREATE_PAYS_TABLE|ADD_PAY|GET_PAYS|UPDATE_PAY
@@ -1133,7 +1133,7 @@
      
         <SQLStatement method="GET_ADDITIONAL_PRODUCT">
             <SQLFragment>
-                SELECT a.id, a.name, a.code, a.medida, a.price, ap.cantidad
+                SELECT a.id, a.name, a.code, a.measurement, a.price, ap.cantidad
                 FROM additionals a, additional_product ap
                 WHERE ap.id_additional=a.id AND ap.id_product=?
             </SQLFragment>
@@ -2182,6 +2182,12 @@
                 UPDATE categories SET 
                 name=?
                 WHERE name = ?;
+            </SQLFragment>
+        </SQLStatement>
+
+        <SQLStatement method="DELETE_CATEGORY">
+            <SQLFragment>
+                DELETE FROM categories WHERE name = ?;
             </SQLFragment>
         </SQLStatement>
         

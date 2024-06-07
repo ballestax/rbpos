@@ -139,7 +139,8 @@ public class PanelList<T> extends PanelCapturaMod implements ListSelectionListen
             pcs.firePropertyChange(AC_ADD, null, nombre);
             modelo.addRow(new Object[]{modelo.getRowCount() + 1, nombre});
             modelo.setRowEditable(modelo.getRowCount() - 1, false);
-            lista = new ArrayList(Arrays.asList(modelo.getColumn(1)));
+            // Manually update lista
+            lista.add(nombre);
         }
     }
 
@@ -159,7 +160,7 @@ public class PanelList<T> extends PanelCapturaMod implements ListSelectionListen
         int selectedRow = tabla.getSelectedRow();
         String name = modelo.getValueAt(selectedRow, 1).toString();
         modelo.removeRow(selectedRow);
-        lista = new ArrayList(Arrays.asList(modelo.getColumn(1)));
+        lista.remove(name);
         pcs.firePropertyChange(AC_DELETE, null, name);
     }
 

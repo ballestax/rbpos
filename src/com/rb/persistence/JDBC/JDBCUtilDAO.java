@@ -173,6 +173,7 @@ public class JDBCUtilDAO implements UtilDAO {
     public static final String GET_CATEGORIES_LIST_KEY = "GET_CATEGORY_PROD";
     public static final String ADD_CATEGORY_KEY = "ADD_CATEGORY";
     public static final String UPDATE_CATEGORY_KEY = "UPDATE_CATEGORY";
+    public static final String DELETE_CATEGORY_KEY = "DELETE_CATEGORY";
 
     // public static final String ADD_WAITER_KEY = "ADD_WAITER";
     public static final String GET_EXPENSE_INCOME_LIST_KEY = "GET_EXPENSE_INCOME_LIST";
@@ -1852,6 +1853,27 @@ public class JDBCUtilDAO implements UtilDAO {
             throw new DAOException("Could not properly update the Category", e);
         } finally {
             DBManager.closeStatement(update);
+            DBManager.closeConnection(conn);
+        }
+    }
+
+    public void deleteCategory(String name) throws DAOException {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+            Object[] parameters = {name};
+            ps = sqlStatements.buildSQLStatement(conn, DELETE_CATEGORY_KEY, parameters);
+            ps.executeUpdate();
+            conn.commit();
+        } catch (SQLException e) {
+            DBManager.rollbackConn(conn);
+            throw new DAOException("Cannot delete the category", e);
+        } catch (IOException e) {
+            throw new DAOException("Cannot delete the category", e);
+        } finally {
+            DBManager.closeStatement(ps);
             DBManager.closeConnection(conn);
         }
     }

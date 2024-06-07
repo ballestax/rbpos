@@ -333,6 +333,8 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
 
         String[] TYPE = {"EFECTIVO", "TRANSF", "TARJETA", "COMBO"};
 
+        
+
         SwingWorker sw;
         sw = new SwingWorker() {
             @Override

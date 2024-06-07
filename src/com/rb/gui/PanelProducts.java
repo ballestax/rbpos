@@ -60,6 +60,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.formula.functions.T;
 import org.dz.MyDefaultTableModel;
 import org.dz.PanelCapturaMod;
 import org.dz.ProgAction;
@@ -69,7 +70,8 @@ import org.dz.TextFormatter;
  *
  * @author lrod
  */
-public class PanelProducts extends PanelCapturaMod implements ActionListener, CaretListener, ListSelectionListener, TableModelListener {
+public class PanelProducts extends PanelCapturaMod
+        implements ActionListener, CaretListener, ListSelectionListener, TableModelListener {
 
     private final Aplication app;
     private MyDefaultTableModel modelProducts;
@@ -105,6 +107,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
     private MyDefaultTableModel modelAditions;
     private TablaCellRenderer tRenderer;
     private Additional currentAdditional;
+    private SwingWorker<Boolean, ?> currentSwingWorker;
 
     /**
      * Creates new form PanelProducts
@@ -123,10 +126,10 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
 
         Font font = new Font("Sans", 1, 15);
 
-        String[] cols = new String[]{"ID", "Nombre", "Categoria", "Precio", "Status"};
+        String[] cols = new String[] { "ID", "Nombre", "Categoria", "Precio", "Status" };
         modelProducts = new MyDefaultTableModel(cols, 0);
 
-        cols = new String[]{"ID", "Nombre", "Precio", "Status"};
+        cols = new String[] { "ID", "Nombre", "Precio", "Status" };
         modelAditions = new MyDefaultTableModel(cols, 0);
 
         ImageIcon icon = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "add1.png", 20, 20));
@@ -171,9 +174,9 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         regPrice.setFont(font);
         regCode.setFont(font);
 
-//        regCat.setText(app.getControl().getCategoriesList().toArray());
+        // regCat.setText(app.getControl().getCategoriesList().toArray());
         tbProducts.setRowHeight(26);
-//        tbProducts.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        // tbProducts.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         selectionModel.addListSelectionListener(this);
@@ -222,7 +225,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         lbID1.setOpaque(true);
         lbID1.setBorder(BorderFactory.createEmptyBorder(2, 7, 2, 7));
         lbID1.setBackground(new Color(120, 144, 240));
-//        lbID1.setFont(font);
+        // lbID1.setFont(font);
 
         chEnableProd.setVisible(false);
         chEnableProd.setActionCommand(AC_ENABLE_PRODUCT);
@@ -235,7 +238,8 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
 
             @Override
             public void focusLost(FocusEvent e) {
-                int existClave = app.getControl().existClave(JDBCProductDAO.TABLE_NAME, "code", "'" + regCode.getText() + "'");
+                int existClave = app.getControl().existClave(JDBCProductDAO.TABLE_NAME, "code",
+                        "'" + regCode.getText() + "'");
                 if (existClave > 0) {
                     regCode.setBorderToError();
                     regCode.setForeground(Color.red);
@@ -252,7 +256,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         btBuscar.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "cancel.png", 18, 18)));
         btBuscar.setActionCommand(AC_CLEAR_FIELD);
         btBuscar.addActionListener(this);
-//        regSearch.setFontCampo(font1);
+        // regSearch.setFontCampo(font1);
         regSearch.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
@@ -271,7 +275,8 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             }
         });
 
-        btRefreshList.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "refresh.png", 18, 18)));
+        btRefreshList
+                .setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "refresh.png", 18, 18)));
         btRefreshList.setActionCommand(AC_REFRESH_LIST);
         btRefreshList.addActionListener(this);
 
@@ -305,10 +310,10 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         regFilterCat.setActionCommand(AC_CHANGE_CATEGORY);
         regFilterCat.addActionListener(this);
 
-//        pnCtrl.setLayout(new FlowLayout());
+        // pnCtrl.setLayout(new FlowLayout());
         pnCtrl.add(btRefreshList);
 
-//        resetPanelNewProduct();
+        // resetPanelNewProduct();
         editCampos(false);
         populateTable("");
 
@@ -332,7 +337,8 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             public void propertyChange(PropertyChangeEvent evt) {
                 int newPosition = jSplitPane1.getDividerLocation();
                 app.getControl().addConfig(
-                        new ConfigDB(Configuration.SPLIT_PANE_PRODUCTS, ConfigDB.INTEGER, String.valueOf(newPosition), app.getUser().getUsername(), Aplication.getUserDevice()));
+                        new ConfigDB(Configuration.SPLIT_PANE_PRODUCTS, ConfigDB.INTEGER, String.valueOf(newPosition),
+                                app.getUser().getUsername(), Aplication.getUserDevice()));
             }
         });
 
@@ -342,29 +348,33 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
 
         tbProducts.setModel(modelProducts);
 
-        int[] colW = new int[]{10, 100, 25, 20, 10};
+        int[] colW = new int[] { 10, 100, 25, 20, 10 };
         for (int i = 0; i < colW.length; i++) {
             tbProducts.getColumnModel().getColumn(i).setMinWidth(colW[i]);
             tbProducts.getColumnModel().getColumn(i).setPreferredWidth(colW[i]);
             tbProducts.getColumnModel().getColumn(i).setCellRenderer(new TablaCellRenderer(true, null));
         }
         tbProducts.getColumnModel().getColumn(3).setCellRenderer(tRenderer);
-//        tbProducts.getColumnModel().getColumn(model.getColumnCount() - 1).setCellEditor(new RadioButtonEditor(tbProducts, this, AC_ENABLE_PRODUCT));
-//        tbProducts.getColumnModel().getColumn(model.getColumnCount() - 1).setCellRenderer(new RadioButtonCellRenderer("Habilitado",true));
+        // tbProducts.getColumnModel().getColumn(model.getColumnCount() -
+        // 1).setCellEditor(new RadioButtonEditor(tbProducts, this, AC_ENABLE_PRODUCT));
+        // tbProducts.getColumnModel().getColumn(model.getColumnCount() -
+        // 1).setCellRenderer(new RadioButtonCellRenderer("Habilitado",true));
     }
 
     public void setupTableAditions() {
 
         tbProducts.setModel(modelAditions);
-        int[] colW = new int[]{10, 100, 20, 10};
+        int[] colW = new int[] { 10, 100, 20, 10 };
         for (int i = 0; i < colW.length; i++) {
             tbProducts.getColumnModel().getColumn(i).setMinWidth(colW[i]);
             tbProducts.getColumnModel().getColumn(i).setPreferredWidth(colW[i]);
             tbProducts.getColumnModel().getColumn(i).setCellRenderer(new TablaCellRenderer(true, null));
         }
         tbProducts.getColumnModel().getColumn(2).setCellRenderer(tRenderer);
-//        tbProducts.getColumnModel().getColumn(model.getColumnCount() - 1).setCellEditor(new RadioButtonEditor(tbProducts, this, AC_ENABLE_PRODUCT));
-//        tbProducts.getColumnModel().getColumn(model.getColumnCount() - 1).setCellRenderer(new RadioButtonCellRenderer("Habilitado",true));
+        // tbProducts.getColumnModel().getColumn(model.getColumnCount() -
+        // 1).setCellEditor(new RadioButtonEditor(tbProducts, this, AC_ENABLE_PRODUCT));
+        // tbProducts.getColumnModel().getColumn(model.getColumnCount() -
+        // 1).setCellRenderer(new RadioButtonCellRenderer("Habilitado",true));
     }
 
     public static final String AC_SHOW_ADITIONS = "AC_SHOW_ADITIONS";
@@ -399,7 +409,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             sorter.setSortable(3, false);
         }
 
-//        sorter.setComparator(3, new COmpara);
+        // sorter.setComparator(3, new COmpara);
         if (tFilter <= 3) {
             sorter.setRowFilter(filterText);
         }
@@ -517,7 +527,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             chEnableProd.setSelected(prod.isEnabled());
             regVarPrice.setVisible(true);
             regVarPrice.setSelected(prod.isVariablePrice());
-//            lbID1.setForeground(prod.isEnabled()?Color.BLACK:Color.RED);
+            // lbID1.setForeground(prod.isEnabled()?Color.BLACK:Color.RED);
             regCode.setText(prod.getCode());
             lbTitlePress.setVisible(true);
             loadPresentations(prod);
@@ -535,7 +545,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             lbID1.setText("");
             lbID1.setBackground(new Color(120, 144, 240));
             chEnableProd.setVisible(false);
-//            lbID1.setForeground(Color.BLACK);
+            // lbID1.setForeground(Color.BLACK);
             currentProduct = null;
 
         }
@@ -556,10 +566,10 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             chEnableProd.setVisible(true);
             chEnableProd.setSelected(additional.isEnabled());
             regVarPrice.setVisible(false);
-//            lbID1.setForeground(prod.isEnabled()?Color.BLACK:Color.RED);
+            // lbID1.setForeground(prod.isEnabled()?Color.BLACK:Color.RED);
             regCode.setText(additional.getCode());
             lbTitlePress.setVisible(false);
-//            loadAdditionalProd(additional);
+            // loadAdditionalProd(additional);
             btAddPress.setVisible(false);
             if (!jScrollPane2.isVisible()) {
                 jScrollPane2.setVisible(true);
@@ -574,7 +584,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             lbID1.setText("");
             lbID1.setBackground(new Color(160, 104, 240));
             chEnableProd.setVisible(false);
-//            lbID1.setForeground(Color.BLACK);
+            // lbID1.setForeground(Color.BLACK);
             currentProduct = null;
 
         }
@@ -602,7 +612,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             btSave.setBackground(BCBACK);
             btSave.setToolTipText("Todos los datos estan guardados");
             btSave.setEnabled(false);
-//            btAdd.removeActionListener(this);
+            // btAdd.removeActionListener(this);
         }
     }
 
@@ -633,7 +643,8 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
                 on = prod.isEnabled();
             }
         }
-        String html = "<html>Habilitar <font color=" + (!on ? "green" : "red") + ">[" + (!on ? "ON" : "OFF") + "]</font><html>";
+        String html = "<html>Habilitar <font color=" + (!on ? "green" : "red") + ">[" + (!on ? "ON" : "OFF")
+                + "]</font><html>";
         JMenuItem itemEnable = new JMenuItem(html);
         itemEnable.addActionListener(new ActionListener() {
 
@@ -663,6 +674,10 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
 
     private void populateTable(String where, String order) {
 
+        if (currentSwingWorker != null && !currentSwingWorker.isDone()) {
+            currentSwingWorker.cancel(true);
+        }
+
         SwingWorker<Boolean, Product> sw = new SwingWorker<Boolean, Product>() {
             @Override
             protected Boolean doInBackground() throws Exception {
@@ -677,12 +692,12 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             @Override
             protected void process(List<Product> chunks) {
                 for (Product prod : chunks) {
-                    modelProducts.addRow(new Object[]{
-                        prod.getId(),
-                        prod.getName(),
-                        prod.getCategory(),
-                        prod.getPrice(),
-                        prod.isEnabled() ? "Habilitado" : "Deshabilitado"
+                    modelProducts.addRow(new Object[] {
+                            prod.getId(),
+                            prod.getName(),
+                            prod.getCategory(),
+                            prod.getPrice(),
+                            prod.isEnabled() ? "Habilitado" : "Deshabilitado"
                     });
                     modelProducts.setRowEditable(modelProducts.getRowCount() - 1, false);
                 }
@@ -696,9 +711,15 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
 
         sw.execute();
 
+        currentSwingWorker = sw;
+
     }
 
     private void populateTableAditions(String where, String order) {
+
+        if (currentSwingWorker != null && !currentSwingWorker.isDone()) {
+            currentSwingWorker.cancel(true);
+        }
 
         SwingWorker<Boolean, Additional> sw = new SwingWorker<Boolean, Additional>() {
             @Override
@@ -714,11 +735,11 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             @Override
             protected void process(List<Additional> chunks) {
                 for (Additional adit : chunks) {
-                    modelAditions.addRow(new Object[]{
-                        adit.getId(),
-                        adit.getName(),
-                        adit.getPrecio(),
-                        adit.isEnabled() ? "Habilitado" : "Deshabilitado"
+                    modelAditions.addRow(new Object[] {
+                            adit.getId(),
+                            adit.getName(),
+                            adit.getPrecio(),
+                            adit.isEnabled() ? "Habilitado" : "Deshabilitado"
                     });
                     modelAditions.setRowEditable(modelAditions.getRowCount() - 1, false);
                 }
@@ -732,6 +753,8 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
 
         sw.execute();
 
+        currentSwingWorker = sw;
+
     }
 
     public ArrayList<String> getCategoriesList() {
@@ -743,6 +766,9 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         List<String> list = getCategoriesList().stream().map(cat -> cat.toUpperCase()).collect(Collectors.toList());
         list.add(0, "");
         regCat.setText(list.toArray());
+
+        list.set(0, "TODOS");
+        regFilterCat.setText(list.toArray());        
     }
 
     public Product parseProduct() {
@@ -885,7 +911,8 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
     }
 
     private void showErrorMessage(String field, String message) {
-        GUIManager.showErrorMessage(this, "<html><p>" + message + "<p color=red size=+1>" + field.toUpperCase() + "</html>", "ADVERTENCIA");
+        GUIManager.showErrorMessage(this,
+                "<html><p>" + message + "<p color=red size=+1>" + field.toUpperCase() + "</html>", "ADVERTENCIA");
     }
 
     public void resetCampos() {
@@ -913,19 +940,20 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         lbID = new javax.swing.JLabel();
-        regName = new org.dz.Registro(BoxLayout.X_AXIS, "Nombre","", 70);
+        regName = new org.dz.Registro(BoxLayout.X_AXIS, "Nombre", "", 70);
         regCat = new org.dz.Registro(BoxLayout.X_AXIS, "Categoria", new String[1], 70);
-        regPrice = new org.dz.Registro(BoxLayout.X_AXIS, "Precio", "",70);
-        regDesc = new org.dz.Registro(BoxLayout.Y_AXIS, "Descripcion", textArea,70);
-        regCode = new org.dz.Registro(BoxLayout.X_AXIS, "Codigo","", 55);
-        regVarPrice = new org.dz.Registro(BoxLayout.X_AXIS, "Variable", false,70);
+        regPrice = new org.dz.Registro(BoxLayout.X_AXIS, "Precio", "", 70);
+        regDesc = new org.dz.Registro(BoxLayout.Y_AXIS, "Descripcion", textArea, 70);
+        regCode = new org.dz.Registro(BoxLayout.X_AXIS, "Codigo", "", 55);
+        regVarPrice = new org.dz.Registro(BoxLayout.X_AXIS, "Variable", false, 70);
         btSave = new javax.swing.JButton();
         btCancel = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -937,9 +965,9 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         jPanel2 = new javax.swing.JPanel();
         pnCtrl = new javax.swing.JPanel();
         btBuscar = new javax.swing.JButton();
-        regSearch = new org.dz.Registro(BoxLayout.X_AXIS, "Buscar", "",60);
+        regSearch = new org.dz.Registro(BoxLayout.X_AXIS, "Buscar", "", 60);
         btRefreshList = new javax.swing.JButton();
-        regFilterCat = new org.dz.Registro(BoxLayout.X_AXIS, "Categoria", new String[]{}, 70);
+        regFilterCat = new org.dz.Registro(BoxLayout.X_AXIS, "Categoria", new String[] {}, 70);
         btNewProduct = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbProducts = new javax.swing.JTable();
@@ -955,13 +983,11 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         javax.swing.GroupLayout panelContainPressLayout = new javax.swing.GroupLayout(panelContainPress);
         panelContainPress.setLayout(panelContainPressLayout);
         panelContainPressLayout.setHorizontalGroup(
-            panelContainPressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
+                panelContainPressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 0, Short.MAX_VALUE));
         panelContainPressLayout.setVerticalGroup(
-            panelContainPressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 203, Short.MAX_VALUE)
-        );
+                panelContainPressLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 203, Short.MAX_VALUE));
 
         jScrollPane2.setViewportView(panelContainPress);
 
@@ -974,70 +1000,94 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(regDesc, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(regCat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(regName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(regPrice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(regVarPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(lbTitlePress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btAddPress)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btCancel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btSave))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(lbID, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(0, 0, 0)
-                        .addComponent(lbID1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(0, 0, 0)
-                        .addComponent(chEnableProd)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(regCode, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2))
-                .addContainerGap())
-        );
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(regDesc, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(regCat, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(regName, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(regPrice, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(regVarPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 131,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout
+                                                .createSequentialGroup()
+                                                .addComponent(lbTitlePress, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btAddPress)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btCancel)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btSave))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                jPanel1Layout.createSequentialGroup()
+                                                        .addComponent(lbID, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addGap(0, 0, 0)
+                                                        .addComponent(lbID1, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addGap(0, 0, 0)
+                                                        .addComponent(chEnableProd)
+                                                        .addPreferredGap(
+                                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(regCode, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jScrollPane2))
+                                .addContainerGap()));
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(regCode, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
-                    .addComponent(lbID, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
-                    .addComponent(lbID1, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
-                    .addComponent(chEnableProd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(regName, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(regCat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(regPrice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(regVarPrice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(regDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btSave)
-                        .addComponent(btCancel)
-                        .addComponent(btAddPress))
-                    .addComponent(lbTitlePress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2)
-                .addGap(28, 28, 28))
-        );
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel1Layout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(regCode, javax.swing.GroupLayout.DEFAULT_SIZE, 32,
+                                                Short.MAX_VALUE)
+                                        .addComponent(lbID, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+                                        .addComponent(lbID1, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+                                        .addComponent(chEnableProd, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(regName, javax.swing.GroupLayout.PREFERRED_SIZE, 32,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(regCat, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(regPrice, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(regVarPrice, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(regDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 85,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(jPanel1Layout
+                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(btSave)
+                                                .addComponent(btCancel)
+                                                .addComponent(btAddPress))
+                                        .addComponent(lbTitlePress, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane2)
+                                .addGap(28, 28, 28)));
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {regCat, regName, regPrice});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL,
+                new java.awt.Component[] { regCat, regName, regPrice });
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btCancel, btSave});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] { btCancel, btSave });
 
         jSplitPane1.setRightComponent(jPanel1);
 
@@ -1046,49 +1096,60 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         javax.swing.GroupLayout pnCtrlLayout = new javax.swing.GroupLayout(pnCtrl);
         pnCtrl.setLayout(pnCtrlLayout);
         pnCtrlLayout.setHorizontalGroup(
-            pnCtrlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnCtrlLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(regSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(btBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(regFilterCat, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btNewProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btRefreshList, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
+                pnCtrlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnCtrlLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(regSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 160,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, 0)
+                                .addComponent(btBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(regFilterCat, javax.swing.GroupLayout.PREFERRED_SIZE, 215,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btNewProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 36,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btRefreshList, javax.swing.GroupLayout.PREFERRED_SIZE, 36,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap()));
 
-        pnCtrlLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btNewProduct, btRefreshList});
+        pnCtrlLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL,
+                new java.awt.Component[] { btNewProduct, btRefreshList });
 
         pnCtrlLayout.setVerticalGroup(
-            pnCtrlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnCtrlLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnCtrlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnCtrlLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(pnCtrlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(btBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(regSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btRefreshList)
-                            .addComponent(regFilterCat, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(btNewProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
+                pnCtrlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnCtrlLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(pnCtrlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnCtrlLayout
+                                                .createSequentialGroup()
+                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                .addGroup(pnCtrlLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                                                        .addComponent(btBuscar, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(regSearch, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(btRefreshList)
+                                                        .addComponent(regFilterCat,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 32,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(btNewProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 32,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap()));
 
-        pnCtrlLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btNewProduct, btRefreshList, regFilterCat, regSearch});
+        pnCtrlLayout.linkSize(javax.swing.SwingConstants.VERTICAL,
+                new java.awt.Component[] { btNewProduct, btRefreshList, regFilterCat, regSearch });
 
         tbProducts.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][] {
 
-            },
-            new String [] {
+                },
+                new String[] {
 
-            }
-        ));
+                }));
         jScrollPane1.setViewportView(tbProducts);
 
         buttonGroup1.add(btTab1);
@@ -1100,55 +1161,55 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addComponent(pnCtrl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(btTab1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btTab2)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane1)
+                                        .addComponent(pnCtrl, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                                .addComponent(btTab1)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(btTab2)
+                                                .addGap(0, 0, Short.MAX_VALUE)))
+                                .addContainerGap()));
 
-        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btTab1, btTab2});
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] { btTab1, btTab2 });
 
         jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btTab1, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-                    .addComponent(btTab2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(pnCtrl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel2Layout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(btTab1, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                                        .addComponent(btTab2, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(pnCtrl, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                .addContainerGap()));
 
-        jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btTab1, btTab2});
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] { btTab1, btTab2 });
 
         jSplitPane1.setLeftComponent(jPanel2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jSplitPane1)
-                .addContainerGap())
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jSplitPane1)
+                                .addContainerGap()));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jSplitPane1))
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jSplitPane1)));
     }// </editor-fold>//GEN-END:initComponents
 
     @Override
@@ -1224,7 +1285,15 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             btCancel.setVisible(false);
             btSave.setVisible(false);
             btSave.setActionCommand(AC_SAVE_NEW_PRODUCT);
+
+            btTab1.setEnabled(true);
+            btTab2.setEnabled(true);
+            btNewProduct.setEnabled(true);
+            regSearch.setEnabled(true);
+            btBuscar.setEnabled(true);
+            regFilterCat.setEnabled(true);
             btRefreshList.setEnabled(true);
+
             lbTitlePress.setVisible(false);
             jScrollPane2.setVisible(false);
             panelContainPress.removeAll();
@@ -1246,7 +1315,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
                 populateTable("");
                 currentProduct = product;
                 tbProducts.setEnabled(true);
-                //resetPanelNewProduct();
+                // resetPanelNewProduct();
                 editCampos(false);
                 btSave.setVisible(false);
                 btCancel.setVisible(false);
@@ -1268,10 +1337,10 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         } else if (AC_SAVE_NEW_ADDITIONAL.equals(e.getActionCommand())) {
             Additional additional = parseAdditional();
             if (additional != null && app.getControl().addAdditional(additional)) {
-                populateTableAditions("","");
+                populateTableAditions("", "");
                 currentAdditional = additional;
                 tbProducts.setEnabled(true);
-                //resetPanelNewProduct();
+                // resetPanelNewProduct();
                 editCampos(false);
                 btSave.setVisible(false);
                 btCancel.setVisible(false);
@@ -1337,13 +1406,13 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
                         regCat.setForeground(Color.black);
                     }
                 }
-            } else if (tabSelected== 2 && editingAditional != null) {
+            } else if (tabSelected == 2 && editingAditional != null) {
                 long id = editingAditional.getId();
                 Additional additional = parseAdditional();
                 if (additional != null) {
                     additional.setId(id);
                     if (app.getControl().updateAdditional(additional)) {
-                        populateTableAditions("","");
+                        populateTableAditions("", "");
                         tbProducts.setEnabled(true);
                         editCampos(false);
                         resetPanelNewProduct();
@@ -1391,7 +1460,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
 
     @Override
     public void caretUpdate(CaretEvent e) {
-       // band = false;
+        // band = false;
         if (e.getSource().equals(regName.getComponent())) {
             if (editingProduct != null) {
                 String value = regName.getText();
@@ -1503,7 +1572,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
             app.getControl().updateCategory(evt.getNewValue().toString(), evt.getOldValue().toString());
             updateCategoriesList();
         } else if (PanelList.AC_DELETE.equals(evt.getPropertyName())) {
-            app.getControl().deleteUnit(evt.getNewValue().toString());
+            app.getControl().deleteCategory(evt.getNewValue().toString());
             updateCategoriesList();
         } else if (PanelPressProduct.AC_SAVE_PRESENTATION.equals(evt.getPropertyName())) {
             loadPresentations(currentProduct);
@@ -1538,7 +1607,7 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
-//        int row = e.getLastIndex();
+        // int row = e.getLastIndex();
         int row = tbProducts.getSelectedRow();
         if (row < 0) {
             showProduct(null);
@@ -1607,7 +1676,8 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
             int r = table.convertRowIndexToModel(row);
             if ("habilitado".equalsIgnoreCase(table.getModel().getValueAt(r, table.getColumnCount() - 1).toString())) {
                 disabled = false;
@@ -1653,7 +1723,8 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
 
             if (isSelected) {
                 setForeground(Color.black);
@@ -1705,7 +1776,8 @@ public class PanelProducts extends PanelCapturaMod implements ActionListener, Ca
         }
 
         @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
+                int column) {
             currentValue = (Boolean) value;
             return button;
         }

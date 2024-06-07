@@ -175,7 +175,7 @@ public class PanelCustomPedido extends PanelCapturaMod implements ActionListener
         panel2.setBorder(BorderFactory.createEmptyBorder(5, 2, 5, 15));
         sPanel1.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        ArrayList<Additional> adds = app.getControl().getAdditionalList("", "i.name");
+        ArrayList<Additional> adds = app.getControl().getAdditionalList("", "name");
         int COLS = 3;
         panel2.setLayout(new GridLayout(0, COLS, 5, 5));
         sPanel1.setViewportView(panel2);

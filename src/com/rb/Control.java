@@ -1197,6 +1197,16 @@ public class Control {
         }
     }
 
+    public void deleteCategory(String nombre) {
+        try {
+            JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
+            utilDAO.deleteCategory(nombre);
+        } catch (DAOException ex) {
+            logger.error("Error deleting category.", ex);
+            GUIManager.showErrorMessage(null, "Error eliminando category", "Error");
+        }
+    }
+
     public void addPresentation(Presentation pres) {
         try {
             JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
