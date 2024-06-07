@@ -721,11 +721,11 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
                         Invoice order = (Invoice) value;
                         Waiter waiter = app.getControl().getWaitressByID(order.getIdWaitress());
                         if (order.getTipoEntrega() == PanelPedido.TIPO_LOCAL) {
-                            html = "<html><table style='width:100%; font-size: 11px; color: darkgreen; border=1'>"
+                            html = "<html><table style=' padding:5px;width:100%; font-size: 10px; color: green;' cellspacing=0>"
                                     +
-                                    "<tr><td style='padding: 3px 5px;'>Local</td></tr>" +
-                                    "<tr><td style='padding: 3px 5px; text-align: left;'>Mesa: " + order.getTable() + "</td>" +
-                                    "<td style='padding: 3px 5px; text-align: right;'>" + waiter.getName() + "</td>" +
+                                    "<tr><td style='font-size: 11px'>Local</td></tr>" +
+                                    "<tr><td style='text-align: left;'>Mesa: " + order.getTable() + "</td>" +
+                                    "<td style='text-align: right;' color="+waiter.getColor()+">" + waiter.getName() + "</td>" +
                                     "</tr>" +
                                     "</table></html>";
                             // "<table width=\"100%\"><tr><td align=\"left\"><font color=red>Mesa: " +
