@@ -16,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.dz.PanelCaptura;
 
 /**
- *
  * @author lrod
  */
 public class PanelAddition extends PanelCaptura implements ActionListener {
@@ -101,6 +100,7 @@ public class PanelAddition extends PanelCaptura implements ActionListener {
         btMinus = new javax.swing.JButton();
 
         setToolTipText("");
+        setMaximumSize(new java.awt.Dimension(330, 60));
 
         lbName.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
         lbName.setForeground(new java.awt.Color(0, 0, 102));
@@ -125,25 +125,33 @@ public class PanelAddition extends PanelCaptura implements ActionListener {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btMinus, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spCant, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(spCant, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btAdd, btMinus, spCant});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(4, 4, 4)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(spCant, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chSel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lbName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(lbPrice))
-                    .addComponent(btAdd)
-                    .addComponent(btMinus))
-                .addContainerGap())
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(btMinus)
+                            .addComponent(spCant, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btAdd))
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.CENTER, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.CENTER, layout.createSequentialGroup()
+                                .addComponent(lbName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, 0)
+                                .addComponent(lbPrice))
+                            .addComponent(chSel, javax.swing.GroupLayout.Alignment.CENTER, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(6, 6, 6))))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btAdd, btMinus, spCant});
@@ -188,7 +196,7 @@ public class PanelAddition extends PanelCaptura implements ActionListener {
         lastValue = value;
     }
 
-    private void activate(boolean act) {
+    public void activate(boolean act) {
         lbName.setEnabled(act);
         lbPrice.setEnabled(act);
         spCant.setEnabled(act);
@@ -209,6 +217,10 @@ public class PanelAddition extends PanelCaptura implements ActionListener {
 
     public int getQuantity() {
         return Integer.parseInt(spCant.getValue().toString());
+    }
+    
+    public void setQuantity(int quantity) {
+        spCant.setValue(quantity);
     }
 
     public boolean isSelected() {
