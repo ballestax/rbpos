@@ -1325,7 +1325,7 @@ public class PanelPedido extends PanelCapturaMod
 
         if (products.contains(productPed) && price == productPed.getPrecio()) {
             try {
-
+ 
                 int row = products.indexOf(productPed);
                 int cant = Integer.valueOf(modeloTb.getValueAt(row, 0).toString());
                 modeloTb.setValueAt(cant + cantidad, row, 0);

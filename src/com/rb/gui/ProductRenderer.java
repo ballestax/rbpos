@@ -50,12 +50,12 @@ public class ProductRenderer extends Box implements TableCellRenderer {
     private boolean marked = false;
 
     /*
-         *   Use the specified formatter to format the Object
+     * Use the specified formatter to format the Object
      */
     public ProductRenderer(int axis) {
         super(axis);
-//        super();
-//        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        // super();
+        // setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         this.setAlignmentX(LEFT_ALIGNMENT);
         alterRowColor = UIManager.getColor("Table.alternateRowColor");
 
@@ -82,23 +82,24 @@ public class ProductRenderer extends Box implements TableCellRenderer {
         iconPlus = new ImageIcon(Resources.getImagen("gui/img/icons/" + "plus.png", Aplication.class, 20, 20));
         iconMinus = new ImageIcon(Resources.getImagen("gui/img/icons/" + "minus.png", Aplication.class, 20, 20));
         iconCancel = new ImageIcon(Resources.getImagen("gui/img/icons/" + "cancel.png", Aplication.class, 20, 20));
-//        ImageIcon iconEntry = new ImageIcon(Resources.getImagen("gui/img/icons/" + "clock.png", Aplication.class, 15, 15));
+        // ImageIcon iconEntry = new ImageIcon(Resources.getImagen("gui/img/icons/" +
+        // "clock.png", Aplication.class, 15, 15));
         lbIconSended = new JLabel();
         lbIconSended.setIcon(null);
-//        lbIconEntry = new JLabel();
-//        lbIconEntry.setIcon(iconEntry);
-//        labelName.setPreferredSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
+        // lbIconEntry = new JLabel();
+        // lbIconEntry.setIcon(iconEntry);
+        // labelName.setPreferredSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         labelPres = new JLabel();
         labelPres.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.lightGray));
 
         labelAdicion = new JLabel();
         labelAdicion.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.lightGray));
-//        labelAdicion.setEditable(false);
+        // labelAdicion.setEditable(false);
         labelAdicion.setOpaque(true);
         labelAdicion.setAlignmentX(0);
         labelIngredients = new JLabel();
-//        labelIngredients.setWrapStyleWord(true);
-//        labelIngredients.setLineWrap(true);
+        // labelIngredients.setWrapStyleWord(true);
+        // labelIngredients.setLineWrap(true);
         labelIngredients.setOpaque(true);
         labelIngredients.setAlignmentX(0);
         labelIngredients.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.lightGray));
@@ -113,17 +114,17 @@ public class ProductRenderer extends Box implements TableCellRenderer {
         labelEsp.setFont(f1);
         labelPres.setFont(f1);
 
-//        lbIconSended.setVisible(false);
+        // lbIconSended.setVisible(false);
         boxTop.setAlignmentX(0);
         boxTop.add(labelName);
         boxTop.add(lbIconSended);
-//        boxTop.add(lbIconEntry);
+        // boxTop.add(lbIconEntry);
         add(boxTop);
-//        add(labelName);
+        // add(labelName);
         add(labelPres);
         add(labelAdicion);
         add(labelIngredients);
-//        add(labelEsp);
+        // add(labelEsp);
 
         labelPres.setVisible(false);
         labelAdicion.setVisible(false);
@@ -171,92 +172,99 @@ public class ProductRenderer extends Box implements TableCellRenderer {
             if (prodPed.hasExcluisones()) {
                 stb.append("<p><font color=red> Sin:").append(prodPed.getStExclusiones()).append("</font></p>");
             }
-//                stb.append("<p>").append(prodPed.getEspecificaciones()).append("</p>)");
+            // stb.append("<p>").append(prodPed.getEspecificaciones()).append("</p>)");
             stb.append("</html>");
 
-//                System.err.println(stb.toString());
+            // System.err.println(stb.toString());
             setToolTipText(stb.toString());
         }
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+            int row, int column) {
         if (value != null) {
             try {
                 prodPed = (ProductoPed) value;
-
+                // prodPed = (ProductoPed) table.getValueAt(row, column);
                 labelName.setFont(fTitle);
 
                 int width = table.getColumnModel().getColumn(column).getWidth();
+
+                // String stExclusion = prodPed.getStExclusiones();
+                String color = "#001D3D";
+                // prodPed.getStatus() == ProductoPed.ST_MOD_ADD_CANT ? "#ff2345" : "#000";
+                // if (prodPed.getStatus() == ProductoPed.ST_NEW_ADD) {
+                // color = "#c54e00";
+                // }
+                labelName.setText("<html><span style='font-size: 13px; font-weight: bold;'>"
+                        + "<font color=" + color + ">"
+                        + prodPed.getProduct().getName().toUpperCase()
+                        + "</font></span>"
+                        // + "</p><font size=2 color=blue>"
+                        // + stPres
+                        // + stTerm
+                        // + "<font color=#fe3917>" + stEntry + "</font>"
+                        // + "<font color=#feaa17>" + stDelivery + "</font>"
+                        + "</html>");
+
                 Presentation presentation = prodPed.getPresentation();
                 String stPres = "";
                 int height0 = 8;
+                labelPres.setVisible(false);
+                labelPres.setText(stPres);
                 if (presentation != null) {
                     labelPres.setVisible(true);
-                    stPres = "<html><font size=4 color=blue> (" + presentation.getName() + ")</font> </html>";
+                    stPres = "<html><p style='font-size: 12px; color:#023e8a;'> (" + presentation.getName()
+                            + ")</font> </html>";
                     labelPres.setText(stPres);
                     labelPres.setPreferredSize(new Dimension(width, height0));
                 }
-//                String termino = prodPed.getTermino();
-//                String stTerm = "";
-//                if (termino != null && !termino.trim().isEmpty()) {
-//                    stTerm = " [" + prodPed.getTermino() + "]";
-//                }
+                // String termino = prodPed.getTermino();
+                // String stTerm = "";
+                // if (termino != null && !termino.trim().isEmpty()) {
+                // stTerm = " [" + prodPed.getTermino() + "]";
+                // }
 
-//                boolean entry = prodPed.isEntry();
-//                String stEntry = "";
-//                if (entry) {
-//                    stEntry = " [" + "ENTRADA" + "]";
-//                }
-//                boolean delivery = prodPed.isDelivery();
-//                String stDelivery = "";
-//                if (delivery) {
-//                    stDelivery = " [" + "LLEVAR" + "]";
-//                }
-//                switch (prodPed.getStatus()) {
-//                    case ProductoPed.ST_SENDED:
-//                    case ProductoPed.ST_SENDED_MOD:
-//                        lbIconSended.setIcon(iconSend1);
-//                        break;
-//                    case ProductoPed.ST_MOD_ADD_CANT:
-//                    case ProductoPed.ST_NEW_ADD:
-//                        lbIconSended.setIcon(iconPlus);
-//                        break;
-//                    case ProductoPed.ST_MOD_MIN_CANT:
-//                        lbIconSended.setIcon(iconMinus);
-//                        break;
-//                    case ProductoPed.ST_AVOIDED:
-//                        lbIconSended.setIcon(iconCancel);
-//                        labelName.setFont(fTitleAvoid);
-//                        labelName.setForeground(Color.MAGENTA);
-//                        break;
-//                    default:
-//                        lbIconSended.setIcon(null);
-//                }
+                // boolean entry = prodPed.isEntry();
+                // String stEntry = "";
+                // if (entry) {
+                // stEntry = " [" + "ENTRADA" + "]";
+                // }
+                // boolean delivery = prodPed.isDelivery();
+                // String stDelivery = "";
+                // if (delivery) {
+                // stDelivery = " [" + "LLEVAR" + "]";
+                // }
+                // switch (prodPed.getStatus()) {
+                // case ProductoPed.ST_SENDED:
+                // case ProductoPed.ST_SENDED_MOD:
+                // lbIconSended.setIcon(iconSend1);
+                // break;
+                // case ProductoPed.ST_MOD_ADD_CANT:
+                // case ProductoPed.ST_NEW_ADD:
+                // lbIconSended.setIcon(iconPlus);
+                // break;
+                // case ProductoPed.ST_MOD_MIN_CANT:
+                // lbIconSended.setIcon(iconMinus);
+                // break;
+                // case ProductoPed.ST_AVOIDED:
+                // lbIconSended.setIcon(iconCancel);
+                // labelName.setFont(fTitleAvoid);
+                // labelName.setForeground(Color.MAGENTA);
+                // break;
+                // default:
+                // lbIconSended.setIcon(null);
+                // }
                 lbIconSended.setVisible(iconPainted);
-
-                //                String stExclusion = prodPed.getStExclusiones();
-                String color = "#c54e00";
-//                prodPed.getStatus() == ProductoPed.ST_MOD_ADD_CANT ? "#ff2345" : "#000";
-//                if (prodPed.getStatus() == ProductoPed.ST_NEW_ADD) {
-//                    color = "#c54e00";
-//                }
-                labelName.setText(("<html><p><font color=" + color + ">" + prodPed.getProduct().getName()
-                        + "</font>"
-                        //                                + "</p><font size=2 color=blue>"
-                        //                        + stPres
-                        //                        + stTerm
-                        //                        + "<font color=#fe3917>" + stEntry + "</font>"
-                        //                        + "<font color=#feaa17>" + stDelivery + "</font>"
-                        + "</font></html>").toUpperCase());
 
                 int height = 0;
                 if (prodPed.hasAdditionals()) {
                     labelAdicion.setVisible(true);
-                    String stAdic = "<html><p>";
+                    String stAdic = "<html><p style='font-size: 12px;'>";
                     for (int i = 0; i < prodPed.getAdicionales().size(); i++) {
                         AdditionalPed adicional = prodPed.getAdicionales().get(i);
-                        stAdic += "<font color=blue>" + adicional.toString() + "</font>";
+                        stAdic += "<font color='#7400B8'>" + adicional.toString() + "</font>";
                         stAdic += ((i != prodPed.getAdicionales().size() - 1 ? "<br>" : ""));
                         height += 7;
                     }
@@ -283,9 +291,9 @@ public class ProductRenderer extends Box implements TableCellRenderer {
                 } else {
                     labelIngredients.setVisible(false);
                 }
-//                
-//                setSize(table.getColumnModel().getColumn(column).getWidth(),
-//            Short.MAX_VALUE);
+                //
+                // setSize(table.getColumnModel().getColumn(column).getWidth(),
+                // Short.MAX_VALUE);
 
                 table.setRowHeight(row, getPreferredSize().height + 15 + height + height2);
 
@@ -297,37 +305,38 @@ public class ProductRenderer extends Box implements TableCellRenderer {
 
         if (isSelected) {
             setBackground(table.getSelectionBackground());
-//            if (hasFocus) {
-//                setBorder(BorderFactory.createLineBorder(Color.darkGray));
-//            } else {
-//                setBorder(createLineBorder(Color.lightGray));
-//            }
+            // if (hasFocus) {
+            // setBorder(BorderFactory.createLineBorder(Color.darkGray));
+            // } else {
+            // setBorder(createLineBorder(Color.lightGray));
+            // }
         } else {
             setBackground(row % 2 == 0 ? table.getBackground() : alterRowColor);
-//            setForeground(Color.black);
+            // setForeground(Color.black);
             setBorder(UIManager.getBorder("Table.cellBorder"));
         }
 
-//        boolean mark = false;
-//        try {
-//            if (table.getValueAt(row, 0) instanceof Boolean) {
-//                mark = Boolean.valueOf(table.getValueAt(row, 0).toString());
-//            }
-//        } catch (Exception e) {
-//        }
-//        
-//        if (marked && mark) {
-//            if (selectionBackgroundColor != null) {
-//                setBackground(selectionBackgroundColor);
-//            }
-//        }
+        // boolean mark = false;
+        // try {
+        // if (table.getValueAt(row, 0) instanceof Boolean) {
+        // mark = Boolean.valueOf(table.getValueAt(row, 0).toString());
+        // }
+        // } catch (Exception e) {
+        // }
+        //
+        // if (marked && mark) {
+        // if (selectionBackgroundColor != null) {
+        // setBackground(selectionBackgroundColor);
+        // }
+        // }
+
         return this;
     }
 
     @Override
     public void setBackground(Color bg) {
-        super.setBackground(bg); //To change body of generated methods, choose Tools | Templates.
-        
+        super.setBackground(bg); // To change body of generated methods, choose Tools | Templates.
+
         labelName.setBackground(bg);
         labelPres.setBackground(bg);
         labelAdicion.setBackground(bg);
