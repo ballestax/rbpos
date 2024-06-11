@@ -52,6 +52,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 import com.rb.Aplication;
 import com.rb.Configuration;
 import com.rb.MyConstants;
+import com.rb.Utiles;
 import com.rb.domain.AdditionalPed;
 import com.rb.domain.ConfigDB;
 import com.rb.domain.Cycle;
@@ -116,13 +117,13 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
 
         pTime = new PrettyTime(new Locale("es"));
 
-        String[] colNames = { "No", "Pedido", "Valor", "Fecha", "Tiempo", "Estado", "Accion" };
+        String[] colNames = {"No", "Pedido", "Valor", "Fecha", "Tiempo", "Estado", "Accion"};
         model = new MyDefaultTableModel(colNames, 0);
         tbOrders.setModel(model);
         tbOrders.setRowHeight(35);
 
         ImageIcon iconPrint = new ImageIcon(
-                app.getImgManager().getImagen(app.getFolderIcons() + "Printer-orange.png", 20, 20));
+                app.getImgManager().getImagen(app.getFolderIcons() + "printer-orange.png", 20, 20));
         ImageIcon iconTickets = new ImageIcon(
                 app.getImgManager().getImagen(app.getFolderIcons() + "tickets.png", 20, 20));
         ImageIcon iconCancel = new ImageIcon(
@@ -134,7 +135,7 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         selectionModel.addListSelectionListener(this);
 
         regFilter1.setLabelText("Pedido");
-        regFilter1.setText(new String[] { "--TODOS--", "LOCAL", "DOMICILIO", "PARA LLEVAR" });
+        regFilter1.setText(new String[]{"--TODOS--", "LOCAL", "DOMICILIO", "PARA LLEVAR"});
 
         ArrayList<Waiter> waiterslList = app.getControl().getWaitresslList("status=1", "name");
         waiterslList.add(0, new Waiter("--TODOS--", 1));
@@ -149,14 +150,14 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
         // List<String> STATUSES = new ArrayList<>(Arrays.asList(Invoice.STATUSES));
         // STATUSES.add(0, "--TODOS--");
         // regFilter3.setText(STATUSES.toArray());
-        regFilter3.setText(new String[] { "--TODOS--", "NORMAL", "ANULADA", "MODIFICADA", "ENVIADA", "PAGADA" });
+        regFilter3.setText(new String[]{"--TODOS--", "NORMAL", "ANULADA", "MODIFICADA", "ENVIADA", "PAGADA"});
 
         tbOrders.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tbOrders.setSelectionModel(selectionModel);
         tbOrders.getTableHeader().setReorderingAllowed(false);
 
         // TimeCellRenderer timeRenderer = new TimeCellRenderer();
-        int[] colW = new int[] { 50, 120, 50, 80, 50, 30, 30 };
+        int[] colW = new int[]{50, 120, 50, 80, 50, 30, 30};
         for (int i = 0; i < colW.length; i++) {
             tbOrders.getColumnModel().getColumn(i).setMinWidth(colW[i]);
             tbOrders.getColumnModel().getColumn(i).setPreferredWidth(colW[i]);
@@ -299,14 +300,14 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
             @Override
             protected Object doInBackground() throws Exception {
                 for (Invoice order : orderslList) {
-                    model.addRow(new Object[] {
-                            order.getId(),
-                            order,
-                            order.getValor(),
-                            order.getFecha(),
-                            "", // pt.formatDuration(pt.calculatePreciseDuration(order.getFecha())),
-                            Invoice.STATUSES[order.getStatus()],
-                            ""
+                    model.addRow(new Object[]{
+                        order.getId(),
+                        order,
+                        order.getValor(),
+                        order.getFecha(),
+                        "", // pt.formatDuration(pt.calculatePreciseDuration(order.getFecha())),
+                        Invoice.STATUSES[order.getStatus()],
+                        ""
                     });
                     model.setRowEditable(model.getRowCount() - 1, false);
                     model.setCellEditable(model.getRowCount() - 1, model.getColumnCount() - 1, true);
@@ -426,7 +427,7 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
             labelInfo.setVerticalAlignment(SwingConstants.CENTER);
             labelInfo.setText(
                     "<html><table width=\"" + width + "\" cellspacing=\"0\" border=\"1\"><tr><td align=\"center\">"
-                            + "<font color=#a0a0aa size=+2>Seleccione un pedido.</font></td></tr></table></html>");
+                    + "<font color=#a0a0aa size=+2>Seleccione un pedido.</font></td></tr></table></html>");
         }
     }
 
@@ -459,10 +460,10 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
             populateList();
         } else if (AC_SHOW_ONLY_PEND.equals(e.getActionCommand())) {
             if (cbPend.isSelected()) {
-                regFilter3.setText(new String[] { "--TODOS--", "NORMAL", "MODIFICADA", "ENVIADA" });
+                regFilter3.setText(new String[]{"--TODOS--", "NORMAL", "MODIFICADA", "ENVIADA"});
             } else {
                 regFilter3
-                        .setText(new String[] { "--TODOS--", "NORMAL", "ANULADA", "MODIFICADA", "ENVIADA", "PAGADA" });
+                        .setText(new String[]{"--TODOS--", "NORMAL", "ANULADA", "MODIFICADA", "ENVIADA", "PAGADA"});
             }
             populateList();
         }
@@ -721,18 +722,10 @@ public class PanelOrderList extends PanelCapturaMod implements ActionListener, L
                         Invoice order = (Invoice) value;
                         Waiter waiter = app.getControl().getWaitressByID(order.getIdWaitress());
                         if (order.getTipoEntrega() == PanelPedido.TIPO_LOCAL) {
-                            html = "<html><table style=' padding:5px;width:100%; font-size: 10px; color: green;' cellspacing=0>"
-                                    +
-                                    "<tr><td style='font-size: 11px'>Local</td></tr>" +
-                                    "<tr><td style='text-align: left;'>Mesa: " + order.getTable() + "</td>" +
-                                    "<td style='text-align: right;' color="+waiter.getColor()+">" + waiter.getName() + "</td>" +
-                                    "</tr>" +
-                                    "</table></html>";
-                            // "<table width=\"100%\"><tr><td align=\"left\"><font color=red>Mesa: " +
-                            // order.getTable() + "<font></td>"
-                            // + "<td bgcolor=\"#" + waiter.getColor().darker() + "\" align=\"right\"><font
-                            // color=#"+waiter.getColor()+">" + waiter.getName() +
-                            // "</font></td></tr></table></html>";
+                            html = "<html>Local<br><table width=\"100%\">"
+                                    + "<tr><td align=\"left\"><font color=red>Mesa: " + order.getTable() + "<font></td>"
+                                    + "<td align=\"right\"><"
+                                    + "font color='#" + Utiles.toHex(waiter.getColor()) + "'>" + waiter.getName() + "</font></td></tr></table></html>";
                         } else if (order.getTipoEntrega() == PanelPedido.TIPO_DOMICILIO) {
                             html = "<html>Domicilio<br><font color=red>" + order.getIdCliente() + "<font></html>";
                         }

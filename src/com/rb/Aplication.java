@@ -81,7 +81,7 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
     public static final String DEFAULT_EXPORT_DIR = "";
 
     //Correr la aplicacion con configuracion de servidor local
-    private static boolean local = true;
+    private static boolean local = !true;
 
     public static final DateFormat DF = new SimpleDateFormat("dd-MM-yyyy");
     public static final DateFormat DF_FULL = new SimpleDateFormat("dd MMMM yyyy hh:mm");
@@ -500,8 +500,8 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
                 getGuiManager().showBasicPanel(getGuiManager().getPanelBasicInventory(), perm);
             }
         };
-        acShowInventory.setSmallIcon(new ImageIcon(imgManager.getImagen(getFolderIcons() + "Inventory-maintenance.png", 25, 25)));
-        acShowInventory.setLargeIcon(new ImageIcon(imgManager.getImagen(getFolderIcons() + "Inventory-maintenance.png", 32, 32)));
+        acShowInventory.setSmallIcon(new ImageIcon(imgManager.getImagen(getFolderIcons() + "inventory-maintenance.png", 25, 25)));
+        acShowInventory.setLargeIcon(new ImageIcon(imgManager.getImagen(getFolderIcons() + "inventory-maintenance.png", 32, 32)));
 
         acShowProducts = new ProgAction("Products",
                 null, "Ver modulo productos", 'p') {

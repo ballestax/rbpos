@@ -582,6 +582,7 @@ public class PrinterService {
                 escpos.write(value);
             }
             escpos.close();
+            
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(PrintService.class.getName()).log(Level.SEVERE, null, ex);
         }

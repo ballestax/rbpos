@@ -180,6 +180,7 @@ public class PanelPayInvoice extends PanelCapturaMod implements ActionListener, 
 
         lbInfo.setVisible(false);
         btPrint.setText("Imprimir");
+        btPrint.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "Printer-orange.png", 20, 20)));
         btPrint.setActionCommand(AC_PRINT_INVOICE);
         btPrint.addActionListener(this);
         btPrint.setVisible(false);
@@ -467,6 +468,8 @@ public class PanelPayInvoice extends PanelCapturaMod implements ActionListener, 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btPayMet1, btPayMet2, btPayMet3, btPayMet4});
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {regBank, regCard, regCardType, regEfect, regTransfer});
+
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btPagar, btPrint});
 
     }// </editor-fold>//GEN-END:initComponents
 

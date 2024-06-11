@@ -60,7 +60,7 @@ public class PanelConfirmPedido extends PanelCapturaMod implements ActionListene
         btPrint.setToolTipText("Imprimir");
         btPrint.setMargin(new Insets(2, 2, 2, 2));
         btPrint.setFocusPainted(false);
-        btPrint.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "Printer-orange.png", 32, 32)));
+        btPrint.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "printer-orange.png", 32, 32)));
         btPrint.setActionCommand(AC_PRINT_BILL);
         btPrint.addActionListener(this);
 
@@ -237,6 +237,7 @@ public class PanelConfirmPedido extends PanelCapturaMod implements ActionListene
             Permission perm = app.getControl().getPermissionByName(MyConstants.PERM_MOD_ORDER);
             if (app.getControl().hasPermission(app.getUser(), perm)) {
                 cargarFactura();
+                cancelPanel();
             } else {
                 GUIManager.showErrorMessage(this, "No tiene permisos para realizar esta accion", "Error de privilegios");
                

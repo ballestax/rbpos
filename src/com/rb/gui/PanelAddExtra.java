@@ -68,10 +68,15 @@ public class PanelAddExtra extends PanelCapturaMod implements ActionListener {
         btSave.setText("Agregar");
         btSave.setActionCommand(AC_ADD_EXTRA);
         btSave.addActionListener(this);
+        
+        btCancel.setText("Cancelar");
+        btCancel.setActionCommand(AC_CANCEL_EXTRA);
+        btCancel.addActionListener(this);
 
         updateCategoriesList();
 
     }
+    private static final String AC_CANCEL_EXTRA = "AC_CANCEL_EXTRA";
     public static final String AC_ADD_CATEGORY_EXTRA = "AC_ADD_CATEGORY_EXTRA";
 
     private CashMov checkExtra() {
@@ -138,11 +143,14 @@ public class PanelAddExtra extends PanelCapturaMod implements ActionListener {
         regDesc = new com.rb.gui.util.Registro(0, lb5, "", width);
         btSave = new javax.swing.JButton();
         btAddCategory = new javax.swing.JButton();
+        btCancel = new javax.swing.JButton();
 
         jLabel1.setBackground(new java.awt.Color(147, 112, 112));
         jLabel1.setOpaque(true);
 
         btSave.setText("jButton1");
+
+        btCancel.setText("jButton1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -158,6 +166,8 @@ public class PanelAddExtra extends PanelCapturaMod implements ActionListener {
                     .addComponent(regValor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btCancel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btSave))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(regCategory, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
@@ -183,7 +193,9 @@ public class PanelAddExtra extends PanelCapturaMod implements ActionListener {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(regNote, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btSave)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btSave)
+                    .addComponent(btCancel))
                 .addContainerGap())
         );
 
@@ -194,6 +206,7 @@ public class PanelAddExtra extends PanelCapturaMod implements ActionListener {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAddCategory;
+    private javax.swing.JButton btCancel;
     private javax.swing.JButton btSave;
     private javax.swing.JLabel jLabel1;
     private com.rb.gui.util.Registro regCategory;
@@ -231,6 +244,8 @@ public class PanelAddExtra extends PanelCapturaMod implements ActionListener {
         } else if (AC_ADD_CATEGORY_EXTRA.equals(e.getActionCommand())) {
             List<CashMov.Category> list = new ArrayList(app.getControl().getExpensesCategoriesMap("", "category").values());
             app.getGuiManager().showPanelNewCategory("Categoria", this, list);
+        }else if(AC_CANCEL_EXTRA.equals(e.getActionCommand())){
+            cancelPanel();
         }
     }
 }

@@ -31,7 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-
 import org.dz.Registro;
 
 /**
@@ -39,11 +38,11 @@ import org.dz.Registro;
  * @author Ballestax
  */
 public class PanelAccess extends JPanel {
-
+    
     private JTextField usuario;
     private JPasswordField contraseña;
     private JLabel mensajes;
-    private final String nomBtns[] = { "Aceptar", "Cancelar" };
+    private final String nomBtns[] = {"Aceptar", "Cancelar"};
     private final JButton[] btns = new JButton[nomBtns.length];
     private JButton btnKeyboard;
     private final Font fnt = new Font("Sans", 1, 16);
@@ -56,12 +55,16 @@ public class PanelAccess extends JPanel {
     private Registro regUser;
     private Registro regPassword;
     private PropertyChangeSupport pcs;
-
+    
     public PanelAccess(Aplication app) {
-        this(app, null);
+        this(app, null, null);
     }
-
-    public PanelAccess(Aplication app, ActionListener listener) {
+    
+    public PanelAccess(Aplication app, User user) {
+        this(app, null, user);
+    }
+    
+    public PanelAccess(Aplication app, ActionListener listener, User user) {
         this.app = app;
         this.listener = listener;
         this.pcs = new PropertyChangeSupport(this);
@@ -71,7 +74,6 @@ public class PanelAccess extends JPanel {
 
         // JLabel lbMsg = new JLabel("<html><font color=blue>Digite su usuario y
         // contraseña para ingresar al sistema</font></html>");
-
         add(labelImg, new GridBagConstraints(0, 1, 2, 2, 0.1, 0.1, GridBagConstraints.CENTER,
                 GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 2), 40, 40));
         add(regUser, new GridBagConstraints(3, 1, 2, 1, 0.1, 0.0, GridBagConstraints.CENTER,
@@ -79,8 +81,11 @@ public class PanelAccess extends JPanel {
         add(regPassword, new GridBagConstraints(3, 2, 2, 1, 0.1, 0.0, GridBagConstraints.CENTER,
                 GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 7), 100, 16));
         // add(btnKeyboard, new GridBagConstraints(4, 1, 1, 1, 0.1, 0.0, GridBagConstraints.CENTER,
-                // GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 7), 16, 16));
-
+        // GridBagConstraints.HORIZONTAL, new Insets(2, 2, 2, 7), 16, 16));
+        if (user != null) {
+            regUser.setText(user.getUsername());
+        }
+        
         Box boxBtns = new Box(BoxLayout.X_AXIS);
         boxBtns.add(btns[1]);
         boxBtns.add(Box.createHorizontalGlue());
@@ -89,56 +94,55 @@ public class PanelAccess extends JPanel {
                 GridBagConstraints.HORIZONTAL, new Insets(7, 15, 7, 7), 0, 0));
 
         // setBackground(new Color(0, 0, 0, 0));
-
     }
-
+    
     private void crearComponentes() {
-
+        
         usuario = new JTextField();
         regUser = new Registro(BoxLayout.Y_AXIS, "Usuario:", usuario);
         regUser.setFont(fnt);
-
+        
         contraseña = new JPasswordField();
         regPassword = new Registro(BoxLayout.Y_AXIS, "Contraseña:", contraseña);
         regPassword.setFont(fnt2);
         contraseña.addKeyListener(new KeyListener() {
-
+            
             @Override
             public void keyPressed(KeyEvent e) {
             }
-
+            
             @Override
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     procesarEvento(e);
                 }
             }
-
+            
             @Override
             public void keyTyped(KeyEvent e) {
             }
         });
-
+        
         host = new JTextField();
         host.setSize(170, 21);
         host.setFont(fnt);
         regHost = new com.rb.gui.util.Registro(BoxLayout.Y_AXIS, "Host:", host);
-
+        
         labelImg = new JLabel(
                 new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "security.png", 90, 90)));
-
+        
         mensajes = new JLabel("MENSAJES");
         // mensajes.setSize(200, 50);
         mensajes.setFont(fnt);
         mensajes.setBackground(Color.orange);
-
+        
         for (int i = 0; i < btns.length; i++) {
             btns[i] = new JButton(nomBtns[i]);
             btns[i].setFont(fnt);
             btns[i].setMinimumSize(new Dimension(120, 30));
             btns[i].setPreferredSize(new Dimension(120, 30));
             btns[i].addActionListener(new ActionListener() {
-
+                
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     procesarEvento(e);
@@ -146,7 +150,7 @@ public class PanelAccess extends JPanel {
             });
         }
         btnKeyboard = new JButton();
-
+        
         btnKeyboard
                 .setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "keyboard.png", 16, 16)));
         btnKeyboard.setActionCommand("AC_SHOW_KEYBOARD");
@@ -162,19 +166,19 @@ public class PanelAccess extends JPanel {
             }
         });
     }
-
+    
     @Override
     public void setVisible(boolean aFlag) {
         super.setVisible(aFlag); // To change body of generated methods, choose Tools | Templates.
     }
-
+    
     private void procesarEvento(ActionEvent e) {
         if (e.getSource().equals(btns[0])) {
             if (comprobarUsuario(usuario.getText(), contraseña.getPassword())) {
                 getRootPane().getParent().setVisible(false);
                 if (listener != null) {
                     listener.actionPerformed(new ActionEvent(this, 1010, "AC_CONTINUE"));
-
+                    
                 }
             } else {
                 String msg = "Datos incorrectos";
@@ -191,11 +195,11 @@ public class PanelAccess extends JPanel {
             }
         }
     }
-
+    
     private void procesarEvento(KeyEvent e) {
         if (comprobarUsuario(usuario.getText(), contraseña.getPassword())) {
             getRootPane().getParent().setVisible(false);
-
+            
         } else {
             String msg = "Datos incorrectos";
             JOptionPane.showMessageDialog(this.getParent(), msg, "Error", JOptionPane.ERROR_MESSAGE);
@@ -203,7 +207,7 @@ public class PanelAccess extends JPanel {
             contraseña.selectAll();
         }
     }
-
+    
     private boolean comprobarUsuario(String user, char[] contra) {
         if (user.length() == 0 || user == null) {
             return false;
@@ -217,17 +221,19 @@ public class PanelAccess extends JPanel {
             return false;
         }
     }
-
+    
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
-        if (pcs != null && listener != null)
+        if (pcs != null && listener != null) {
             pcs.addPropertyChangeListener(listener);
+        }
     }
-
+    
     @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
-        if (pcs != null && listener != null)
+        if (pcs != null && listener != null) {
             pcs.removePropertyChangeListener(listener);
+        }
     }
-
+    
 }

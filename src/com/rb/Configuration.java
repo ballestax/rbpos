@@ -74,7 +74,7 @@ public class Configuration {
     public static final String BS_CUSTOM_SERVICE = "cf.tck.custom3";
     public static final String BS_CUSTOM_QUALITY_MSG = "cf.tck.quality_msg";
     public static final String BS_CUSTOM_QUALITY_SCALE = "cf.tck.quality_scale";
-    public static final String BS_CUSTOM_QUALITY_ENABLED = "cf.tck.ticket_width";
+    public static final String BS_CUSTOM_QUALITY_ENABLED = "cf.tck.quality_enabled";
     public static final String BS_TICKECT_WIDTH = "cf.tck.ticket_width";
 
     public static final String SPLIT_PANE_ORDERS = "cf.split_panel_orders";

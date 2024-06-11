@@ -1583,7 +1583,7 @@ public class Control {
     public BigDecimal getValueSalesByCycle(long idCycle) {
         try {
             JDBCUtilDAO utilDAO = (JDBCUtilDAO) DAOFactory.getInstance().getUtilDAO();
-            return utilDAO.getSumValue("invoices", "value", "ciclo=" + idCycle + " AND status=0");
+            return utilDAO.getSumValue("invoices", "value", "ciclo=" + idCycle + " AND status!=1");
         } catch (DAOException ex) {
             logger.error("Error getting Sum of Invoices.", ex);
             return null;

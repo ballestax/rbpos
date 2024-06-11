@@ -210,7 +210,7 @@ public class GUIManager {
         } catch (Exception exception) {
 
         }
-        
+
         UIDefaults defaults = UIManager.getLookAndFeelDefaults();
         if (defaults.get("Table.alternateRowColor") == null) {
             defaults.put("Table.alternateRowColor", new Color(240, 240, 240));
@@ -406,7 +406,7 @@ public class GUIManager {
 
     public PanelBasic getPanelBasicInventory() {
         if (panelBasicInventory == null) {
-            ImageIcon icon = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "Inventory-maintenance.png", 30, 30));
+            ImageIcon icon = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "inventory-maintenance.png", 30, 30));
             panelBasicInventory = new PanelBasic(app, "Inventarios", icon, getPanelInventory());
         }
         return panelBasicInventory;
@@ -602,7 +602,14 @@ public class GUIManager {
 
     public PanelAccess getPanelAccess() {
 
-        PanelAccess panelAccess = new PanelAccess(app);
+        PanelAccess panelAccess = new PanelAccess(app, null);
+
+        return panelAccess;
+    }
+
+    public PanelAccess getPanelAccess(User user) {
+
+        PanelAccess panelAccess = new PanelAccess(app, user);
 
         return panelAccess;
     }
@@ -1100,6 +1107,31 @@ public class GUIManager {
         dialog.setVisible(true);
     }
 
+    public void showPanelConfirmAccess(ActionListener listener) {
+        user = app.getUser();
+        setWaitCursor();
+        final JDialog dialog = new JDialog();
+        dialog.setModalityType(Dialog.ModalityType.TOOLKIT_MODAL);
+        int w = 350;
+        int h = 220;
+        dialog.setPreferredSize(new Dimension(w, h));
+        dialog.setResizable(false);
+        dialog.add(getPanelAccess(user));
+//        dialog.setUndecorated(true);
+//        dialog.setBackground(new Color(125,125,125,200));
+        WindowAdapter windowAction = new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            }
+        };
+        dialog.addWindowListener(windowAction);
+        dialog.setTitle("Credenciales.");
+        dialog.pack();
+        dialog.setLocationRelativeTo(getFrame());
+        setDefaultCursor();
+        dialog.setVisible(true);
+    }
+
     public MyDialogEsc getDialog(boolean limpiar) {
         if (myDialog == null) {
             myDialog = new MyDialogEsc(frame);
@@ -1161,7 +1193,7 @@ public class GUIManager {
 
     public void reviewFacture(Invoice invoice) {
         PanelConfirmPedido confirmPedido = new PanelConfirmPedido(app, invoice);
-
+        confirmPedido.addPropertyChangeListener(getPanelPedido());
         setWaitCursor();
         JDialog dialog = getDialog(true);
         dialog.setPreferredSize(null);
@@ -1417,7 +1449,7 @@ public class GUIManager {
         setWaitCursor();
         JDialog dialog = new MyDialogEsc();
         dialog.setModal(true);
-        dialog.setIconImage(app.getImgManager().getImagen("gui/img/Inventory-maintenance.png", 18, 18));
+        dialog.setIconImage(app.getImgManager().getImagen("gui/img/inventory-maintenance.png", 18, 18));
         dialog.add(getPanelNewList(title, listener, lista));
         dialog.setTitle("Unidades de medida.");
         dialog.pack();
@@ -1430,7 +1462,7 @@ public class GUIManager {
 //        setWaitCursor();
 //        JDialog dialog = new MyDialog();
 //        dialog.setModal(true);
-//        dialog.setIconImage(app.getImgManager().getImagen("gui/img/Inventory-maintenance.png", 18, 18));        
+//        dialog.setIconImage(app.getImgManager().getImagen("gui/img/inventory-maintenance.png", 18, 18));        
 ////        if (!getPanelNewLocation().containsListener(getPanelNewProduct())) {
 ////            getPanelNewLocation().addPropertyChangeListener(getPanelNewProduct());
 ////        }
@@ -1496,7 +1528,7 @@ public class GUIManager {
         setWaitCursor();
         JDialog dialog = new MyDialogEsc();
         dialog.setModal(true);
-        dialog.setIconImage(app.getImgManager().getImagen("gui/img/Inventory-maintenance.png", 18, 18));
+        dialog.setIconImage(app.getImgManager().getImagen("gui/img/inventory-maintenance.png", 18, 18));
         dialog.add(getPanelNewList(title, listener, lista));
         dialog.setTitle("Categorias.");
         dialog.pack();

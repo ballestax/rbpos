@@ -166,7 +166,7 @@ public class PanelInventory extends PanelCapturaMod implements ActionListener, L
 
         JButton btPrintList = new JButton();
         btPrintList.setFont(f);
-        btPrintList.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "Printer-orange.png", 22, 22)));
+        btPrintList.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "printer-orange.png", 22, 22)));
         btPrintList.setActionCommand(AC_PRINT_LIST);
         btPrintList.addActionListener(this);
         btPrintList.setToolTipText("Imprimir");

@@ -63,6 +63,7 @@ public class MyConstants {
     public static final String PERM_ANULATE_INVOICE = "allow-anulate-invoice";
     public static final String PERM_MOD_ORDER = "allow-mod-order";
     public static final String PERM_PRINT_INVOICE = "allow-print-ticket";
+    public static final String PERM_OPEN_CASH = "allow-open-cash";
 
     public static final Permission[] PERMISSIONS = {
         new Permission(PERM_ANULATE_INVOICE, "Anular factura"),
@@ -93,7 +94,8 @@ public class MyConstants {
         new Permission(PERM_SHOW_TAB_STATIONS, "Ver pestaña estaciones"),
         new Permission("allow-modify-waiters", "Modificar meseros"),
         new Permission("allow-modify-tables", "Modificar mesas"),
-        new Permission("allow-modify-stations", "Modificar estaciones"),};
+        new Permission("allow-modify-stations", "Modificar estaciones"),
+        new Permission(PERM_OPEN_CASH, "Abrir caja"),};
 
     public static final SimpleDateFormat FORMAT_DATE = new SimpleDateFormat("dd-MM-yyyy");
 

@@ -134,9 +134,9 @@
               </Group>
               <EmptySpace type="unrelated" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="2" attributes="0">
-                  <Component id="btPrint" alignment="2" min="-2" pref="24" max="-2" attributes="0"/>
+                  <Component id="btPrint" linkSize="15" alignment="2" min="-2" pref="24" max="-2" attributes="0"/>
                   <Component id="lbInfo" alignment="2" min="-2" pref="21" max="-2" attributes="0"/>
-                  <Component id="btPagar" alignment="2" min="-2" pref="34" max="-2" attributes="0"/>
+                  <Component id="btPagar" linkSize="15" alignment="2" min="-2" pref="34" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
           </Group>
