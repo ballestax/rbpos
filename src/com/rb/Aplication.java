@@ -75,7 +75,7 @@ public final class Aplication implements ActionListener, PropertyChangeListener,
     public static final String PREFERENCES = "";
     public static final String DATABASE = "rubidium";
     public static final String WORK_FOLDER = "rubidium";
-    public static final String DB_USER = "root";
+    public static final String DB_USER = "admin";
     public static boolean INSTALL_DB = true;
     private static final boolean messaged = true;
     public static final String DEFAULT_EXPORT_DIR = "";

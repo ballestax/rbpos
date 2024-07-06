@@ -8,11 +8,15 @@ package com.rb.gui;
 import com.rb.MyConstants;
 import com.rb.Aplication;
 import com.rb.Configuration;
+import com.rb.GUIManager;
 import com.rb.domain.ConfigDB;
+import com.rb.domain.Permission;
 import com.rb.domain.Product;
+import static com.rb.gui.PanelCash.logger;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.BoxLayout;
@@ -130,6 +134,23 @@ public class PanelTopSearch extends PanelCaptura implements ActionListener {
 
     }
     public static final String AC_FILTER_PRODUCTS = "AC_FILTER_PRODUCTS";
+    
+    private void pulsePinPrinter() {
+        Permission perm = app.getControl().getPermissionByName(MyConstants.PERM_OPEN_CASH);
+        if (!app.getControl().hasPermission(app.getUser(), perm)) {
+            GUIManager.showErrorMessage(this, "No tiene permisos para abrir la caja", "Error de privilegios");
+            return;
+        }
+        ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED);
+        if (config == null) {
+            GUIManager.showErrorMessage(null, "Impresora no configurada", "Printer error");
+        } else {
+            String printer = config.getValor();
+            app.getPrinterService().sendPulsePin(printer);
+            logger.debug("Pulse pin: " + app.getUser() + " : " + new Date());
+        }
+
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -241,9 +262,7 @@ public class PanelTopSearch extends PanelCaptura implements ActionListener {
                 filtrar(regSearch.getText(), 1);
             }
         } else if (AC_SEND_PIN.equals(e.getActionCommand())) {
-            ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED);
-            String printer = config != null ? config.getValor() : "";
-            app.getPrinterService().sendPulsePin(printer);
+           pulsePinPrinter();
         }
 
     }

@@ -40,6 +40,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -61,7 +62,7 @@ import org.dz.PanelCapturaMod;
  * @author lrod
  */
 public class PanelCash extends PanelCapturaMod implements ActionListener, ListSelectionListener, PropertyChangeListener {
-    
+
     private final Aplication app;
     private Cycle cycle;
     private BigDecimal total;
@@ -87,40 +88,40 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         initComponents();
         createComponents();
     }
-    
+
     private void createComponents() {
-        
+
         String[] cols = new String[]{"Ticket", "Fecha", "Valor", "Tipo", "Mesa", "Mesero", "Pago", "Ver", "Pagar"};
         model = new MyDefaultTableModel(cols, 0);
-        
+
         String[] cols2 = new String[]{"Tipo", "Categoria", "Descripcion", "Valor"};
         modelExt = new MyDefaultTableModel(cols2, 0);
-        
+
         lbFacturas.setText("Facturas");
         lbGastos.setText("Extras");
-        
+
         total = new BigDecimal(0);
-        
+
         regFilter1.setLabelText("Pedido");
         regFilter1.setText(new String[]{"--TODOS--", "LOCAL", "DOMICILIO", "PARA LLEVAR"});
-        
+
         ArrayList<Waiter> waiterslList = app.getControl().getWaitresslList("status=1", "name");
         waiterslList.add(0, new Waiter("--TODOS--", 1));
         regFilter2.setText(waiterslList.toArray());
         regFilter2.setLabelText("Mesero");
-        
+
         btRefresh.setActionCommand(AC_REFRESH);
         btRefresh.addActionListener(this);
         btRefresh.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "update.png", 32, 32)));
-        
+
         btOpenCash.setActionCommand(AC_OPEN_CASH);
         btOpenCash.addActionListener(this);
         btOpenCash.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "cashdrawer.png", 32, 32)));
-        
+
         btAddExtra.setActionCommand(AC_ADD_GASTO);
         btAddExtra.addActionListener(this);
         btAddExtra.setIcon(new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "add1.png", 24, 24)));
-        
+
         tableInvoices.setModel(model);
         tableInvoices.setRowHeight(24);
         Font f = new Font("Sans", 0, 14);
@@ -130,7 +131,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             tableInvoices.getColumnModel().getColumn(i).setPreferredWidth(colW[i]);
             tableInvoices.getColumnModel().getColumn(i).setCellRenderer(new TablaCellRenderer(true, f));
         }
-        
+
         popupTable = new JPopupMenu();
         popupListenerTabla = new com.rb.gui.util.MyPopupListener(popupTable, true);
         JMenuItem item1 = new JMenuItem("Pagar");
@@ -141,14 +142,14 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             showPayInvoice(inv);
         });
         popupTable.add(item1);
-        
+
         tableInvoices.addMouseListener(popupListenerTabla);
         tableInvoices.getTableHeader().setReorderingAllowed(false);
-        
+
         DefaultListSelectionModel selModel = new DefaultListSelectionModel();
         selModel.addListSelectionListener(this);
         tableInvoices.setSelectionModel(selModel);
-        
+
         tableExtras.setModel(modelExt);
         tableExtras.setRowHeight(24);
         int[] colWE = new int[]{40, 100, 100, 60};
@@ -157,24 +158,24 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             tableExtras.getColumnModel().getColumn(i).setPreferredWidth(colWE[i]);
             tableExtras.getColumnModel().getColumn(i).setCellRenderer(new TablaCellRenderer(true));
         }
-        
+
         TablaCellRenderer rightRenderer = new TablaCellRenderer(true, f);
         rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
-        
+
         ImageIcon icon1 = new ImageIcon(app.getImgManager().getImagen("gui/img/icons/right.png", 16, 16));
         IconCellRenderer iconRenderer = new IconCellRenderer("", icon1);
         tableExtras.getColumnModel().getColumn(0).setCellRenderer(iconRenderer);
-        
+
         tableInvoices.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
         tableExtras.getColumnModel().getColumn(modelExt.getColumnCount() - 1).setCellRenderer(rightRenderer);
-        
+
         tableInvoices.getColumnModel().getColumn(model.getColumnCount() - 2).setCellEditor(new BotonEditor(tableInvoices, this, AC_PAY_INVOICE));
         tableInvoices.getColumnModel().getColumn(model.getColumnCount() - 2).setCellRenderer(new ButtonCellRenderer("Pagar"));
         tableInvoices.getColumnModel().getColumn(model.getColumnCount() - 1).setCellEditor(new BotonEditor(tableInvoices, this, AC_REVIEW_INVOICE));
         tableInvoices.getColumnModel().getColumn(model.getColumnCount() - 1).setCellRenderer(new ButtonCellRenderer("Ver"));
-        
+
         Font font1 = new Font("sans", Font.BOLD, 16);
-        
+
         Color color1 = new Color(45, 167, 72);
         lbTit1.setText("Ventas");
         lbTit1.setOpaque(true);
@@ -184,7 +185,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         lbData1.setBorder(BorderFactory.createLineBorder(color1.darker(), 1, true));
         lbData1.setBackground(color1.brighter());
         lbData1.setFont(font1);
-        
+
         Color color2 = new Color(187, 65, 92);
         lbTit2.setText("Salidas");
         lbTit2.setOpaque(true);
@@ -194,7 +195,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         lbData2.setBorder(BorderFactory.createLineBorder(color2.darker(), 1, true));
         lbData2.setBackground(color2.brighter());
         lbData2.setFont(font1);
-        
+
         Color color3 = new Color(75, 102, 197);
         lbTit3.setText("Resultado");
         lbTit3.setOpaque(true);
@@ -204,7 +205,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         lbData3.setBorder(BorderFactory.createLineBorder(color3.darker(), 1, true));
         lbData3.setBackground(color3.brighter());
         lbData3.setFont(font1);
-        
+
         Color color4 = new Color(45, 172, 167);
         lbTit4.setText("Inicial");
         lbTit4.setOpaque(true);
@@ -214,7 +215,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         lbData4.setBorder(BorderFactory.createLineBorder(color4.darker(), 1, true));
         lbData4.setBackground(color4.brighter());
         lbData4.setFont(font1);
-        
+
         Color color5 = new Color(35, 142, 87);
         lbTit5.setText("Entradas");
         lbTit5.setOpaque(true);
@@ -224,7 +225,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         lbData5.setBorder(BorderFactory.createLineBorder(color5.darker(), 1, true));
         lbData5.setBackground(color5.brighter());
         lbData5.setFont(font1);
-        
+
         Color color6 = new Color(175, 92, 147);
         lbTit6.setText("Transf - Bancos");
         lbTit6.setOpaque(true);
@@ -234,24 +235,24 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         lbData6.setBorder(BorderFactory.createLineBorder(color6.darker(), 1, true));
         lbData6.setBackground(color6.brighter());
         lbData6.setFont(font1);
-        
+
         icOpen = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "open.png", 32, 32));
         icClose = new ImageIcon(app.getImgManager().getImagen(app.getFolderIcons() + "close.png", 32, 32));
-        
+
         btNewCiclo.setMargin(new Insets(2, 2, 2, 2));
         btNewCiclo.setIcon(icOpen);
         btNewCiclo.setActionCommand(AC_NEW_CYCLE);
         btNewCiclo.addActionListener(this);
-        
+
         Border bordeOut = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED, color3, color2);
         Border bordeIn = BorderFactory.createEmptyBorder(10, 10, 10, 10);
-        
+
         jLabel1.setText("Ciclo de caja");
-        
+
         jLabel2.setBorder(BorderFactory.createCompoundBorder(bordeOut, BorderFactory.createEmptyBorder(2, 8, 2, 8)));
-        
+
         lbInit.setBorder(BorderFactory.createCompoundBorder(bordeOut, bordeIn));
-        
+
         lbEnd.setBorder(BorderFactory.createCompoundBorder(bordeOut, bordeIn));
 
 //        populateTabla("");
@@ -261,13 +262,13 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         lbData4.setText("0");
         lbData5.setText("0");
         lbData6.setText("0");
-        
+
         ConfigDB config = app.getControl().getConfigGlobal(Configuration.OPEN_CASH);
         btOpenCash.setEnabled(config != null ? (Boolean.valueOf(config.getValor())) : false);
-        
+
         regFilter1.setActionCommand(AC_FILTER);
         regFilter1.addActionListener(this);
-        
+
         regFilter2.setActionCommand(AC_FILTER);
         regFilter2.addActionListener(this);
 //        regFilter2.setEnabled(false);
@@ -275,37 +276,37 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         selStatusBar.setOpaque(true);
         selStatusBar.setBorder(BorderFactory.createEtchedBorder());
         selStatusBar.setVisible(false);
-        
+
         loadCycle();
-        
+
         loadExtras();
-        
+
     }
     private static final String AC_PAY_INVOICE = "AC_PAY_INVOICE";
     private static final String AC_REVIEW_INVOICE = "AC_REVIEW_INVOICE";
     private static final String AC_FILTER = "AC_FILTER";
-    
+
     private void showPayInvoice(Invoice inv) {
         app.getGuiManager().showPanelPayInvoice(inv);
     }
-    
+
     public void loadCycle() {
         cycle = app.getControl().getLastCycle();
         if (cycle != null) {
             showCycle(cycle);
         }
     }
-    
+
     private static final String AC_ADD_GASTO = "AC_ADD_GASTO";
     public static final String AC_CLOSE_CYCLE = "AC_CLOSE_CYCLE";
     public static final String AC_NEW_CYCLE = "AC_NEW_CYCLE";
     public static final String AC_NEW_EXPESE_INCOME = "AC_NEW_EXPESE_INCOME";
     public static final String AC_REFRESH = "AC_REFRESH";
     public static final String AC_OPEN_CASH = "AC_OPEN_CASH";
-    
+
     private void showCycle(Cycle cycle) {
         jLabel2.setText("<html><font color=blue size=5>" + cycle.getId() + "</font></html>");
-        
+
         Color colorStatus = cycle.getStatus() == 1 ? Color.GREEN : Color.RED;
         lbStatus.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED, colorStatus, colorStatus.darker()));
         lbStatus.setText("<html><font color=green>" + (cycle.getStatus() == 1 ? "Abierto" : "Cerrado") + "</font></html>");
@@ -315,9 +316,9 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         } else {
             lbEnd.setText("<html>Cierre:<br><font color=green size=3>" + "" + "</font></html>");
         }
-        
+
         lbData4.setText("<html><font size=4>" + app.DCFORM_P.format(cycle.getInitialBalance().doubleValue()) + "</font></html>");
-        
+
         if (cycle.getStatus() == 1) {
 //            btNewCiclo.setEnabled(false);
             btNewCiclo.setIcon(icClose);
@@ -327,39 +328,39 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             btNewCiclo.setIcon(icOpen);
             btNewCiclo.setActionCommand(AC_NEW_CYCLE);
         }
-        
+
         populateTabla("");
         calculateTotals();
     }
-    
+
     private void populateTabla(String query) {
-        
+
         String[] TYPE = {"EFECTIVO", "TRANSF", "TARJETA", "COMBO"};
-        
+
         if (currentSwingWorker != null && !currentSwingWorker.isDone()) {
             currentSwingWorker.cancel(true);
         }
-        
+
         SwingWorker sw;
         sw = new SwingWorker() {
             @Override
             protected Object doInBackground() throws Exception {
-                
+
                 model.setRowCount(0);
-                
+
                 int selected = regFilter1.getSelected();
                 String filter = selected == 0 ? "" : " AND deliveryType=" + selected;
-                
+
                 int idWaiter = 0;
                 if (regFilter2.isEnabled()) {
                     Waiter selWaiter = (Waiter) regFilter2.getSelectedItem();
                     idWaiter = selWaiter.getId();
                 }
-                
+
                 filter += idWaiter == 0 ? "" : " AND idMesero=" + idWaiter;
-                
+
                 ArrayList<Invoice> invoiceslList = app.getControl().getInvoicesLitelList("ciclo=" + cycle.getId() + filter, "sale_date DESC");
-                
+
                 total = new BigDecimal(0);
                 int totalProducts = 0;
                 int anuladas = 0;
@@ -387,7 +388,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
                             pago ? "PAGO" : "PAGAR",
                             "Ver"
                         });
-                        
+
                         model.setRowEditable(model.getRowCount() - 1, false);
                         model.setCellEditable(model.getRowCount() - 1, model.getColumnCount() - 2, true);
                         model.setCellEditable(model.getRowCount() - 1, model.getColumnCount() - 1, true);
@@ -395,24 +396,24 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
                         anuladas++;
                     }
                 }
-                
+
                 return true;
             }
-            
+
             @Override
             protected void done() {
                 app.getGuiManager().setDefaultCursor();
                 calculateTotals();
             }
-            
+
         };
         app.getGuiManager().setWaitCursor();
         sw.execute();
-        
+
         currentSwingWorker = sw;
-        
+
     }
-    
+
     private void calculateTotals() {
         long cycle_id = 0L;
         BigDecimal initial = BigDecimal.ZERO;
@@ -425,21 +426,21 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         BigDecimal incomes = app.getControl().getValueExpenseIncomeByCycle(cycle_id, CashMov.INCOME);
         BigDecimal transfer = app.getControl().getValueTranfersByCycle(cycle_id);
         BigDecimal outcome = initial.add(sales).add(incomes).add(expenses.negate()).subtract(transfer);
-        
+
         lbData4.setText("<html><font size=4>" + app.DCFORM_P.format(initial) + "</font></html>");
-        
+
         lbData1.setText("<html><font size=4>" + app.DCFORM_P.format(sales) + "</font></html>");
-        
+
         lbData3.setText("<html><font size=4>" + app.DCFORM_P.format(outcome) + "</font></html>");
-        
+
         lbData5.setText("<html><font size=4>" + app.DCFORM_P.format(incomes) + "</font></html>");
-        
+
         lbData2.setText("<html><font size=4>" + app.DCFORM_P.format(expenses) + "</font></html>");
-        
+
         lbData6.setText("<html><font size=4>" + app.DCFORM_P.format(transfer) + "</font></html>");
-        
+
     }
-    
+
     public void loadExtras() {
         if (cycle != null) {
             modelExt.setRowCount(0);
@@ -459,28 +460,45 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             }
             calculateTotals();
         }
-        
+
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (AC_NEW_CYCLE.equals(e.getActionCommand())) {
-            app.getGuiManager().showPanelNewCycle(this);            
-            
+            app.getGuiManager().showPanelNewCycle(this);
+
         } else if (AC_CLOSE_CYCLE.equals(e.getActionCommand())) {
-            if (cycle.getStatus() == 1) {
-                cycle.setStatus(0);
-                cycle.setEnd(new Date());
-                app.getControl().saveSnapshotData(cycle);
-                app.getControl().updateCycle(cycle);
-                showCycle(cycle);
-                pulsePinPrinter();
+            StringBuilder msg = new StringBuilder();
+            msg.append("<html>Esta seguro que desea cerrar el ciclo de caja ");
+            msg.append("<font color=blue>").append(cycle.getId());
+            msg.append(" </font> del ");
+            msg.append("<font color=blue>").append(Aplication.DF_FULL.format(cycle.getInit())).append("</font>");
+            msg.append("</html>");
+            int opt = JOptionPane.showConfirmDialog(null, msg, "Advertencia", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (opt == JOptionPane.OK_OPTION) {
+                if (cycle.getStatus() == 1) {
+                    cycle.setStatus(0);
+                    cycle.setEnd(new Date());
+                    app.getControl().saveSnapshotData(cycle);
+                    app.getControl().updateCycle(cycle);
+                    showCycle(cycle);
+                    pulsePinPrinter();
+
+                } else {
+                    GUIManager.showErrorMessage(PanelCash.this, "Ya el ciclo esta cerrado", "Ciclo cerrado");
+                }
             }
+
         } else if (AC_REFRESH.equals(e.getActionCommand())) {
             loadCycle();
             loadExtras();
         } else if (AC_ADD_GASTO.equals(e.getActionCommand())) {
-            app.getGuiManager().showPanelAddExtra(this);
+            if (cycle.getStatus() == 1) {
+                app.getGuiManager().showPanelAddExtra(this);
+            } else {
+                GUIManager.showErrorMessage(PanelCash.this, "Ya el ciclo esta cerrado", "Ciclo cerrado");
+            }
         } else if (AC_FILTER.equals(e.getActionCommand())) {
             int SEL = regFilter1.getSelected();
             if (SEL == 1 || SEL == 0) {
@@ -501,17 +519,28 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
                 //app.getGuiManager().showPanelConfirmAccess(this);
                 pulsePinPrinter();
             }
-            
+
         }
     }
-    
+
     private void pulsePinPrinter() {
+        Permission perm = app.getControl().getPermissionByName(MyConstants.PERM_OPEN_CASH);
+        if (!app.getControl().hasPermission(app.getUser(), perm)) {
+            GUIManager.showErrorMessage(this, "No tiene permisos para abrir la caja", "Error de privilegios");
+            return;
+        }
+
         ConfigDB config = app.getControl().getConfigLocal(Configuration.PRINTER_SELECTED);
-        String printer = config != null ? config.getValor() : "";
-        app.getPrinterService().sendPulsePin(printer);
-        logger.debug("Pulse pin: " + app.getUser() + " : " + new Date());
+        if (config == null) {
+            GUIManager.showErrorMessage(null, "Impresora no configurada", "Printer error");
+        } else {
+            String printer = config.getValor();
+            app.getPrinterService().sendPulsePin(printer);
+            logger.debug("Pulse pin: " + app.getUser() + " : " + new Date());
+        }
+
     }
-    
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (AC_NEW_CYCLE.equals(evt.getPropertyName())) {
@@ -521,7 +550,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             pulsePinPrinter();
         } else if (PanelAddExtra.AC_ADD_EXTRA.equals(evt.getPropertyName())) {
             loadExtras();
-             pulsePinPrinter();
+            pulsePinPrinter();
         } else if (PanelPedido.AC_CONFIRMAR_PEDIDO.equals(evt.getPropertyName())) {
             populateTabla("");
         } else if (PanelPayInvoice.AC_PAY.equals(evt.getPropertyName())) {
@@ -529,12 +558,12 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             pulsePinPrinter();
         }
     }
-    
+
     @Override
     public void valueChanged(ListSelectionEvent e) {
         int[] selectedRows = tableInvoices.getSelectedRows();
         double total = 0, service = 0;
-        
+
         for (int selectedRow : selectedRows) {
             double valInvoice = 0;
             try {
@@ -547,9 +576,9 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         }
         makeStatusLabelSelecteds(selectedRows.length, total, service);
     }
-    
+
     private void makeStatusLabelSelecteds(int rows, double tot, double serv) {
-        
+
         if (rows > 0) {
             selStatusBar.setVisible(true);
             selStatusBar.setText("<html>  <font color=" + colSelection + ">Selección</font> [<font color=blue>" + (rows)
@@ -560,7 +589,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             selStatusBar.setText("");
             selStatusBar.setVisible(false);
         }
-        
+
     }
 
     /**
@@ -894,7 +923,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
     // End of variables declaration//GEN-END:variables
 
     public class BotonEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
-        
+
         private JTextField campo;
         Object currentValue;
         JButton button;
@@ -902,7 +931,7 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
         private JTable tabla;
         private ActionListener acList;
         private String acCommand;
-        
+
         public BotonEditor(JTable tabla, ActionListener listener, String acCommand) {
             button = new JButton();
             button.setBorderPainted(false);
@@ -911,9 +940,9 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             this.acCommand = acCommand;
             button.setActionCommand(acCommand);
             button.addActionListener(BotonEditor.this);
-            
+
         }
-        
+
         @Override
         public boolean isCellEditable(EventObject e) {
             if (e instanceof MouseEvent) {
@@ -921,18 +950,18 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             }
             return true;
         }
-        
+
         @Override
         public Object getCellEditorValue() {
             return currentValue;
         }
-        
+
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             currentValue = value;
             return button;
         }
-        
+
         @Override
         public void actionPerformed(ActionEvent e) {
             final int c = tabla.getEditingColumn();
@@ -954,16 +983,16 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             }
         }
     }
-    
+
     public class ButtonCellRenderer extends JButton implements TableCellRenderer {
-        
+
         public ButtonCellRenderer(String text) {
             setText(text);
         }
-        
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            
+
             if (value != null) {
                 setText(value.toString());
             }
@@ -983,20 +1012,20 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             return this;
         }
     }
-    
+
     public class IconCellRenderer extends JLabel implements TableCellRenderer {
-        
+
         protected ImageIcon icon1 = new ImageIcon(app.getImgManager().getImagen("gui/img/icons/left_green.png", 16, 16));
         protected ImageIcon icon2 = new ImageIcon(app.getImgManager().getImagen("gui/img/icons/right_red.png", 16, 16));
-        
+
         public IconCellRenderer(String text, ImageIcon icon) {
             setText(text);
             setIcon(icon);
         }
-        
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            
+
             if (value != null) {
                 setText(value.toString());
                 String text = value.toString();
@@ -1023,5 +1052,5 @@ public class PanelCash extends PanelCapturaMod implements ActionListener, ListSe
             return this;
         }
     }
-    
+
 }
